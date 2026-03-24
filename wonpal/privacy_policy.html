@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wonpal — Privacy Policy</title>
+<style>
+
+/* TERRARIUM COLORS */
+:root {
+  --background: #D7C3AC;
+  --surface: #A1B5A7;
+  --primary: #2C504A;
+  --secondary: #296673;
+  --tertiary: #B087AE;
+  --text: #1A2E2A;
+  --text-muted: #4A6460;
+  --code-bg: #1A2E2A;
+  --code-text: #A8D1C8;
+  --rule: rgba(44,80,74,0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #141008;
+    --surface: #1E1A10;
+    --primary: #A8D1C8;
+    --secondary: #88BDC9;
+    --tertiary: #C9A8C6;
+    --text: #EDE0CF;
+    --text-muted: #8A9E99;
+    --code-bg: #0D0A04;
+    --code-text: #A8D1C8;
+    --rule: rgba(168,209,200,0.12);
+  }
+}
+
+/* BASE */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Georgia', serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100dvh;
+}
+
+/* LEAVES */
+.leaf {
+  position: fixed;
+  font-size: 16px;
+  opacity: .35;
+  pointer-events: none;
+  animation: leafDrift linear infinite;
+  z-index: 0;
+}
+@keyframes leafDrift {
+  from { transform: translateY(-8vh) rotate(0deg); }
+  to   { transform: translateY(108vh) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaf { animation: none; }
+}
+
+/* LAYOUT */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 28px 100px;
+}
+
+/* HERO */
+.hero {
+  margin-bottom: 48px;
+}
+.hero-eyebrow {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: 14px;
+  opacity: .8;
+}
+.hero h1 {
+  margin: 0 0 14px;
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-weight: 400;
+  color: var(--primary);
+  line-height: 1.15;
+}
+.hero-lead {
+  font-size: 0.97rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+.hero-date {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+/* HIGHLIGHT BOX */
+.highlight {
+  background: var(--surface);
+  padding: 20px 24px;
+  border-radius: 16px;
+  margin: 24px 0 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.highlight strong {
+  color: var(--primary);
+}
+
+/* SECTIONS */
+.section {
+  margin-bottom: 48px;
+}
+.section h2 {
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--primary);
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--rule);
+}
+.section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--secondary);
+  margin: 20px 0 10px;
+}
+.section p {
+  margin: 0 0 12px;
+}
+.section ul {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+.section li {
+  margin-bottom: 8px;
+}
+.section li strong {
+  color: var(--primary);
+}
+
+/* PERMISSION CARDS */
+.permission-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+.permission-card {
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow .2s;
+}
+.permission-card:hover {
+  box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+}
+.permission-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.permission-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.permission-info {
+  flex: 1;
+}
+.permission-name {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.permission-summary {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.permission-badge {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+.permission-badge.required {
+  background: var(--secondary);
+  color: var(--background);
+}
+.permission-badge.optional {
+  background: transparent;
+  border: 1.5px solid var(--rule);
+  color: var(--text-muted);
+}
+.permission-badge.runtime {
+  background: var(--tertiary);
+  color: var(--background);
+}
+.toggle-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  transition: transform .25s, background .2s;
+  user-select: none;
+}
+.permission-card.open .toggle-icon {
+  transform: rotate(180deg);
+  background: rgba(0,0,0,0.12);
+}
+.permission-divider {
+  height: 1px;
+  background: var(--rule);
+  margin: 0 20px;
+  display: none;
+}
+.permission-card.open .permission-divider {
+  display: block;
+}
+.permission-detail {
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), padding .35s;
+}
+.permission-card.open .permission-detail {
+  max-height: 500px;
+  padding: 16px 20px 20px;
+}
+.permission-detail p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+code {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.83em;
+}
+
+/* NOT COLLECTED LIST */
+.not-collected {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.not-collected-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.not-collected-item::before {
+  content: '\2715';
+  color: var(--tertiary);
+  font-weight: bold;
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1.5px solid var(--rule);
+  text-align: center;
+}
+.footer p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 8px 0;
+}
+.footer a {
+  color: var(--secondary);
+  text-decoration: none;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .page { padding: 40px 20px 80px; }
+  .not-collected { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Privacy Policy</div>
+    <h1>Wonpal</h1>
+    <p class="hero-lead">How we handle your data — spoiler: we don't.</p>
+    <p class="hero-date">Last Updated: March 24, 2026</p>
+  </div>
+
+  <div class="highlight">
+    <strong>The short version:</strong> Wonpal operates entirely on your device. We do not collect, transmit, or store any of your personal data on external servers. The app has no internet permission.
+  </div>
+
+  <div class="section">
+    <h2>Overview</h2>
+    <p>Wonpal is developed by Bleelblep. This Privacy Policy explains how we collect, use, and protect information when you use our Android application designed for Nothing Phone devices.</p>
+    <p>Wonpal displays caller information on your Nothing Phone's Glyph Matrix LED when VoIP calls come in. It monitors incoming call notifications, matches caller names to your contacts, and renders the result on the Glyph LED interface.</p>
+  </div>
+
+  <div class="section">
+    <h2>Information We Access</h2>
+    <p>To provide its functionality, Wonpal accesses certain device information locally:</p>
+
+    <h3>Notifications</h3>
+    <ul>
+      <li>Wonpal uses Android's Notification Listener Service to detect incoming VoIP call notifications from apps you've selected (e.g. WhatsApp, Telegram, Discord).</li>
+      <li><strong>We read the caller name</strong> from the notification to display it on the Glyph Matrix and match it to your contacts.</li>
+      <li><strong>We read the notification category and flags</strong> to determine if the notification represents an incoming call and whether it is actively ringing.</li>
+      <li>We do not read message content, chat history, or unrelated notifications from apps you haven't enabled.</li>
+    </ul>
+
+    <h3>Contacts</h3>
+    <ul>
+      <li>If you grant the optional Contacts permission, Wonpal matches caller names from notifications to your device contacts.</li>
+      <li>This enables per-contact customization — custom display text, fonts, icons, and VIP status.</li>
+      <li><strong>Contact data is only queried locally</strong> and is never transmitted off your device.</li>
+      <li>You can use Wonpal without this permission; caller names will still be displayed from notification data.</li>
+    </ul>
+
+    <h3>Phone State</h3>
+    <ul>
+      <li>We detect the current Do Not Disturb mode to respect your focus settings.</li>
+      <li><strong>We do NOT access call logs</strong>, phone numbers, or call history from the system dialer.</li>
+    </ul>
+
+    <h3>Installed Applications</h3>
+    <ul>
+      <li>We query your list of installed applications to let you choose which calling apps Wonpal should monitor.</li>
+      <li>We also check which apps register as telecom providers to warn you about potential conflicts with Nothing OS's built-in call animations.</li>
+      <li>This information is used solely for the app selection interface and is stored locally on your device.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Information Storage</h2>
+    <p>All data is stored locally on your device:</p>
+    <ul>
+      <li><strong>Preferences:</strong> Your app settings (brightness, scroll speed, theme, DND behavior, etc.) are stored in local DataStore preferences.</li>
+      <li><strong>Database:</strong> Per-contact display configurations, VIP status, and call history entries are stored in a local Room database.</li>
+      <li><strong>Call History:</strong> Wonpal maintains its own local call log of detected VoIP calls (caller name, source app, timestamp). This is separate from your system call history and is stored only on your device.</li>
+    </ul>
+    <p><strong>None of this data is transmitted to external servers.</strong></p>
+  </div>
+
+  <div class="section">
+    <h2>Information We Do NOT Collect</h2>
+    <div class="not-collected">
+      <span class="not-collected-item">Personal identification</span>
+      <span class="not-collected-item">Location data</span>
+      <span class="not-collected-item">Calendar</span>
+      <span class="not-collected-item">Camera or microphone</span>
+      <span class="not-collected-item">SMS messages</span>
+      <span class="not-collected-item">System call logs</span>
+      <span class="not-collected-item">Browsing history</span>
+      <span class="not-collected-item">Device identifiers</span>
+      <span class="not-collected-item">Analytics or usage stats</span>
+      <span class="not-collected-item">Message or chat content</span>
+      <span class="not-collected-item">Network activity</span>
+      <span class="not-collected-item">Phone numbers</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Permissions Explained</h2>
+    <p>Click each permission to learn more about why it's needed:</p>
+
+    <div class="permission-grid" id="permissions"></div>
+  </div>
+
+  <div class="section">
+    <h2>Third-Party Services</h2>
+    <p>Wonpal does not integrate any third-party analytics, advertising, or tracking services. The app does not contain ads and has no internet access.</p>
+    <p>The app uses the Nothing Glyph SDK solely to control the Glyph LED matrix on compatible Nothing Phone devices. This SDK operates locally and does not transmit data externally.</p>
+  </div>
+
+  <div class="section">
+    <h2>Data Security</h2>
+    <p>Since all data remains on your device, your information is protected by your device's built-in security features, including device encryption and app sandboxing.</p>
+    <p>You can delete all stored data at any time by clearing the app's data in Android Settings, or by using the in-app history clear function.</p>
+  </div>
+
+  <div class="section">
+    <h2>Children's Privacy</h2>
+    <p>Wonpal does not knowingly collect any personal information from children under the age of 13. Since we do not collect personal data from any users, children can safely use the app.</p>
+  </div>
+
+  <div class="section">
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. Any changes will be reflected in the "Last Updated" date at the top of this policy. We encourage you to review this policy periodically.</p>
+  </div>
+
+  <div class="footer">
+    <p>Questions? Contact us at <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+    <p><em>This privacy policy applies to the Wonpal application available on Google Play.</em></p>
+  </div>
+
+</div>
+
+<script>
+const PERMISSIONS = [
+  {
+    icon: "\uD83D\uDD14",
+    name: "Notification Listener",
+    code: "BIND_NOTIFICATION_LISTENER_SERVICE",
+    badge: "required",
+    summary: "Detect incoming VoIP call notifications",
+    detail: "This is Wonpal's core permission. It allows the app to detect when a VoIP call notification arrives from apps you've selected (WhatsApp, Telegram, etc.). Wonpal reads the caller name and call state from the notification to display caller info on the Glyph Matrix. Without this permission, the app cannot function."
+  },
+  {
+    icon: "\uD83D\uDC64",
+    name: "Contacts",
+    code: "READ_CONTACTS",
+    badge: "runtime",
+    summary: "Match caller names to your contacts",
+    detail: "Allows Wonpal to look up caller names from notifications in your device contacts. This enables per-contact customization \u2014 you can set custom display text, fonts, icons, and VIP status for individual callers. This permission is optional; without it, Wonpal still displays the caller name from the notification but cannot offer per-contact overrides."
+  },
+  {
+    icon: "\uD83D\uDCF1",
+    name: "Query All Packages",
+    code: "QUERY_ALL_PACKAGES",
+    badge: "required",
+    summary: "See which calling apps are installed",
+    detail: "Allows Wonpal to list installed apps so you can choose which calling apps to monitor. We also check whether apps register as telecom providers with the system, which helps us warn you about potential conflicts with Nothing OS's built-in call animations. We never transmit this information anywhere."
+  },
+  {
+    icon: "\uD83D\uDCDE",
+    name: "Phone State",
+    code: "READ_PHONE_STATE",
+    badge: "runtime",
+    summary: "Detect Do Not Disturb mode",
+    detail: "Allows Wonpal to check the current Do Not Disturb / interruption filter state. When DND is active and the \"Respect Do Not Disturb\" setting is enabled, Wonpal will mute its ringtone and optionally hide the glyph display. VIP contacts can bypass DND. We do not access call logs, phone numbers, or contact information through this permission."
+  },
+  {
+    icon: "\uD83D\uDD14",
+    name: "Post Notifications",
+    code: "POST_NOTIFICATIONS",
+    badge: "required",
+    summary: "Show Quick Settings tile status",
+    detail: "Required on Android 13 and above for the Quick Settings tile to function. The tile lets you toggle Wonpal's service on or off directly from your notification shade without opening the app."
+  },
+  {
+    icon: "\uD83D\uDCA1",
+    name: "Nothing Glyph SDK",
+    code: "com.nothing.ketchum.permission.ENABLE",
+    badge: "required",
+    summary: "Control the Glyph LED matrix",
+    detail: "This is a Nothing Phone-specific permission that allows Wonpal to communicate with the Glyph Matrix LED hardware. Without this permission, the app cannot display caller information on the Glyph interface. This SDK operates entirely on-device and does not transmit any data."
+  }
+];
+
+function renderPermissions() {
+  const container = document.getElementById("permissions");
+
+  PERMISSIONS.forEach(perm => {
+    const card = document.createElement("div");
+    card.className = "permission-card";
+    card.innerHTML = `
+      <div class="permission-header" onclick="togglePermission(this.parentElement)">
+        <span class="permission-icon">${perm.icon}</span>
+        <div class="permission-info">
+          <div class="permission-name">${perm.name}</div>
+          <div class="permission-summary">${perm.summary}</div>
+        </div>
+        <span class="permission-badge ${perm.badge}">${perm.badge}</span>
+        <div class="toggle-icon">\u25BC</div>
+      </div>
+      <div class="permission-divider"></div>
+      <div class="permission-detail">
+        <p>${perm.detail}</p>
+        <p style="margin-top: 12px;"><code>${perm.code}</code></p>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function togglePermission(card) {
+  card.classList.toggle("open");
+}
+
+renderPermissions();
+
+/* Leaves */
+const leaves = ["\uD83C\uDF43","\uD83C\uDF3F","\uD83C\uDF42"];
+const leafCount = window.innerWidth < 700 ? 5 : 10;
+for (let i = 0; i < leafCount; i++) {
+  const l = document.createElement("div");
+  l.className = "leaf";
+  l.innerText = leaves[Math.floor(Math.random() * leaves.length)];
+  l.style.left = Math.random() * 100 + "vw";
+  l.style.animationDuration = (18 + Math.random() * 18) + "s";
+  l.style.animationDelay = Math.random() * 20 + "s";
+  document.body.appendChild(l);
+}
+</script>
+
+</body>
+</html>
