@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wonpal Beta</title>
+
+<style>
+
+/* TERRARIUM COLORS */
+
+:root{
+--background:#D7C3AC;
+--surface:#A1B5A7;
+--primary:#2C504A;
+--secondary:#296673;
+--tertiary:#B087AE;
+--text:#1A2E2A;
+}
+
+@media (prefers-color-scheme: dark){
+:root{
+--background:#211608;
+--surface:#2C2010;
+--primary:#A8D1C8;
+--secondary:#88BDC9;
+--tertiary:#C9A8C6;
+--text:#EDE0CF;
+}
+}
+
+/* BASE */
+
+body{
+margin:0;
+font-family:system-ui,-apple-system,sans-serif;
+background:var(--background);
+color:var(--text);
+min-height:100dvh;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+padding:20px;
+box-sizing:border-box;
+}
+
+/* CARD */
+
+.container{
+position:relative;
+z-index:10;
+width:100%;
+max-width:620px;
+background:var(--surface);
+padding:32px;
+border-radius:20px;
+box-shadow:0 20px 40px rgba(0,0,0,0.25);
+}
+
+h1{
+margin-top:0;
+font-size:1.8rem;
+color:var(--primary);
+}
+
+.notice{
+background:rgba(0,0,0,0.08);
+padding:14px;
+border-radius:12px;
+margin:20px 0;
+}
+
+/* WANTED BANNER */
+
+.wanted{
+background:var(--tertiary);
+color:white;
+padding:14px 16px;
+border-radius:12px;
+margin:20px 0;
+font-size:0.9rem;
+line-height:1.5;
+}
+
+.wanted strong{
+display:block;
+font-size:1rem;
+margin-bottom:4px;
+letter-spacing:.01em;
+}
+
+/* FORM */
+
+.field{
+margin-bottom:16px;
+}
+
+label{
+display:block;
+font-size:0.85rem;
+font-weight:600;
+margin-bottom:6px;
+opacity:0.8;
+}
+
+input,textarea{
+width:100%;
+box-sizing:border-box;
+background:rgba(0,0,0,0.08);
+border:1.5px solid rgba(0,0,0,0.1);
+border-radius:10px;
+padding:10px 12px;
+font-size:15px;
+font-family:inherit;
+color:var(--text);
+transition:.2s;
+}
+
+input:focus,textarea:focus{
+outline:none;
+border-color:var(--primary);
+background:rgba(0,0,0,0.05);
+}
+
+textarea{
+resize:vertical;
+min-height:80px;
+}
+
+/* BUTTON */
+
+button{
+background:var(--primary);
+color:white;
+border:none;
+width:100%;
+padding:16px;
+border-radius:14px;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+transition:.2s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+button:active{
+transform:scale(.98);
+}
+
+button:disabled{
+opacity:0.6;
+cursor:not-allowed;
+transform:none;
+}
+
+/* SUCCESS STATE */
+
+.success{
+text-align:center;
+padding:16px 0;
+}
+
+.success .checkmark{
+font-size:2.5rem;
+display:block;
+margin-bottom:12px;
+}
+
+/* PARTICLES */
+
+.particle{
+position:fixed;
+width:4px;
+height:4px;
+background:var(--secondary);
+border-radius:50%;
+opacity:.4;
+animation:floatUp linear infinite;
+pointer-events:none;
+}
+
+@keyframes floatUp{
+from{transform:translateY(0);opacity:0;}
+30%{opacity:.6;}
+to{transform:translateY(-120vh);opacity:0;}
+}
+
+/* LEAVES */
+
+.leaf{
+position:fixed;
+font-size:18px;
+opacity:.6;
+pointer-events:none;
+animation:leafDrift linear infinite;
+}
+
+@keyframes leafDrift{
+from{transform:translateY(-10vh) rotate(0deg);}
+to{transform:translateY(110vh) rotate(360deg);}
+}
+
+/* BLOBS */
+
+.blob{
+position:fixed;
+width:24px;
+height:24px;
+background:var(--primary);
+border-radius:50%;
+opacity:.85;
+filter:blur(.3px);
+animation:blobFloat ease-in-out infinite;
+pointer-events:none;
+}
+
+@keyframes blobFloat{
+0%{transform:translateY(0px) scale(1);}
+50%{transform:translateY(-10px) scale(1.1);}
+100%{transform:translateY(0px) scale(1);}
+}
+
+/* COUNTER */
+
+.counter{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:20px;
+padding:12px 14px;
+background:rgba(0,0,0,0.08);
+border-radius:12px;
+font-size:0.9rem;
+}
+
+.counter-bar-wrap{
+flex:1;
+height:8px;
+background:rgba(0,0,0,0.12);
+border-radius:99px;
+overflow:hidden;
+}
+
+.counter-bar{
+height:100%;
+background:var(--primary);
+border-radius:99px;
+transition:width .6s cubic-bezier(.4,0,.2,1);
+width:0%;
+}
+
+.counter-label{
+white-space:nowrap;
+font-weight:600;
+font-size:0.85rem;
+opacity:.8;
+min-width:72px;
+text-align:right;
+}
+
+/* FULL STATE */
+
+.full-notice{
+text-align:center;
+padding:20px 0 8px;
+}
+
+.full-notice .lock{
+font-size:2rem;
+display:block;
+margin-bottom:8px;
+}
+
+/* MOBILE TWEAKS */
+
+@media (max-width:600px){
+.container{padding:24px;}
+h1{font-size:1.6rem;}
+}
+
+/* REDUCE ANIMATION IF USER PREFERS */
+
+@media (prefers-reduced-motion: reduce){
+.particle,.leaf,.blob{animation:none;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Wonpal Beta</h1>
+
+<p>
+  Wonpal shows who's calling on your Glyph Matrix — names, contacts, custom icons — before you even pick up.
+  Before it goes public, it needs testers.
+</p>
+
+<div class="notice">
+  📞 <b>Important:</b> This beta supports <b>Nothing Phone (3)</b> only.
+</div>
+
+<div class="wanted">
+  🔍 <strong>Especially looking for you</strong>
+  Do you make VoIP calls using apps <em>other</em> than Telegram or Facebook Messenger? WhatsApp, Discord, Signal, Viber, Teams, Zoom — we need testers with a variety of calling apps to make sure Wonpal works everywhere.
+</div>
+
+<div id="form-wrap">
+  <div class="field">
+    <label for="email">Your Email Address</label>
+    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+  </div>
+  <div class="field">
+    <label for="google-email">Google Account Email <span style="opacity:.6;font-weight:400">(for Play Store access)</span></label>
+    <input type="email" id="google-email" name="google_account_email" placeholder="googleaccount@gmail.com" required>
+  </div>
+  <div class="field">
+    <label for="apps">VoIP apps you use <span style="opacity:.6;font-weight:400">(e.g. WhatsApp, Telegram)</span></label>
+    <input type="text" id="apps" name="voip_apps" placeholder="WhatsApp, Telegram…">
+  </div>
+  <div class="field">
+    <label for="notes">Notes <span style="opacity:.6;font-weight:400">(optional)</span></label>
+    <textarea id="notes" name="notes" placeholder="Anything you'd like us to know…"></textarea>
+  </div>
+  <button id="submit-btn" onclick="apply()">Apply to Test</button>
+</div>
+
+<div id="success-msg" class="success" style="display:none">
+  <span class="checkmark">📞</span>
+  <b>Application sent!</b><br>
+  <span style="opacity:.7">You'll hear back if you make the list.</span>
+</div>
+
+<div id="full-notice" class="full-notice" style="display:none">
+  <span class="lock">🔒</span>
+  <b>Beta is full.</b><br>
+  <span style="opacity:.7">All 20 spots have been claimed. Check back if a spot opens up.</span>
+</div>
+
+<div class="counter" id="counter-wrap">
+  <div class="counter-bar-wrap">
+    <div class="counter-bar" id="counter-bar"></div>
+  </div>
+  <div class="counter-label" id="counter-label">loading…</div>
+</div>
+
+<p style="opacity:.7;margin-top:14px;font-size:0.85rem">
+  first 20 humans get early access 📞
+</p>
+
+</div>
+
+<script>
+
+const MAX = 20
+const COUNTER_NAMESPACE = "wonpal-beta"
+const COUNTER_KEY = "signups"
+const ABACUS = `https://abacus.jasoncameron.dev`
+const FORMSPREE_ID = "xdawqlpd"
+
+/* Read current count (no increment) */
+async function getCount(){
+  try {
+    const res = await fetch(`${ABACUS}/get/${COUNTER_NAMESPACE}/${COUNTER_KEY}`)
+    if(res.status === 404) return 0
+    const data = await res.json()
+    return Math.min(data.value || 0, MAX)
+  } catch(e){
+    return null
+  }
+}
+
+/* Increment and return new count */
+async function incrementCount(){
+  const res = await fetch(`${ABACUS}/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`)
+  const data = await res.json()
+  return data.value || MAX
+}
+
+function updateCounterUI(count){
+  if(count === null){
+    document.getElementById("counter-label").textContent = "? / 20 spots"
+    return
+  }
+  const pct = (count / MAX) * 100
+  document.getElementById("counter-bar").style.width = pct + "%"
+  document.getElementById("counter-label").textContent = `${count} / ${MAX} spots`
+}
+
+function lockForm(){
+  document.getElementById("form-wrap").style.display = "none"
+  document.getElementById("full-notice").style.display = "block"
+}
+
+/* Init: check count on page load */
+getCount().then(count => {
+  updateCounterUI(count)
+  if(count !== null && count >= MAX) lockForm()
+})
+
+async function apply(){
+  const email = document.getElementById("email").value.trim()
+  const googleEmail = document.getElementById("google-email").value.trim()
+  const apps = document.getElementById("apps").value.trim()
+  const notes = document.getElementById("notes").value.trim()
+
+  if(!email || !googleEmail){
+    alert("Please fill in both email fields.")
+    return
+  }
+
+  /* Re-check count before submitting */
+  const current = await getCount()
+  if(current !== null && current >= MAX){
+    lockForm()
+    return
+  }
+
+  const btn = document.getElementById("submit-btn")
+  btn.disabled = true
+  btn.textContent = "Sending…"
+
+  try {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        email,
+        google_account_email: googleEmail,
+        voip_apps: apps,
+        notes
+      })
+    })
+
+    if(res.ok){
+      const newCount = await incrementCount()
+      updateCounterUI(Math.min(newCount, MAX))
+      document.getElementById("form-wrap").style.display = "none"
+      document.getElementById("success-msg").style.display = "block"
+      if(newCount >= MAX) lockForm()
+    } else {
+      btn.disabled = false
+      btn.textContent = "Apply to Test"
+      alert("Something went wrong. Please try again.")
+    }
+  } catch(e){
+    btn.disabled = false
+    btn.textContent = "Apply to Test"
+    alert("Network error. Please try again.")
+  }
+}
+
+/* Detect mobile for performance */
+const isMobile = window.innerWidth < 700
+
+/* PARTICLES */
+const particleCount = isMobile ? 18 : 40
+for(let i=0;i<particleCount;i++){
+  let p=document.createElement("div")
+  p.className="particle"
+  p.style.left=Math.random()*100+"vw"
+  p.style.animationDuration=(8+Math.random()*10)+"s"
+  p.style.animationDelay=Math.random()*10+"s"
+  document.body.appendChild(p)
+}
+
+/* LEAVES */
+const leaves=["🍃","🌿"]
+const leafCount = isMobile ? 6 : 12
+for(let i=0;i<leafCount;i++){
+  let l=document.createElement("div")
+  l.className="leaf"
+  l.innerText=leaves[Math.floor(Math.random()*leaves.length)]
+  l.style.left=Math.random()*100+"vw"
+  l.style.animationDuration=(15+Math.random()*15)+"s"
+  l.style.animationDelay=Math.random()*20+"s"
+  document.body.appendChild(l)
+}
+
+/* BLOBS */
+const blobCount = isMobile ? 4 : 7
+for(let i=0;i<blobCount;i++){
+  let b=document.createElement("div")
+  b.className="blob"
+  b.style.left=Math.random()*100+"vw"
+  b.style.bottom=(Math.random()*40)+"vh"
+  b.style.animationDuration=(3+Math.random()*4)+"s"
+  document.body.appendChild(b)
+}
+
+</script>
+
+</body>
+</html>
