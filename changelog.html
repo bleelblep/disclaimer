@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixlings — Changelog</title>
+<style>
+
+/* TERRARIUM COLORS */
+:root {
+  --background: #D7C3AC;
+  --surface: #A1B5A7;
+  --primary: #2C504A;
+  --secondary: #296673;
+  --tertiary: #B087AE;
+  --text: #1A2E2A;
+  --text-muted: #4A6460;
+  --code-bg: #1A2E2A;
+  --code-text: #A8D1C8;
+  --rule: rgba(44,80,74,0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #141008;
+    --surface: #1E1A10;
+    --primary: #A8D1C8;
+    --secondary: #88BDC9;
+    --tertiary: #C9A8C6;
+    --text: #EDE0CF;
+    --text-muted: #8A9E99;
+    --code-bg: #0D0A04;
+    --code-text: #A8D1C8;
+    --rule: rgba(168,209,200,0.12);
+  }
+}
+
+/* BASE */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Georgia', serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100dvh;
+}
+
+/* LEAVES */
+.leaf {
+  position: fixed;
+  font-size: 16px;
+  opacity: .35;
+  pointer-events: none;
+  animation: leafDrift linear infinite;
+  z-index: 0;
+}
+@keyframes leafDrift {
+  from { transform: translateY(-8vh) rotate(0deg); }
+  to   { transform: translateY(108vh) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaf { animation: none; }
+}
+
+/* LAYOUT */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 28px 100px;
+}
+
+/* HERO */
+.hero {
+  margin-bottom: 60px;
+}
+.hero-eyebrow {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: 14px;
+  opacity: .8;
+}
+.hero h1 {
+  margin: 0 0 14px;
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-weight: 400;
+  color: var(--primary);
+  line-height: 1.15;
+}
+.hero-lead {
+  font-size: 0.97rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* TIMELINE */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 0;
+  width: 1.5px;
+  background: var(--rule);
+}
+
+/* RELEASE ENTRY */
+.release {
+  position: relative;
+  margin-bottom: 52px;
+}
+.release:last-child {
+  margin-bottom: 0;
+}
+
+/* DOT on timeline */
+.release::before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  top: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--background);
+  box-shadow: 0 0 0 1.5px var(--primary);
+}
+.release.latest::before {
+  background: var(--secondary);
+  box-shadow: 0 0 0 1.5px var(--secondary), 0 0 10px rgba(41,102,115,0.4);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 1.5px var(--secondary), 0 0 8px rgba(41,102,115,0.3); }
+  50%       { box-shadow: 0 0 0 1.5px var(--secondary), 0 0 16px rgba(41,102,115,0.55); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .release.latest::before { animation: none; }
+}
+
+/* RELEASE HEADER */
+.release-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.release-version {
+  font-family: 'Courier New', monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.release-date {
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+  opacity: .8;
+}
+.badge {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: var(--secondary);
+  color: var(--background);
+}
+.badge.beta {
+  background: var(--tertiary);
+}
+.badge.fix {
+  background: transparent;
+  border: 1.5px solid var(--rule);
+  color: var(--text-muted);
+}
+
+/* RELEASE CARD */
+.release-card {
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow .2s;
+}
+.release-card:hover {
+  box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+}
+
+/* SUMMARY ROW */
+.release-summary {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.release-summary-text {
+  flex: 1;
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+.release-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+}
+.pill {
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1.5px solid;
+}
+.pill.new     { color: var(--secondary); border-color: var(--secondary); }
+.pill.fixed   { color: var(--tertiary);  border-color: var(--tertiary); }
+.pill.changed { color: var(--primary);   border-color: var(--primary); }
+.pill.removed { color: var(--text-muted);border-color: var(--rule); }
+
+.toggle-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  transition: transform .25s, background .2s;
+  user-select: none;
+}
+.release-card.open .toggle-icon {
+  transform: rotate(180deg);
+  background: rgba(0,0,0,0.12);
+}
+
+/* DIVIDER between summary and detail */
+.release-divider {
+  height: 1px;
+  background: var(--rule);
+  margin: 0 20px;
+  display: none;
+}
+.release-card.open .release-divider {
+  display: block;
+}
+
+/* DETAIL PANEL */
+.release-detail {
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), padding .35s;
+}
+.release-card.open .release-detail {
+  max-height: 2000px;
+  padding: 16px 20px 20px;
+}
+
+/* CHANGE GROUPS */
+.change-group {
+  margin-bottom: 16px;
+}
+.change-group:last-child {
+  margin-bottom: 0;
+}
+.change-group-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: .75;
+  margin-bottom: 8px;
+}
+.change-group-label.new    { color: var(--secondary); opacity: 1; }
+.change-group-label.fixed  { color: var(--tertiary);  opacity: 1; }
+.change-group-label.changed{ color: var(--primary);   opacity: 1; }
+.change-group-label.removed{ color: var(--text-muted);opacity: 1; }
+
+.change-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.change-list li {
+  position: relative;
+  padding: 4px 0 4px 18px;
+  font-size: 0.93rem;
+  border-bottom: 1px solid var(--rule);
+}
+.change-list li:last-child { border-bottom: none; }
+.change-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  font-size: 0.65rem;
+  color: var(--secondary);
+}
+
+code {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.83em;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .page { padding: 40px 20px 80px; }
+  .timeline { padding-left: 22px; }
+  .release::before { left: -28px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">🌱 Pixlings</div>
+    <h1>Changelog</h1>
+    <p class="hero-lead">What's new, what's fixed, what's mutated.</p>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+</div>
+
+<script>
+/* ============================================================
+   CHANGELOG DATA
+   To add a new release, copy a block and paste it at the TOP
+   of the RELEASES array. Set latest: true on the newest only.
+
+   TAG TYPES: "new" | "fixed" | "changed" | "removed"
+   BADGE TYPES: "latest" | "beta" | "fix" | "" (none)
+   ============================================================ */
+
+const RELEASES = [
+  {
+    version: "0.6.2",
+    date: "2026-03-22",
+    badge: "latest",
+    latest: true,
+    summary: "Sync animation brightness with system glyph settings. Fixed donation pixlings losing preferences on update.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "System brightness sync — new toggle to match animation brightness with Nothing Phone's system glyph brightness setting",
+          "Reads from multiple Nothing Phone brightness keys with automatic fallback",
+          "Real-time brightness updates via <code>ContentObserver</code>",
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Donation pixling preferences — supporter pixlings no longer lose brightness, speed, and toggle settings after app update",
+          "Active pixling now persists correctly when donation content syncs",
+          "Improved preference preservation during donation content sync cycle",
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "All animation frame durations normalized to 100ms for consistent playback speed",
+          "Privacy policy redesigned with terrarium theme and detailed permission explanations",
+          "Changelog dialog now has dynamic height based on content",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.6.1",
+    date: "2026-03-22",
+    badge: "",
+    latest: false,
+    summary: "In-app preview now mirrors the glyph matrix in real-time. Fixed animation conflicts during state transitions.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "In-app preview mirroring — preview now shows exact frames from the physical glyph matrix in real-time",
+          "Added <code>GlyphMatrixMirror</code> composable for synchronized preview display",
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Animation priority conflict — charging and motion animations no longer fight when shaking phone while charging or low battery",
+          "Animations now properly wait for exit sequences to complete before transitioning to new state",
+          "Exit animations only play when the animation still owns the current state",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.6.0",
+    date: "2026-03-21",
+    badge: "",
+    latest: false,
+    summary: "System animations now take priority over Pixlings. Quick Pause toggle and media notification bug fixes.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "System Priority — Glyph Timer and incoming calls now automatically pause Pixlings animations",
+          "Quick Pause toggle in settings to instantly disable all animations",
+          "Call state detection via <code>TelephonyManager</code> / <code>TelephonyCallback</code>",
+          "Glyph Timer detection via notification channel monitoring",
+          "Pause state indicator banner on home screen showing why animations are paused",
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Music notification bug — playing music no longer briefly triggers the notification animation before switching to music animation",
+          "Added comprehensive media app filtering for 30+ known music/video player packages",
+          "Added filtering for media-related notification channels and group keys",
+          "Quick Pause now fully stops animation loops and releases the glyph matrix",
+          "Fixed ANR when toggling Quick Pause by moving pause operations to background thread",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.5.0",
+    date: "2025-03-19",
+    badge: "",
+    latest: false,
+    summary: "Fixed animations stopping when screen is locked and crashes when switching between media apps.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Custom Pixlings now support Enter / Loop / Exit pattern for Music state",
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Fixed animations stopping when screen is locked — added <code>PARTIAL_WAKE_LOCK</code>",
+          "Fixed crashes when switching between media apps",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.4.0",
+    date: "2025-03-19",
+    badge: "",
+    latest: false,
+    summary: "Background reliability fixes, boot persistence, battery onboarding, and notification/overlay/loop state stability.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Boot receiver — <code>AppMatrixBootReceiver</code> restarts the service after device boot or app update if App Matrix Mode is enabled",
+          "Onboarding page 5: Battery — tap to open system battery optimisation settings, shows green checkmark when already disabled; page is optional",
+          "<code>REQUEST_IGNORE_BATTERY_OPTIMIZATIONS</code> and <code>RECEIVE_BOOT_COMPLETED</code> permissions added to manifest",
+          "Onboarding page order: Welcome → Notifications → Reactions → Glyph Button → Auto Reactions → Battery → All Set!",
+          "\"More Coming Soon\" chip is now always pinned last in the pack tab row",
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Race conditions in notification loop counting — <code>_notificationLoopCount</code> changed to <code>AtomicInteger</code>; added <code>stateMutex</code> to protect state transitions",
+          "Blocking <code>getBaseState()</code> on main thread — wrapped in <code>withContext(Dispatchers.Default)</code> with <code>withTimeoutOrNull(500L)</code> on each <code>.first()</code> call",
+          "Animation job cancellation timeout — replaced <code>cancelAndJoin()</code> with <code>cancel()</code> + <code>withTimeoutOrNull(1000L) { job.join() }</code> to prevent ANR",
+          "Exit animations not playing — added <code>forcePlay</code> parameter to <code>playAnimationAsset()</code>; exit animations called with <code>forcePlay=true</code> in <code>NonCancellable</code> context",
+          "Resource leak in asset loading — <code>inputStream</code> declared outside try block with explicit <code>inputStream?.close()</code> in catch",
+          "Destructive database migration — changed to <code>fallbackToDestructiveMigrationFrom(1, 2)</code>; user data preserved for versions 3–11",
+          "<code>AppMatrixReactionsService</code>: added <code>::glyphWrapper.isInitialized</code> checks, try-catch around glyph operations, and <code>serviceScope.isActive</code> guard in animation loop",
+          "<code>AppMatrixReactionsService</code>: protected <code>onDestroy()</code> with null checks and try-catch",
+          "<code>GlyphToyService</code>: added <code>::glyphWrapper.isInitialized</code> and <code>::servicePrefs.isInitialized</code> guards; <code>releaseGlyphMatrix()</code> checks initialisation before cleanup",
+          "SharedFlow buffer capacity increased from 64 to 256 in <code>PixlingsNotificationListener</code>; added logging when <code>tryEmit()</code> fails so dropped notifications are visible in logs",
+          "Overlay state not reset on error — moved <code>_isOverlayActive.value = true</code> before try block; <code>finally</code> always resets to false; added <code>withTimeoutOrNull(500L)</code> to flow <code>.first()</code> calls and null checks on <code>buildCompositeFrame()</code>",
+          "Loop count state lost on recomposition — moved <code>remainingActivityLoops</code>, <code>remainingChargingLoops</code>, <code>remainingEntertainmentLoops</code> from Compose <code>remember</code> to <code>MutableStateFlow</code> in ViewModel; added <code>initLoopCount()</code>, <code>decrementLoopCount()</code>, <code>resetLoopCount()</code>; loop counts now survive configuration changes",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.3.0",
+    date: "2025-03-19",
+    badge: "",
+    latest: false,
+    summary: "Enter / Loop / Exit transitions for all animation states, with auto-detection from filenames.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Enter / Loop / Exit animation transitions for all states",
+          "Filename pattern detection — <code>_Enter</code>, <code>_Loop</code>, <code>_Exit</code> auto-detected",
+          "Multiple loop variations now supported for all states",
+          "<code>LowBattery</code> state now supports Enter / Loop / Exit",
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "<code>pack.json</code> animation arrays accept any mix of enter/loop/exit files",
+          "Idle variations play randomly from the loop pool",
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Loop animations no longer skip first frame on re-entry",
+          "Charging state now correctly fires Exit on unplug",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.2.1",
+    date: "2025-03-05",
+    badge: "fix",
+    latest: false,
+    summary: "Patch for notification triggering, music resumption, and a crash on first launch.",
+    groups: [
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Notification animation failing to trigger on some apps",
+          "Music state not resuming after screen off",
+          "Crash on devices with no default idle animation set",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.2.0",
+    date: "2025-02-20",
+    badge: "",
+    latest: false,
+    summary: "Motion and Music states added. Custom Pixling packs can now be imported via zip.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Motion state — triggered by device shake / movement",
+          "Music state — active during media playback",
+          "Custom Pixling packs via <code>.zip</code> import",
+          "<code>defaultIdleAnimation</code> field in <code>pack.json</code>",
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "Pack format updated — all states now use array syntax",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.1.0",
+    date: "2025-02-01",
+    badge: "beta",
+    latest: false,
+    summary: "First beta. Idle, Notification, and Charging states. Nothing Phone (3) only.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Initial beta release",
+          "Idle, Notification, Charging states",
+          "Basic <code>pack.json</code> format",
+          "Nothing Phone (3) Glyph Matrix support",
+        ]
+      }
+    ]
+  }
+]
+
+/* ============================================================
+   RENDERER — no need to edit below this line
+   ============================================================ */
+
+function renderChangelog() {
+  const timeline = document.getElementById("timeline")
+
+  RELEASES.forEach(release => {
+    const el = document.createElement("div")
+    el.className = "release" + (release.latest ? " latest" : "")
+
+    const badgeHTML = release.badge
+      ? `<span class="badge ${release.badge === "latest" ? "" : release.badge}">${release.badge === "latest" ? "latest" : release.badge}</span>`
+      : ""
+
+    // Count items per tag for pills
+    const tagCounts = {}
+    release.groups.forEach(g => {
+      tagCounts[g.tag] = (tagCounts[g.tag] || 0) + g.items.length
+    })
+    const pillsHTML = Object.entries(tagCounts).map(([tag, count]) =>
+      `<span class="pill ${tag}">${count} ${tag}</span>`
+    ).join("")
+
+    const groupsHTML = release.groups.map(g => `
+      <div class="change-group">
+        <div class="change-group-label ${g.tag}">${g.label}</div>
+        <ul class="change-list">
+          ${g.items.map(item => `<li>${item}</li>`).join("")}
+        </ul>
+      </div>
+    `).join("")
+
+    el.innerHTML = `
+      <div class="release-header">
+        <span class="release-version">v${release.version}</span>
+        <span class="release-date">${release.date}</span>
+        ${badgeHTML}
+      </div>
+      <div class="release-card" onclick="toggleRelease(this)">
+        <div class="release-summary">
+          <div class="release-summary-text">
+            ${release.summary}
+            <div class="release-pills">${pillsHTML}</div>
+          </div>
+          <div class="toggle-icon">▼</div>
+        </div>
+        <div class="release-divider"></div>
+        <div class="release-detail">
+          ${groupsHTML}
+        </div>
+      </div>
+    `
+
+    timeline.appendChild(el)
+  })
+}
+
+function toggleRelease(card) {
+  card.classList.toggle("open")
+}
+
+renderChangelog()
+
+/* Leaves */
+const leaves = ["🍃","🌿","🍂"]
+const leafCount = window.innerWidth < 700 ? 5 : 10
+for (let i = 0; i < leafCount; i++) {
+  const l = document.createElement("div")
+  l.className = "leaf"
+  l.innerText = leaves[Math.floor(Math.random() * leaves.length)]
+  l.style.left = Math.random() * 100 + "vw"
+  l.style.animationDuration = (18 + Math.random() * 18) + "s"
+  l.style.animationDelay = Math.random() * 20 + "s"
+  document.body.appendChild(l)
+}
+</script>
+
+</body>
+</html>
