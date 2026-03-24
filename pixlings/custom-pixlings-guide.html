@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixlings — Creator Guide</title>
+    <style>
+        /* TERRARIUM COLORS */
+        :root {
+            --background: #D7C3AC;
+            --surface: #A1B5A7;
+            --surface-alt: #B8C9BB;
+            --primary: #2C504A;
+            --secondary: #296673;
+            --tertiary: #B087AE;
+            --text: #1A2E2A;
+            --text-muted: #4A6460;
+            --code-bg: #1A2E2A;
+            --code-text: #A8D1C8;
+            --rule: rgba(44, 80, 74, 0.18);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #141008;
+                --surface: #1E1A10;
+                --surface-alt: #252016;
+                --primary: #A8D1C8;
+                --secondary: #88BDC9;
+                --tertiary: #C9A8C6;
+                --text: #EDE0CF;
+                --text-muted: #8A9E99;
+                --code-bg: #0D0A04;
+                --code-text: #A8D1C8;
+                --rule: rgba(168, 209, 200, 0.12);
+            }
+        }
+
+        /* BASE */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.75;
+        }
+
+        /* AMBIENT LEAVES */
+        .leaf {
+            position: fixed;
+            font-size: 16px;
+            opacity: 0.35;
+            pointer-events: none;
+            animation: leafDrift linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes leafDrift {
+            from {
+                transform: translateY(-8vh) rotate(0deg);
+            }
+            to {
+                transform: translateY(108vh) rotate(360deg);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .leaf {
+                animation: none;
+            }
+        }
+
+        /* LAYOUT */
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 60px 28px 100px;
+        }
+
+        /* HEADER */
+        .hero {
+            margin-bottom: 56px;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--secondary);
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .hero h1 {
+            margin: 0 0 20px;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 400;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .hero-lead {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0;
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: 52px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            font-size: 1.1rem;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.04em;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .prose {
+            font-size: 0.97rem;
+            color: var(--text);
+            margin: 0 0 16px;
+        }
+
+        /* CARD */
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* STEPS */
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .steps li {
+            counter-increment: step;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            font-size: 0.96rem;
+        }
+
+        .steps li:last-child {
+            margin-bottom: 0;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--background);
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        /* CODE BLOCK */
+        .code-wrap {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 20px 22px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: var(--code-text);
+            white-space: pre;
+        }
+
+        .code-label {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 10px 14px;
+            border-bottom: 1.5px solid var(--rule);
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tick {
+            color: var(--secondary);
+        }
+
+        .cross {
+            color: var(--tertiary);
+        }
+
+        /* FILE TREE */
+        .filetree {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 20px 22px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.8;
+            color: var(--code-text);
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .filetree .dir {
+            color: var(--secondary);
+        }
+
+        .filetree .file {
+            opacity: 0.85;
+        }
+
+        .filetree .indent {
+            margin-left: 20px;
+        }
+
+        .filetree .indent2 {
+            margin-left: 40px;
+        }
+
+        /* BULLETS */
+        .bullets {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .bullets li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.96rem;
+        }
+
+        .bullets li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-size: 0.7rem;
+            top: 9px;
+        }
+
+        /* CALLOUT */
+        .callout {
+            background: rgba(0, 0, 0, 0.06);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 10px 10px 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+
+        .callout b {
+            color: var(--primary);
+        }
+
+        /* DIVIDER */
+        hr {
+            border: none;
+            border-top: 1px solid var(--rule);
+            margin: 48px 0;
+        }
+
+        /* FINAL NOTE */
+        .final {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--surface);
+            border-radius: 20px;
+        }
+
+        .final .glyph {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .final p {
+            margin: 0 0 10px;
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .final p:last-child {
+            margin: 0;
+        }
+
+        .final em {
+            color: var(--primary);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        /* LINK */
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--rule);
+            transition: 0.15s;
+        }
+
+        a:hover {
+            border-bottom-color: var(--secondary);
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+            .page {
+                padding: 40px 20px 80px;
+            }
+            .card {
+                padding: 18px 20px;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* WATERMARK */
+        .watermark {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0.045;
+        }
+        @media (prefers-color-scheme: dark) {
+            .watermark { opacity: 0.065; }
+        }
+        .watermark-inner {
+            position: absolute;
+            inset: -20%;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            transform: rotate(-22deg);
+            transform-origin: center center;
+        }
+        .watermark-word {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--primary);
+            white-space: nowrap;
+            padding: 12px 18px;
+            line-height: 1;
+        }
+
+        /* INLINE CODE */
+        code {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark" aria-hidden="true">
+        <div class="watermark-inner" id="watermark-inner"></div>
+    </div>
+    <div class="page">
+        <div class="hero">
+            <div class="hero-eyebrow">🌱 Pixlings</div>
+            <h1>So you want to create your own little creature.</h1>
+            <p class="hero-lead">Pixlings live inside your Glyph Matrix. They're built from JSON animations. If you're comfortable working directly with the LED matrix, this method gives you complete control over how your Pixling moves and glows.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🛠</span>
+                <h2>Creating Animations</h2>
+            </div>
+            <p class="prose">Build your Pixling animations using the <a href="https://glypheditor.pauwma.com/">Glyph Matrix Editor by pauwma</a>. It lets you work directly with the 27×18 matrix and control the brightness of every LED.</p>
+            <ol class="steps">
+                <li>Create your animation directly in the editor.</li>
+                <li>Export the animation as a <code>.json</code> file.</li>
+                <li>Include that JSON file in your Pixling zip.</li>
+            </ol>
+        </div>
+
+        <hr>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📦</span>
+                <h2>pack.json Structure</h2>
+            </div>
+            <p class="prose">Every Pixling must include a <code>pack.json</code> file in the root of the zip.</p>
+            <div class="code-label">Example</div>
+            <div class="code-wrap">
+                <pre>{
+  "id": "doze",
+  "name": "Doze",
+  "subtitle": "Sleepy, gentle presence",
+  "description": "Calm and heavy-eyed, he often drifts into sleep.",
+  "defaultIdleAnimation": "TeddyBear_Idle_Loop.json",
+  "animations": {
+    "Idle": [
+      "TeddyBear_Idle_Enter.json",
+      "TeddyBear_Idle_Loop.json",
+      "TeddyBear_Idle_Blink.json"
+    ],
+    "Notification": [
+      "TeddyBear_Enter_Bell.json",
+      "TeddyBear_Loop_Bell.json",
+      "TeddyBear_Exit_Bell.json"
+    ],
+    "Charging": [
+      "TeddyBear_Enter_Charging.json",
+      "TeddyBear_Loop_Charging.json",
+      "TeddyBear_Exit_Charging.json"
+    ],
+    "LowBattery": [
+      "TeddyBear_Enter_LowBattery.json",
+      "TeddyBear_Loop_LowBattery.json",
+      "TeddyBear_Exit_LowBattery.json"
+    ],
+    "Motion": [ "TeddyBear_Motion.json" ],
+    "Music": [ "TeddyBear_Music.json" ]
+  }
+}</pre>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎞</span>
+                <h2>Enter / Loop / Exit Animations</h2>
+            </div>
+            <p class="prose">All animation states support optional Enter / Loop / Exit transitions. The system automatically detects these based on filename patterns:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Filename Pattern</th>
+                            <th>Type</th>
+                            <th>Behavior</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>*_Enter*</code></td>
+                            <td>Enter</td>
+                            <td>Plays once when the state begins</td>
+                        </tr>
+                        <tr>
+                            <td><code>*_Loop*</code></td>
+                            <td>Loop</td>
+                            <td>Repeats until the state ends</td>
+                        </tr>
+                        <tr>
+                            <td><code>*_Exit*</code></td>
+                            <td>Exit</td>
+                            <td>Plays once when the state ends</td>
+                        </tr>
+                        <tr>
+                            <td>No pattern</td>
+                            <td>Loop (default)</td>
+                            <td>Treated as a loop animation</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="callout">
+                <b>How it works:</b> Filenames are checked case-insensitively for <code>_enter</code>, <code>_loop</code>, or <code>_exit</code>. Files without these patterns are treated as loop animations. You can include multiple files of each type — they'll play in sequence.
+            </div>
+            <div class="code-label">Examples</div>
+            <div class="code-wrap">
+                <pre>// Full Enter → Loop → Exit pattern
+"Idle": [
+  "Unicorn_Idle_Enter.json",    // Plays once at start
+  "Unicorn_Idle_Loop.json",     // Loops continuously
+  "Unicorn_Idle_Exit.json"      // Plays when leaving Idle
+]
+
+// Loop only (no enter/exit)
+"Music": [ "ghost_music.json" ]
+
+// Multiple loop variations (all treated as loop)
+"Idle": [
+  "Cactus_Idle_Breathing.json",
+  "Cactus_Idle_Blink.json"
+]
+
+// Enter + multiple loops + Exit
+"Charging": [
+  "Bear_Enter_Charging.json",
+  "Bear_Loop_Charging_A.json",
+  "Bear_Loop_Charging_B.json",
+  "Bear_Exit_Charging.json"
+]</pre>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📋</span>
+                <h2>Supported Animation States</h2>
+            </div>
+            <p class="prose">Pixlings supports six animation states. All states now support the Enter / Loop / Exit pattern.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>State</th>
+                            <th>Enter/Loop/Exit</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Idle</code></td>
+                            <td><span class="tick">✅</span></td>
+                            <td>Default state when nothing else is happening</td>
+                        </tr>
+                        <tr>
+                            <td><code>Notification</code></td>
+                            <td><span class="tick">✅</span></td>
+                            <td>Triggered by incoming notifications</td>
+                        </tr>
+                        <tr>
+                            <td><code>Charging</code></td>
+                            <td><span class="tick">✅</span></td>
+                            <td>Active while device is charging</td>
+                        </tr>
+                        <tr>
+                            <td><code>LowBattery</code></td>
+                            <td><span class="tick">✅</span></td>
+                            <td>Active when battery is below threshold</td>
+                        </tr>
+                        <tr>
+                            <td><code>Motion</code></td>
+                            <td><span class="tick">✅</span></td>
+                            <td>Triggered by device shake/movement</td>
+                        </tr>
+                        <tr>
+                            <td><code>Music</code></td>
+                            <td><span class="tick">✅</span></td>
+                            <td>Active during media playback</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📁</span>
+                <h2>Final Zip Structure</h2>
+            </div>
+            <p class="prose"><code>pack.json</code> goes in the root of the zip. All animation files go inside an <code>animations/</code> subfolder. Filenames in <code>pack.json</code> are plain names — no folder prefix needed.</p>
+            <div class="filetree">
+<span>MyPixling.zip</span>
+<div class="indent">│</div>
+<div class="indent">├── <span class="file">pack.json</span></div>
+<div class="indent">└── <span class="dir">animations/</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Idle_Enter.json</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Idle_Loop.json</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Idle_Blink.json</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Enter_Bell.json</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Loop_Bell.json</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Exit_Bell.json</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Charging.json</span></div>
+<div class="indent2">├── <span class="file">TeddyBear_Motion.json</span></div>
+<div class="indent2">└── <span class="file">TeddyBear_Music.json</span></div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">⚡</span>
+                <h2>Tips for Better Animations</h2>
+            </div>
+            <ul class="bullets">
+                <li>Keep silhouettes strong — readability matters at small sizes.</li>
+                <li>Avoid overly subtle motion — bold movement reads better on the matrix.</li>
+                <li>Make sure loops connect smoothly to themselves and to enter/exit transitions.</li>
+                <li>Test different brightness levels — dim animations feel very different from full brightness.</li>
+                <li>Keep frame counts efficient to reduce unnecessary processing.</li>
+                <li>Use Enter animations for "wake up" effects and Exit for "settling down" transitions.</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <div class="final">
+            <span class="glyph">🧠</span>
+            <p><em>The setup itself is simple.</em></p>
+            <p><em>The real work is making something that feels alive.</em></p>
+            <p>Take your time with the animation. Give it personality.<br>Your Pixling should feel like a tiny creature living in the lights.</p>
+        </div>
+    </div>
+
+    <script>
+        // Watermark
+        const wm = document.getElementById("watermark-inner");
+        const wmWords = ["PIXLINGS", "🌿", "PIXLINGS", "🍃"];
+        for (let i = 0; i < 120; i++) {
+            const span = document.createElement("span");
+            span.className = "watermark-word";
+            span.textContent = wmWords[i % wmWords.length];
+            wm.appendChild(span);
+        }
+
+        // Ambient leaves
+        const leaves = ["🍃", "🌿", "🍂"];
+        const count = window.innerWidth < 700 ? 6 : 12;
+
+        for (let i = 0; i < count; i++) {
+            const l = document.createElement("div");
+            l.className = "leaf";
+            l.innerText = leaves[Math.floor(Math.random() * leaves.length)];
+            l.style.left = Math.random() * 100 + "vw";
+            l.style.animationDuration = (18 + Math.random() * 18) + "s";
+            l.style.animationDelay = Math.random() * 20 + "s";
+            document.body.appendChild(l);
+        }
+    </script>
+</body>
+</html>
