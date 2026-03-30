@@ -366,10 +366,50 @@ code {
 
 const RELEASES = [
   {
-    version: "0.6.4",
-    date: "2026-03-29",
+    version: "0.7.0",
+    date: "2026-03-31",
     badge: "latest",
     latest: true,
+    summary: "Automatic pack update checking with one-tap updates for custom packs hosted on GitHub or other platforms.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Automatic update checking for custom packs with updateUrl field in pack.json",
+          "Pack Details screen shows current version, latest version, and update status",
+          "Manual \"Check for Updates\" button in Pack Details",
+          "One-tap \"Update Now\" downloads and installs pack updates automatically",
+          "Update notifications appear in Terrarium when viewing packs with available updates",
+          "App automatically checks for pack updates 2 seconds after launch",
+          "Comprehensive Custom Packs Guide (HTML) with GitHub Releases workflow documentation",
+          "Pack Details card in Terrarium for easy access to update checking and pack information",
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "Pack Details screen redesigned to match app visual style with watermark background and animations",
+          "Removed Export and Share buttons from Pack Details screen",
+          "Update buttons now maintain consistent height regardless of content",
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Fixed pack update flow preserving pack details during update process",
+          "Added INTERNET permission for network-based pack updates",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.6.4",
+    date: "2026-03-29",
+    badge: "",
+    latest: false,
     summary: "New app setup flow, enhanced pack management system, and improved custom pixlings experience.",
     groups: [
       {

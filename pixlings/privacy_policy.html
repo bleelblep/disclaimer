@@ -327,7 +327,7 @@ code {
   </div>
 
   <div class="highlight">
-    <strong>The short version:</strong> Pixlings operates entirely on your device. We do not collect, transmit, or store any of your personal data on external servers. The app has no internet permission.
+    <strong>The short version:</strong> Pixlings operates entirely on your device. We do not collect, transmit, or store any of your personal data on external servers. Internet access is used only to download updates for custom packs you've imported, when you choose to check for updates.
   </div>
 
   <div class="section">
@@ -509,6 +509,14 @@ const PERMISSIONS = [
     badge: "required",
     summary: "Show service status notification",
     detail: "Required on Android 13 and above to display the foreground service notification. This notification shows when the animation service is running and allows you to see at a glance that Pixlings is active."
+  },
+  {
+    icon: "🌐",
+    name: "Internet Access",
+    code: "INTERNET",
+    badge: "required",
+    summary: "Download custom pack updates",
+    detail: "Used exclusively to check for and download updates to custom Pixling packs you've imported. When a pack includes an updateUrl in its metadata, Pixlings can automatically check if a newer version is available and download it with your permission. No analytics, tracking, or personal data is transmitted. This feature is only used when you have imported packs with update URLs."
   },
   {
     icon: "💡",
