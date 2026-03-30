@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixlings — Custom Packs Guide</title>
+    <style>
+        /* TERRARIUM COLORS */
+        :root {
+            --background: #D7C3AC;
+            --surface: #A1B5A7;
+            --surface-alt: #B8C9BB;
+            --primary: #2C504A;
+            --secondary: #296673;
+            --tertiary: #B087AE;
+            --text: #1A2E2A;
+            --text-muted: #4A6460;
+            --code-bg: #1A2E2A;
+            --code-text: #A8D1C8;
+            --rule: rgba(44, 80, 74, 0.18);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #141008;
+                --surface: #1E1A10;
+                --surface-alt: #252016;
+                --primary: #A8D1C8;
+                --secondary: #88BDC9;
+                --tertiary: #C9A8C6;
+                --text: #EDE0CF;
+                --text-muted: #8A9E99;
+                --code-bg: #0D0A04;
+                --code-text: #A8D1C8;
+                --rule: rgba(168, 209, 200, 0.12);
+            }
+        }
+
+        /* BASE */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.75;
+        }
+
+        /* AMBIENT LEAVES */
+        .leaf {
+            position: fixed;
+            font-size: 16px;
+            opacity: 0.35;
+            pointer-events: none;
+            animation: leafDrift linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes leafDrift {
+            from {
+                transform: translateY(-8vh) rotate(0deg);
+            }
+            to {
+                transform: translateY(108vh) rotate(360deg);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .leaf {
+                animation: none;
+            }
+        }
+
+        /* LAYOUT */
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 60px 28px 100px;
+        }
+
+        /* HEADER */
+        .hero {
+            margin-bottom: 56px;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--secondary);
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .hero h1 {
+            margin: 0 0 20px;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 400;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .hero-lead {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0;
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: 52px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            font-size: 1.1rem;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.04em;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .prose {
+            font-size: 0.97rem;
+            color: var(--text);
+            margin: 0 0 16px;
+        }
+
+        .prose strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* CARD */
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* STEPS */
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .steps li {
+            counter-increment: step;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            font-size: 0.96rem;
+        }
+
+        .steps li:last-child {
+            margin-bottom: 0;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--background);
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        /* CODE BLOCK */
+        .code-wrap {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 20px 22px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: var(--code-text);
+            white-space: pre;
+        }
+
+        .code-label {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+
+        /* ALERT */
+        .alert {
+            background: var(--surface-alt);
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+
+        .alert-title {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .alert-content {
+            font-size: 0.93rem;
+            color: var(--text);
+            margin: 0;
+        }
+
+        /* LISTS */
+        ul:not(.steps) {
+            padding-left: 24px;
+            margin: 12px 0;
+        }
+
+        ul:not(.steps) li {
+            margin-bottom: 8px;
+            font-size: 0.96rem;
+        }
+
+        /* LINKS */
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        a:hover {
+            border-bottom-color: var(--secondary);
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 10px 14px;
+            border-bottom: 1.5px solid var(--rule);
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+        }
+
+        td code {
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Ambient leaves -->
+<div class="leaf" style="left:10%;animation-duration:18s;animation-delay:-2s">🍃</div>
+<div class="leaf" style="left:25%;animation-duration:22s;animation-delay:-8s">🍃</div>
+<div class="leaf" style="left:45%;animation-duration:20s;animation-delay:-5s">🍃</div>
+<div class="leaf" style="left:65%;animation-duration:24s;animation-delay:-12s">🍃</div>
+<div class="leaf" style="left:82%;animation-duration:19s;animation-delay:-15s">🍃</div>
+
+<div class="page">
+    <header class="hero">
+        <div class="hero-eyebrow">Developer Documentation</div>
+        <h1>Custom Packs Guide</h1>
+        <p class="hero-lead">
+            Learn how to create distributable Pixling packs with automatic update checking,
+            version management, and professional hosting.
+        </p>
+    </header>
+
+    <!-- OVERVIEW -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📦</span>
+            <h2>What are Custom Packs?</h2>
+        </div>
+        <p class="prose">
+            Custom Packs are collections of Pixlings bundled with metadata like author information,
+            version numbers, and update URLs. Unlike individual custom Pixlings, packs support
+            automatic update checking, making distribution and maintenance much easier.
+        </p>
+        <div class="alert">
+            <div class="alert-title">Before You Start</div>
+            <div class="alert-content">
+                Make sure you're familiar with creating custom Pixlings first. Check out the
+                <a href="https://bleelblep.github.io/disclaimer/pixlings/custom-pixlings-guide.html">Custom Pixlings Guide</a>
+                to learn the basics of animation creation.
+            </div>
+        </div>
+    </section>
+
+    <!-- PACK STRUCTURE -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📁</span>
+            <h2>Pack Structure</h2>
+        </div>
+        <p class="prose">
+            A custom pack is a ZIP file with the following structure:
+        </p>
+        <div class="code-wrap">
+            <div class="code-label">Directory Structure</div>
+            <pre>my-pack.zip
+├── pack.json                 (required - pack metadata)
+└── animations/               (required - animation files)
+    ├── MyPixling_Idle.json
+    ├── MyPixling_Motion.json
+    └── ...</pre>
+        </div>
+        <p class="prose">
+            The <code>pack.json</code> file contains all metadata about your pack and its Pixlings.
+        </p>
+    </section>
+
+    <!-- PACK.JSON FORMAT -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📝</span>
+            <h2>pack.json Format</h2>
+        </div>
+        <p class="prose">
+            Here's a complete example of a <code>pack.json</code> file with all fields:
+        </p>
+        <div class="code-wrap">
+            <div class="code-label">pack.json</div>
+            <pre>{
+  "name": "My Custom Pack",
+  "subtitle": "A collection of awesome Pixlings",
+  "author": "Your Name",
+  "version": "1.0.0",
+  "description": "A detailed description of your pack and what makes it special.",
+  "created": "2026-03-31",
+  "updateUrl": "https://github.com/yourusername/my-pack/releases/latest/download/pack.json",
+  "pixlings": [
+    {
+      "name": "My Pixling",
+      "subtitle": "A friendly companion",
+      "description": "This Pixling loves to dance and react to notifications.",
+      "defaultIdleAnimation": "MyPixling_Idle.json",
+      "animations": {
+        "Idle": ["MyPixling_Idle.json"],
+        "Motion": ["MyPixling_Motion.json"],
+        "Notification": [
+          "MyPixling_Notification_Enter.json",
+          "MyPixling_Notification_Loop.json",
+          "MyPixling_Notification_Exit.json"
+        ]
+      }
+    }
+  ]
+}</pre>
+        </div>
+
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>name</code></td>
+                            <td>✅ Yes</td>
+                            <td>Pack name (shown in the app)</td>
+                        </tr>
+                        <tr>
+                            <td><code>subtitle</code></td>
+                            <td>✅ Yes</td>
+                            <td>Short description</td>
+                        </tr>
+                        <tr>
+                            <td><code>author</code></td>
+                            <td>Recommended</td>
+                            <td>Creator name or organization</td>
+                        </tr>
+                        <tr>
+                            <td><code>version</code></td>
+                            <td>Recommended</td>
+                            <td>Pack version (e.g., "1.0.0")</td>
+                        </tr>
+                        <tr>
+                            <td><code>description</code></td>
+                            <td>Optional</td>
+                            <td>Detailed pack description</td>
+                        </tr>
+                        <tr>
+                            <td><code>created</code></td>
+                            <td>Optional</td>
+                            <td>Creation date (any format)</td>
+                        </tr>
+                        <tr>
+                            <td><code>updateUrl</code></td>
+                            <td>Optional</td>
+                            <td>URL to check for updates (see below)</td>
+                        </tr>
+                        <tr>
+                            <td><code>pixlings</code></td>
+                            <td>✅ Yes</td>
+                            <td>Array of Pixling definitions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- UPDATE URLs -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🔄</span>
+            <h2>Automatic Update Checking</h2>
+        </div>
+        <p class="prose">
+            The <code>updateUrl</code> field enables automatic update checking. When set, Pixlings
+            will periodically check this URL for a newer version of your pack.
+        </p>
+
+        <div class="alert">
+            <div class="alert-title">How It Works</div>
+            <div class="alert-content">
+                The app downloads the <code>pack.json</code> from your <code>updateUrl</code> and
+                compares the <code>version</code> field. If the remote version is newer, users will
+                see an "Update Available" notification.
+            </div>
+        </div>
+
+        <p class="prose">
+            <strong>Important:</strong> The <code>updateUrl</code> should point to a
+            <code>pack.json</code> file, NOT the ZIP file. Users will download the full ZIP when
+            they choose to update.
+        </p>
+
+        <div class="code-wrap">
+            <div class="code-label">Example updateUrl</div>
+            <pre>"updateUrl": "https://github.com/user/repo/releases/latest/download/pack.json"</pre>
+        </div>
+    </section>
+
+    <!-- VERSIONING -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🏷️</span>
+            <h2>Versioning Best Practices</h2>
+        </div>
+        <p class="prose">
+            Use <strong>semantic versioning</strong> (MAJOR.MINOR.PATCH) for clear version tracking:
+        </p>
+        <div class="card">
+            <ul>
+                <li><code>1.0.0</code> → Initial release</li>
+                <li><code>1.0.1</code> → Bug fix or small tweak</li>
+                <li><code>1.1.0</code> → New Pixling or feature added</li>
+                <li><code>2.0.0</code> → Major redesign or breaking change</li>
+            </ul>
+        </div>
+        <p class="prose">
+            The app uses smart version comparison:
+        </p>
+        <div class="card">
+            <ul>
+                <li>✅ Semantic versions are compared numerically (<code>1.0.0</code> < <code>1.0.1</code>)</li>
+                <li>✅ Non-semantic versions use string comparison</li>
+                <li>✅ Missing version numbers default to <code>0</code> (<code>1.0</code> = <code>1.0.0</code>)</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- HOSTING OPTIONS -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🌐</span>
+            <h2>Hosting Your Pack</h2>
+        </div>
+        <p class="prose">
+            You need to host both your pack ZIP file and a publicly accessible <code>pack.json</code>
+            for update checking. Here are the recommended options:
+        </p>
+
+        <!-- GitHub Releases -->
+        <div class="card">
+            <h3 style="margin:0 0 12px;font-size:1.05rem;color:var(--primary);">
+                GitHub Releases (Recommended)
+            </h3>
+            <p class="prose" style="margin-bottom:12px;">
+                The easiest and most reliable option for hosting packs.
+            </p>
+            <ol class="steps">
+                <li>
+                    Create a GitHub repository for your pack
+                </li>
+                <li>
+                    In your repo, go to <strong>Releases</strong> → <strong>Create a new release</strong>
+                </li>
+                <li>
+                    Tag the release with your version (e.g., <code>v1.0.0</code>)
+                </li>
+                <li>
+                    Upload two files as release assets:
+                    <ul style="margin-top:8px;">
+                        <li><code>my-pack.zip</code> - The full pack</li>
+                        <li><code>pack.json</code> - Just the metadata file</li>
+                    </ul>
+                </li>
+                <li>
+                    In your ZIP's <code>pack.json</code>, set the <code>updateUrl</code> to:
+                    <div class="code-wrap" style="margin-top:8px;">
+                        <pre>"updateUrl": "https://github.com/USER/REPO/releases/latest/download/pack.json"</pre>
+                    </div>
+                </li>
+                <li>
+                    Share the ZIP download link with users:
+                    <div class="code-wrap" style="margin-top:8px;">
+                        <pre>https://github.com/USER/REPO/releases/latest/download/my-pack.zip</pre>
+                    </div>
+                </li>
+            </ol>
+            <div class="alert" style="margin-top:16px;">
+                <div class="alert-title">Pro Tip</div>
+                <div class="alert-content">
+                    Using <code>/releases/latest/download/</code> means users always get the newest version
+                    without you updating any links. Just create a new release and it works automatically!
+                </div>
+            </div>
+        </div>
+
+        <!-- GitHub Pages -->
+        <div class="card">
+            <h3 style="margin:0 0 12px;font-size:1.05rem;color:var(--primary);">
+                GitHub Pages
+            </h3>
+            <p class="prose" style="margin-bottom:12px;">
+                Good for custom landing pages and documentation.
+            </p>
+            <ol class="steps">
+                <li>
+                    In your repo settings, enable GitHub Pages
+                </li>
+                <li>
+                    Commit your <code>pack.json</code> to the <code>docs/</code> folder or root
+                </li>
+                <li>
+                    Use the GitHub Pages URL as your <code>updateUrl</code>:
+                    <div class="code-wrap" style="margin-top:8px;">
+                        <pre>"updateUrl": "https://USER.github.io/REPO/pack.json"</pre>
+                    </div>
+                </li>
+                <li>
+                    Host the ZIP file via GitHub Releases (recommended) or in your repo
+                </li>
+            </ol>
+        </div>
+
+        <!-- Other Options -->
+        <div class="card">
+            <h3 style="margin:0 0 12px;font-size:1.05rem;color:var(--primary);">
+                Other Hosting Options
+            </h3>
+            <ul>
+                <li><strong>Dropbox/Google Drive:</strong> Generate public share links, but these may change or expire</li>
+                <li><strong>Your own website:</strong> Host both files on your server with direct HTTPS links</li>
+                <li><strong>Pastebin/Gist:</strong> For <code>pack.json</code> only (use raw URL), but not for ZIPs</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- TESTING -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🧪</span>
+            <h2>Testing Your Pack</h2>
+        </div>
+        <div class="card">
+            <ol class="steps">
+                <li>
+                    Create your <code>pack.json</code> and animation files
+                </li>
+                <li>
+                    ZIP them together (not in a subfolder!)
+                </li>
+                <li>
+                    Import the ZIP into Pixlings via the Terrarium screen
+                </li>
+                <li>
+                    Verify all Pixlings appear correctly
+                </li>
+                <li>
+                    Test each animation state (Idle, Motion, Notification, etc.)
+                </li>
+                <li>
+                    If everything works, upload to your hosting platform
+                </li>
+                <li>
+                    Test the update URL by importing the pack, then creating a new version with
+                    a higher version number and checking for updates in the Pack Details screen
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- DISTRIBUTION -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📢</span>
+            <h2>Distributing Your Pack</h2>
+        </div>
+        <p class="prose">
+            Once your pack is hosted and tested, you can share it with others:
+        </p>
+        <div class="card">
+            <ul>
+                <li>Share the direct ZIP download link</li>
+                <li>Users can tap the link on their phone to download</li>
+                <li>After importing, they'll automatically receive update notifications</li>
+                <li>Consider creating a README or landing page with screenshots and installation instructions</li>
+            </ul>
+        </div>
+
+        <div class="alert">
+            <div class="alert-title">Community Sharing</div>
+            <div class="alert-content">
+                Consider sharing your pack on Reddit, Discord, or other Nothing Phone communities.
+                Always include clear installation instructions and screenshots!
+            </div>
+        </div>
+    </section>
+
+    <!-- EXAMPLE WORKFLOW -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">⚡</span>
+            <h2>Quick Start Workflow</h2>
+        </div>
+        <div class="card">
+            <ol class="steps">
+                <li>Create your Pixling animations</li>
+                <li>Write a <code>pack.json</code> with metadata and version <code>1.0.0</code></li>
+                <li>ZIP the files together</li>
+                <li>Create a GitHub repository</li>
+                <li>Create a release tagged <code>v1.0.0</code></li>
+                <li>Upload <code>my-pack.zip</code> and <code>pack.json</code> as release assets</li>
+                <li>Set <code>updateUrl</code> to <code>https://github.com/USER/REPO/releases/latest/download/pack.json</code></li>
+                <li>Re-ZIP with the updated <code>pack.json</code></li>
+                <li>Replace the ZIP in the release</li>
+                <li>Share the download link!</li>
+            </ol>
+        </div>
+
+        <p class="prose" style="margin-top:24px;">
+            When you want to release an update:
+        </p>
+
+        <div class="card">
+            <ol class="steps">
+                <li>Update your animations or <code>pack.json</code></li>
+                <li>Bump the version number (e.g., <code>1.0.0</code> → <code>1.1.0</code>)</li>
+                <li>Create a new GitHub release with the new version tag</li>
+                <li>Upload the new ZIP and <code>pack.json</code></li>
+                <li>Users will automatically see "Update Available" in the app!</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- TIPS -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">💡</span>
+            <h2>Pro Tips</h2>
+        </div>
+        <div class="card">
+            <ul>
+                <li><strong>Use descriptive names:</strong> "Cyberpunk Companions v2" is better than "My Pack"</li>
+                <li><strong>Test before releasing:</strong> Import your own pack and test all animations</li>
+                <li><strong>Write a changelog:</strong> Include release notes in your GitHub releases</li>
+                <li><strong>Optimize file sizes:</strong> Remove unnecessary frames to keep packs small</li>
+                <li><strong>Be consistent:</strong> Use a consistent naming scheme for animation files</li>
+                <li><strong>Include variety:</strong> Packs with 3-5 Pixlings are more appealing than single-Pixling packs</li>
+                <li><strong>Credit others:</strong> If you used someone's artwork or animations, credit them in the description</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- TROUBLESHOOTING -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🔧</span>
+            <h2>Troubleshooting</h2>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+            <h3 style="margin:0 0 8px;font-size:0.95rem;color:var(--primary);">
+                "Update check failed" or "HTTP 404"
+            </h3>
+            <ul style="margin:0;">
+                <li>Verify your <code>updateUrl</code> is correct and publicly accessible</li>
+                <li>Make sure you uploaded <code>pack.json</code> as a release asset</li>
+                <li>Try opening the URL in a browser - you should see the JSON content</li>
+            </ul>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+            <h3 style="margin:0 0 8px;font-size:0.95rem;color:var(--primary);">
+                "No update available" when there should be
+            </h3>
+            <ul style="margin:0;">
+                <li>Check that the remote version is actually higher (e.g., <code>1.1.0</code> > <code>1.0.0</code>)</li>
+                <li>Version comparison is case-sensitive for non-numeric parts</li>
+                <li>Try "Check for Updates" manually from Pack Details screen</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 style="margin:0 0 8px;font-size:0.95rem;color:var(--primary);">
+                Pack imports but animations don't work
+            </h3>
+            <ul style="margin:0;">
+                <li>Verify animation files are in the <code>animations/</code> folder in the ZIP</li>
+                <li>Check that file names in <code>pack.json</code> match exactly (case-sensitive)</li>
+                <li>Make sure animations follow the proper JSON format (489 pixels per frame)</li>
+            </ul>
+        </div>
+    </section>
+
+</div>
+
+<script>
+// Add more leaves dynamically
+for (let i = 0; i < 10; i++) {
+    const leaf = document.createElement('div');
+    leaf.className = 'leaf';
+    leaf.textContent = '🍃';
+    leaf.style.left = Math.random() * 100 + '%';
+    leaf.style.animationDuration = (18 + Math.random() * 8) + 's';
+    leaf.style.animationDelay = -(Math.random() * 20) + 's';
+    document.body.appendChild(leaf);
+}
+</script>
+
+</body>
+</html>
