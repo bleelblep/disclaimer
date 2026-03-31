@@ -78,7 +78,7 @@
         .page {
             position: relative;
             z-index: 1;
-            max-width: 780px;
+            max-width: 760px;
             margin: 0 auto;
             padding: 60px 28px 100px;
         }
@@ -314,6 +314,19 @@
         td code {
             font-size: 0.8em;
         }
+
+        /* COMPACT LIST */
+        .compact-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .compact-list li {
+            margin-bottom: 4px;
+            font-size: 0.92rem;
+        }
     </style>
 </head>
 <body>
@@ -330,8 +343,7 @@
         <div class="hero-eyebrow">Developer Documentation</div>
         <h1>Custom Packs Guide</h1>
         <p class="hero-lead">
-            Learn how to create distributable Pixling packs with automatic update checking,
-            version management, and professional hosting.
+            Create distributable Pixling packs with automatic update checking using GitHub Releases.
         </p>
     </header>
 
@@ -342,71 +354,63 @@
             <h2>What are Custom Packs?</h2>
         </div>
         <p class="prose">
-            Custom Packs are collections of Pixlings bundled with metadata like author information,
-            version numbers, and update URLs. Unlike individual custom Pixlings, packs support
-            automatic update checking, making distribution and maintenance much easier.
+            Custom Packs are collections of Pixlings with metadata like author, version, and automatic update URLs.
+            They get their own tab in the app and support one-tap updates.
         </p>
         <div class="alert">
             <div class="alert-title">Before You Start</div>
             <div class="alert-content">
-                Make sure you're familiar with creating custom Pixlings first. Check out the
+                Familiar with creating custom Pixlings? Check the
                 <a href="https://bleelblep.github.io/disclaimer/pixlings/custom-pixlings-guide.html">Custom Pixlings Guide</a>
-                to learn the basics of animation creation.
+                if you need to learn animation basics first.
             </div>
         </div>
     </section>
 
-    <!-- PACK STRUCTURE -->
+    <!-- QUICK START -->
     <section class="section">
         <div class="section-header">
-            <span class="section-icon">📁</span>
-            <h2>Pack Structure</h2>
+            <span class="section-icon">⚡</span>
+            <h2>Quick Start</h2>
         </div>
-        <p class="prose">
-            A custom pack is a ZIP file with the following structure:
-        </p>
-        <div class="code-wrap">
-            <div class="code-label">Directory Structure</div>
-            <pre>my-pack.zip
-├── pack.json                 (required - pack metadata)
-└── animations/               (required - animation files)
-    ├── MyPixling_Idle.json
-    ├── MyPixling_Motion.json
-    └── ...</pre>
+        <div class="card">
+            <ol class="steps">
+                <li>Create your Pixling animations</li>
+                <li>Write a <code>pack.json</code> file (see below)</li>
+                <li>Put animation files in an <code>animations/</code> folder</li>
+                <li>ZIP them together</li>
+                <li>Create a GitHub repository and release</li>
+                <li>Upload the ZIP and <code>pack.json</code> to the release</li>
+                <li>Share the download link!</li>
+            </ol>
         </div>
-        <p class="prose">
-            The <code>pack.json</code> file contains all metadata about your pack and its Pixlings.
-        </p>
     </section>
 
-    <!-- PACK.JSON FORMAT -->
+    <!-- PACK.JSON -->
     <section class="section">
         <div class="section-header">
             <span class="section-icon">📝</span>
             <h2>pack.json Format</h2>
         </div>
         <p class="prose">
-            Here's a complete example of a <code>pack.json</code> file with all fields:
+            The <code>pack.json</code> goes in your ZIP root and defines your pack metadata and Pixlings.
         </p>
         <div class="code-wrap">
-            <div class="code-label">pack.json</div>
+            <div class="code-label">Minimal Example</div>
             <pre>{
-  "name": "My Custom Pack",
-  "subtitle": "A collection of awesome Pixlings",
+  "name": "My Pack",
+  "subtitle": "Cool Pixlings",
   "author": "Your Name",
   "version": "1.0.0",
-  "description": "A detailed description of your pack and what makes it special.",
-  "created": "2026-03-31",
-  "updateUrl": "https://github.com/yourusername/my-pack/releases/latest/download/pack.json",
+  "updateUrl": "https://github.com/user/repo/releases/latest/download/pack.json",
   "pixlings": [
     {
       "name": "My Pixling",
       "subtitle": "A friendly companion",
-      "description": "This Pixling loves to dance and react to notifications.",
+      "description": "Reacts to notifications and loves to dance.",
       "defaultIdleAnimation": "MyPixling_Idle.json",
       "animations": {
         "Idle": ["MyPixling_Idle.json"],
-        "Motion": ["MyPixling_Motion.json"],
         "Notification": [
           "MyPixling_Notification_Enter.json",
           "MyPixling_Notification_Loop.json",
@@ -418,92 +422,98 @@
 }</pre>
         </div>
 
-        <div class="card">
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Field</th>
-                            <th>Required</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>name</code></td>
-                            <td>✅ Yes</td>
-                            <td>Pack name (shown in the app)</td>
-                        </tr>
-                        <tr>
-                            <td><code>subtitle</code></td>
-                            <td>✅ Yes</td>
-                            <td>Short description</td>
-                        </tr>
-                        <tr>
-                            <td><code>author</code></td>
-                            <td>Recommended</td>
-                            <td>Creator name or organization</td>
-                        </tr>
-                        <tr>
-                            <td><code>version</code></td>
-                            <td>Recommended</td>
-                            <td>Pack version (e.g., "1.0.0")</td>
-                        </tr>
-                        <tr>
-                            <td><code>description</code></td>
-                            <td>Optional</td>
-                            <td>Detailed pack description</td>
-                        </tr>
-                        <tr>
-                            <td><code>created</code></td>
-                            <td>Optional</td>
-                            <td>Creation date (any format)</td>
-                        </tr>
-                        <tr>
-                            <td><code>updateUrl</code></td>
-                            <td>Optional</td>
-                            <td>URL to check for updates (see below)</td>
-                        </tr>
-                        <tr>
-                            <td><code>pixlings</code></td>
-                            <td>✅ Yes</td>
-                            <td>Array of Pixling definitions</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>name</code></td>
+                        <td>✅ Yes</td>
+                        <td>Pack name</td>
+                    </tr>
+                    <tr>
+                        <td><code>subtitle</code></td>
+                        <td>✅ Yes</td>
+                        <td>Short description</td>
+                    </tr>
+                    <tr>
+                        <td><code>author</code></td>
+                        <td>Recommended</td>
+                        <td>Your name</td>
+                    </tr>
+                    <tr>
+                        <td><code>version</code></td>
+                        <td>Recommended</td>
+                        <td>Version (e.g., "1.0.0")</td>
+                    </tr>
+                    <tr>
+                        <td><code>updateUrl</code></td>
+                        <td>Optional</td>
+                        <td>URL for auto-updates</td>
+                    </tr>
+                    <tr>
+                        <td><code>pixlings</code></td>
+                        <td>✅ Yes</td>
+                        <td>Array of Pixlings</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 
-    <!-- UPDATE URLs -->
+    <!-- GITHUB RELEASES -->
     <section class="section">
         <div class="section-header">
-            <span class="section-icon">🔄</span>
-            <h2>Automatic Update Checking</h2>
+            <span class="section-icon">🚀</span>
+            <h2>Publishing with GitHub Releases</h2>
         </div>
         <p class="prose">
-            The <code>updateUrl</code> field enables automatic update checking. When set, Pixlings
-            will periodically check this URL for a newer version of your pack.
+            Free hosting with automatic updates. Create a GitHub repository, make a release, and upload your files.
         </p>
 
-        <div class="alert">
-            <div class="alert-title">How It Works</div>
-            <div class="alert-content">
-                The app downloads the <code>pack.json</code> from your <code>updateUrl</code> and
-                compares the <code>version</code> field. If the remote version is newer, users will
-                see an "Update Available" notification.
+        <div class="card">
+            <h3 style="margin:0 0 12px;font-size:0.95rem;color:var(--primary);">1. Create a Release</h3>
+            <p style="margin:0 0 12px;font-size:0.93rem;color:var(--text-muted);">
+                In your GitHub repo, go to <strong>Releases</strong> → <strong>Create a new release</strong>.
+                Tag it with your version (e.g., <code>v1.0.0</code>).
+            </p>
+            <p style="margin:0;font-size:0.93rem;color:var(--text-muted);">
+                Upload two files: <code>my-pack.zip</code> and <code>pack.json</code>
+            </p>
+        </div>
+
+        <div class="card">
+            <h3 style="margin:0 0 12px;font-size:0.95rem;color:var(--primary);">2. Set Update URL</h3>
+            <p style="margin:0 0 12px;font-size:0.93rem;color:var(--text-muted);">
+                In your <code>pack.json</code> (inside the ZIP), add this updateUrl:
+            </p>
+            <div class="code-wrap" style="margin:0;">
+                <pre>"updateUrl": "https://github.com/USER/REPO/releases/latest/download/pack.json"</pre>
             </div>
         </div>
 
-        <p class="prose">
-            <strong>Important:</strong> The <code>updateUrl</code> should point to a
-            <code>pack.json</code> file, NOT the ZIP file. Users will download the full ZIP when
-            they choose to update.
-        </p>
+        <div class="card">
+            <h3 style="margin:0 0 12px;font-size:0.95rem;color:var(--primary);">3. Share with Users</h3>
+            <p style="margin:0;font-size:0.93rem;color:var(--text-muted);">
+                Give users this link to download your pack:
+            </p>
+            <div class="code-wrap" style="margin:12px 0 0 0;">
+                <pre>https://github.com/USER/REPO/releases/latest/download/my-pack.zip</pre>
+            </div>
+        </div>
 
-        <div class="code-wrap">
-            <div class="code-label">Example updateUrl</div>
-            <pre>"updateUrl": "https://github.com/user/repo/releases/latest/download/pack.json"</pre>
+        <div class="alert">
+            <div class="alert-title">Why This Works</div>
+            <div class="alert-content">
+                The <code>/releases/latest/</code> URL automatically points to your newest release.
+                When you publish an update, users see it in the app — no link changes needed.
+            </div>
         </div>
     </section>
 
@@ -511,241 +521,55 @@
     <section class="section">
         <div class="section-header">
             <span class="section-icon">🏷️</span>
-            <h2>Versioning Best Practices</h2>
+            <h2>Versioning</h2>
         </div>
         <p class="prose">
-            Use <strong>semantic versioning</strong> (MAJOR.MINOR.PATCH) for clear version tracking:
+            Use semantic versioning (MAJOR.MINOR.PATCH):
         </p>
-        <div class="card">
-            <ul>
-                <li><code>1.0.0</code> → Initial release</li>
-                <li><code>1.0.1</code> → Bug fix or small tweak</li>
-                <li><code>1.1.0</code> → New Pixling or feature added</li>
-                <li><code>2.0.0</code> → Major redesign or breaking change</li>
-            </ul>
+        <ul class="compact-list">
+            <li><code>1.0.0</code> → Initial release</li>
+            <li><code>1.0.1</code> → Bug fix</li>
+            <li><code>1.1.0</code> → New feature/Pixling</li>
+            <li><code>2.0.0</code> → Major redesign</li>
+        </ul>
+        <p class="prose" style="margin-top:16px;">
+            When you release an update, just bump the version, create a new GitHub release with the
+            new tag, and upload the updated files. Users will see "Update Available" in the app!
+        </p>
+    </section>
+
+    <!-- STRUCTURE -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📁</span>
+            <h2>ZIP Structure</h2>
+        </div>
+        <div class="code-wrap">
+            <pre>my-pack.zip
+├── pack.json
+└── animations/
+    ├── Pixling_Idle.json
+    ├── Pixling_Motion.json
+    └── ...</pre>
         </div>
         <p class="prose">
-            The app uses smart version comparison:
+            Put <code>pack.json</code> in the root. All animation JSONs go in <code>animations/</code>.
         </p>
-        <div class="card">
-            <ul>
-                <li>✅ Semantic versions are compared numerically (<code>1.0.0</code> < <code>1.0.1</code>)</li>
-                <li>✅ Non-semantic versions use string comparison</li>
-                <li>✅ Missing version numbers default to <code>0</code> (<code>1.0</code> = <code>1.0.0</code>)</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- HOSTING OPTIONS -->
-    <section class="section">
-        <div class="section-header">
-            <span class="section-icon">🌐</span>
-            <h2>Hosting Your Pack</h2>
-        </div>
-        <p class="prose">
-            You need to host both your pack ZIP file and a publicly accessible <code>pack.json</code>
-            for update checking. Here are the recommended options:
-        </p>
-
-        <!-- GitHub Releases -->
-        <div class="card">
-            <h3 style="margin:0 0 12px;font-size:1.05rem;color:var(--primary);">
-                GitHub Releases (Recommended)
-            </h3>
-            <p class="prose" style="margin-bottom:12px;">
-                The easiest and most reliable option for hosting packs.
-            </p>
-            <ol class="steps">
-                <li>
-                    Create a GitHub repository for your pack
-                </li>
-                <li>
-                    In your repo, go to <strong>Releases</strong> → <strong>Create a new release</strong>
-                </li>
-                <li>
-                    Tag the release with your version (e.g., <code>v1.0.0</code>)
-                </li>
-                <li>
-                    Upload two files as release assets:
-                    <ul style="margin-top:8px;">
-                        <li><code>my-pack.zip</code> - The full pack</li>
-                        <li><code>pack.json</code> - Just the metadata file</li>
-                    </ul>
-                </li>
-                <li>
-                    In your ZIP's <code>pack.json</code>, set the <code>updateUrl</code> to:
-                    <div class="code-wrap" style="margin-top:8px;">
-                        <pre>"updateUrl": "https://github.com/USER/REPO/releases/latest/download/pack.json"</pre>
-                    </div>
-                </li>
-                <li>
-                    Share the ZIP download link with users:
-                    <div class="code-wrap" style="margin-top:8px;">
-                        <pre>https://github.com/USER/REPO/releases/latest/download/my-pack.zip</pre>
-                    </div>
-                </li>
-            </ol>
-            <div class="alert" style="margin-top:16px;">
-                <div class="alert-title">Pro Tip</div>
-                <div class="alert-content">
-                    Using <code>/releases/latest/download/</code> means users always get the newest version
-                    without you updating any links. Just create a new release and it works automatically!
-                </div>
-            </div>
-        </div>
-
-        <!-- GitHub Pages -->
-        <div class="card">
-            <h3 style="margin:0 0 12px;font-size:1.05rem;color:var(--primary);">
-                GitHub Pages
-            </h3>
-            <p class="prose" style="margin-bottom:12px;">
-                Good for custom landing pages and documentation.
-            </p>
-            <ol class="steps">
-                <li>
-                    In your repo settings, enable GitHub Pages
-                </li>
-                <li>
-                    Commit your <code>pack.json</code> to the <code>docs/</code> folder or root
-                </li>
-                <li>
-                    Use the GitHub Pages URL as your <code>updateUrl</code>:
-                    <div class="code-wrap" style="margin-top:8px;">
-                        <pre>"updateUrl": "https://USER.github.io/REPO/pack.json"</pre>
-                    </div>
-                </li>
-                <li>
-                    Host the ZIP file via GitHub Releases (recommended) or in your repo
-                </li>
-            </ol>
-        </div>
-
-        <!-- Other Options -->
-        <div class="card">
-            <h3 style="margin:0 0 12px;font-size:1.05rem;color:var(--primary);">
-                Other Hosting Options
-            </h3>
-            <ul>
-                <li><strong>Dropbox/Google Drive:</strong> Generate public share links, but these may change or expire</li>
-                <li><strong>Your own website:</strong> Host both files on your server with direct HTTPS links</li>
-                <li><strong>Pastebin/Gist:</strong> For <code>pack.json</code> only (use raw URL), but not for ZIPs</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- TESTING -->
-    <section class="section">
-        <div class="section-header">
-            <span class="section-icon">🧪</span>
-            <h2>Testing Your Pack</h2>
-        </div>
-        <div class="card">
-            <ol class="steps">
-                <li>
-                    Create your <code>pack.json</code> and animation files
-                </li>
-                <li>
-                    ZIP them together (not in a subfolder!)
-                </li>
-                <li>
-                    Import the ZIP into Pixlings via the Terrarium screen
-                </li>
-                <li>
-                    Verify all Pixlings appear correctly
-                </li>
-                <li>
-                    Test each animation state (Idle, Motion, Notification, etc.)
-                </li>
-                <li>
-                    If everything works, upload to your hosting platform
-                </li>
-                <li>
-                    Test the update URL by importing the pack, then creating a new version with
-                    a higher version number and checking for updates in the Pack Details screen
-                </li>
-            </ol>
-        </div>
-    </section>
-
-    <!-- DISTRIBUTION -->
-    <section class="section">
-        <div class="section-header">
-            <span class="section-icon">📢</span>
-            <h2>Distributing Your Pack</h2>
-        </div>
-        <p class="prose">
-            Once your pack is hosted and tested, you can share it with others:
-        </p>
-        <div class="card">
-            <ul>
-                <li>Share the direct ZIP download link</li>
-                <li>Users can tap the link on their phone to download</li>
-                <li>After importing, they'll automatically receive update notifications</li>
-                <li>Consider creating a README or landing page with screenshots and installation instructions</li>
-            </ul>
-        </div>
-
-        <div class="alert">
-            <div class="alert-title">Community Sharing</div>
-            <div class="alert-content">
-                Consider sharing your pack on Reddit, Discord, or other Nothing Phone communities.
-                Always include clear installation instructions and screenshots!
-            </div>
-        </div>
-    </section>
-
-    <!-- EXAMPLE WORKFLOW -->
-    <section class="section">
-        <div class="section-header">
-            <span class="section-icon">⚡</span>
-            <h2>Quick Start Workflow</h2>
-        </div>
-        <div class="card">
-            <ol class="steps">
-                <li>Create your Pixling animations</li>
-                <li>Write a <code>pack.json</code> with metadata and version <code>1.0.0</code></li>
-                <li>ZIP the files together</li>
-                <li>Create a GitHub repository</li>
-                <li>Create a release tagged <code>v1.0.0</code></li>
-                <li>Upload <code>my-pack.zip</code> and <code>pack.json</code> as release assets</li>
-                <li>Set <code>updateUrl</code> to <code>https://github.com/USER/REPO/releases/latest/download/pack.json</code></li>
-                <li>Re-ZIP with the updated <code>pack.json</code></li>
-                <li>Replace the ZIP in the release</li>
-                <li>Share the download link!</li>
-            </ol>
-        </div>
-
-        <p class="prose" style="margin-top:24px;">
-            When you want to release an update:
-        </p>
-
-        <div class="card">
-            <ol class="steps">
-                <li>Update your animations or <code>pack.json</code></li>
-                <li>Bump the version number (e.g., <code>1.0.0</code> → <code>1.1.0</code>)</li>
-                <li>Create a new GitHub release with the new version tag</li>
-                <li>Upload the new ZIP and <code>pack.json</code></li>
-                <li>Users will automatically see "Update Available" in the app!</li>
-            </ol>
-        </div>
     </section>
 
     <!-- TIPS -->
     <section class="section">
         <div class="section-header">
             <span class="section-icon">💡</span>
-            <h2>Pro Tips</h2>
+            <h2>Tips</h2>
         </div>
         <div class="card">
             <ul>
-                <li><strong>Use descriptive names:</strong> "Cyberpunk Companions v2" is better than "My Pack"</li>
-                <li><strong>Test before releasing:</strong> Import your own pack and test all animations</li>
-                <li><strong>Write a changelog:</strong> Include release notes in your GitHub releases</li>
-                <li><strong>Optimize file sizes:</strong> Remove unnecessary frames to keep packs small</li>
-                <li><strong>Be consistent:</strong> Use a consistent naming scheme for animation files</li>
-                <li><strong>Include variety:</strong> Packs with 3-5 Pixlings are more appealing than single-Pixling packs</li>
-                <li><strong>Credit others:</strong> If you used someone's artwork or animations, credit them in the description</li>
+                <li><strong>Test locally first:</strong> Import your ZIP in Pixlings before publishing</li>
+                <li><strong>Use descriptive names:</strong> "Cyberpunk Pack v2" > "Pack"</li>
+                <li><strong>Include 3-5 Pixlings:</strong> More variety = better packs</li>
+                <li><strong>Write release notes:</strong> Describe changes in your GitHub releases</li>
+                <li><strong>Credit sources:</strong> If you used others' work, credit them</li>
             </ul>
         </div>
     </section>
@@ -762,9 +586,9 @@
                 "Update check failed" or "HTTP 404"
             </h3>
             <ul style="margin:0;">
-                <li>Verify your <code>updateUrl</code> is correct and publicly accessible</li>
-                <li>Make sure you uploaded <code>pack.json</code> as a release asset</li>
-                <li>Try opening the URL in a browser - you should see the JSON content</li>
+                <li>Check your <code>updateUrl</code> is correct</li>
+                <li>Ensure you uploaded <code>pack.json</code> to the release</li>
+                <li>Try opening the URL in a browser to verify</li>
             </ul>
         </div>
 
@@ -773,9 +597,9 @@
                 "No update available" when there should be
             </h3>
             <ul style="margin:0;">
-                <li>Check that the remote version is actually higher (e.g., <code>1.1.0</code> > <code>1.0.0</code>)</li>
-                <li>Version comparison is case-sensitive for non-numeric parts</li>
-                <li>Try "Check for Updates" manually from Pack Details screen</li>
+                <li>Verify the remote version is higher (e.g., <code>1.1.0</code> > <code>1.0.0</code>)</li>
+                <li>Check version numbers match exactly</li>
+                <li>Try "Check for Updates" manually in Pack Details</li>
             </ul>
         </div>
 
@@ -784,9 +608,9 @@
                 Pack imports but animations don't work
             </h3>
             <ul style="margin:0;">
-                <li>Verify animation files are in the <code>animations/</code> folder in the ZIP</li>
-                <li>Check that file names in <code>pack.json</code> match exactly (case-sensitive)</li>
-                <li>Make sure animations follow the proper JSON format (489 pixels per frame)</li>
+                <li>Check animation files are in <code>animations/</code> folder</li>
+                <li>Verify filenames match exactly (case-sensitive)</li>
+                <li>Ensure animations follow the proper JSON format (489 pixels per frame)</li>
             </ul>
         </div>
     </section>

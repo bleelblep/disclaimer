@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixlings — Quiet Life in Your Glyph</title>
+    <style>
+        /* TERRARIUM COLORS */
+        :root {
+            --background: #D7C3AC;
+            --surface: #A1B5A7;
+            --surface-alt: #B8C9BB;
+            --primary: #2C504A;
+            --secondary: #296673;
+            --tertiary: #B087AE;
+            --text: #1A2E2A;
+            --text-muted: #4A6460;
+            --code-bg: #1A2E2A;
+            --code-text: #A8D1C8;
+            --rule: rgba(44, 80, 74, 0.18);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #141008;
+                --surface: #1E1A10;
+                --surface-alt: #252016;
+                --primary: #A8D1C8;
+                --secondary: #88BDC9;
+                --tertiary: #C9A8C6;
+                --text: #EDE0CF;
+                --text-muted: #8A9E99;
+                --code-bg: #0D0A04;
+                --code-text: #A8D1C8;
+                --rule: rgba(168, 209, 200, 0.12);
+            }
+        }
+
+        /* BASE */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.75;
+        }
+
+        /* AMBIENT LEAVES */
+        .leaf {
+            position: fixed;
+            font-size: 16px;
+            opacity: 0.35;
+            pointer-events: none;
+            animation: leafDrift linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes leafDrift {
+            from {
+                transform: translateY(-8vh) rotate(0deg);
+            }
+            to {
+                transform: translateY(108vh) rotate(360deg);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .leaf {
+                animation: none;
+            }
+        }
+
+        /* LAYOUT */
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 840px;
+            margin: 0 auto;
+            padding: 80px 28px 120px;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero-icon {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-icon {
+                animation: none;
+            }
+        }
+
+        .hero h1 {
+            margin: 0 0 20px;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 400;
+            color: var(--primary);
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-description {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* LINK GRID */
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .link-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 32px 28px;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .link-card-icon {
+            font-size: 2.5rem;
+            display: block;
+        }
+
+        .link-card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .link-card-description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* SECTION */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .section-eyebrow {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--secondary);
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1.5px solid var(--rule);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        .footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .footer a:hover {
+            border-bottom-color: var(--secondary);
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+            .page {
+                padding: 60px 20px 100px;
+            }
+            .link-grid {
+                grid-template-columns: 1fr;
+            }
+            .link-card {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Ambient leaves -->
+<div class="leaf" style="left:8%;animation-duration:20s;animation-delay:-3s">🍃</div>
+<div class="leaf" style="left:22%;animation-duration:24s;animation-delay:-9s">🌿</div>
+<div class="leaf" style="left:40%;animation-duration:22s;animation-delay:-6s">🍃</div>
+<div class="leaf" style="left:58%;animation-duration:26s;animation-delay:-14s">🍂</div>
+<div class="leaf" style="left:75%;animation-duration:21s;animation-delay:-11s">🍃</div>
+<div class="leaf" style="left:88%;animation-duration:23s;animation-delay:-17s">🌿</div>
+
+<div class="page">
+    <header class="hero">
+        <span class="hero-icon">🌱</span>
+        <h1>Pixlings</h1>
+        <p class="hero-subtitle">Quiet life in your Glyph Matrix</p>
+        <p class="hero-description">
+            A quiet presence lives within your Nothing Phone's Glyph Matrix. It moves, reacts,
+            and exists alongside you — ambient, expressive, and alive.
+        </p>
+    </header>
+
+    <section class="section">
+        <div class="section-header">
+            <div class="section-eyebrow">Documentation</div>
+            <h2 class="section-title">Get Started</h2>
+        </div>
+
+        <div class="link-grid">
+            <a href="https://bleelblep.github.io/disclaimer/pixlings/changelog.html" class="link-card">
+                <span class="link-card-icon">📜</span>
+                <h3 class="link-card-title">Changelog</h3>
+                <p class="link-card-description">
+                    What's new, what's fixed, what's mutated. Track all updates and improvements.
+                </p>
+            </a>
+
+            <a href="https://bleelblep.github.io/disclaimer/pixlings/privacy_policy.html" class="link-card">
+                <span class="link-card-icon">🔒</span>
+                <h3 class="link-card-title">Privacy Policy</h3>
+                <p class="link-card-description">
+                    How we handle your data. Spoiler: we don't. Everything stays on your device.
+                </p>
+            </a>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div class="section-eyebrow">For Creators</div>
+            <h2 class="section-title">Create Custom Pixlings</h2>
+        </div>
+
+        <div class="link-grid">
+            <a href="https://bleelblep.github.io/disclaimer/pixlings/custom-pixlings-guide.html" class="link-card">
+                <span class="link-card-icon">🎨</span>
+                <h3 class="link-card-title">Custom Pixlings Guide</h3>
+                <p class="link-card-description">
+                    Learn how to create your own Pixling animations from scratch using the Glyph Matrix Editor.
+                </p>
+            </a>
+
+            <a href="https://bleelblep.github.io/disclaimer/pixlings/custom-packs-guide.html" class="link-card">
+                <span class="link-card-icon">📦</span>
+                <h3 class="link-card-title">Custom Packs Guide</h3>
+                <p class="link-card-description">
+                    Package and distribute your Pixlings with automatic updates using GitHub Releases.
+                </p>
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>Made with care by <strong>Bleelblep</strong></p>
+        <p>Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+    </footer>
+</div>
+
+<script>
+// Add more leaves dynamically
+for (let i = 0; i < 12; i++) {
+    const leaf = document.createElement('div');
+    leaf.className = 'leaf';
+    leaf.textContent = ['🍃', '🌿', '🍂'][Math.floor(Math.random() * 3)];
+    leaf.style.left = Math.random() * 100 + '%';
+    leaf.style.animationDuration = (18 + Math.random() * 10) + 's';
+    leaf.style.animationDelay = -(Math.random() * 25) + 's';
+    document.body.appendChild(leaf);
+}
+</script>
+
+</body>
+</html>
