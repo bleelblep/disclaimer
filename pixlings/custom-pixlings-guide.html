@@ -364,6 +364,37 @@
             font-weight: 600;
         }
 
+        .next-step {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 32px 28px;
+            margin-bottom: 52px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .next-step p {
+            margin: 0 0 20px;
+            color: var(--text-muted);
+            font-size: 0.97rem;
+        }
+
+        .next-step a {
+            display: inline-block;
+            padding: 12px 28px;
+            background: var(--primary);
+            color: var(--background);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform 0.2s;
+        }
+
+        .next-step a:hover {
+            transform: scale(1.05);
+        }
+
         /* LINK */
         a {
             color: var(--secondary);
@@ -774,9 +805,14 @@
             <p>Take your time with the animation. Give it personality.<br>Your Pixling should feel like a tiny creature living in the lights.</p>
         </div>
 
+        <div class="next-step">
+            <p>Ready to package and share your creations?</p>
+            <a href="custom-packs-guide.html">Next: Custom Packs Guide →</a>
+        </div>
+
         <footer class="footer">
             <p>Made with care by <strong>Bleelblep</strong></p>
-            <p><a href="https://bleelblep.github.io/disclaimer/pixlings/">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+            <p><a href="index.html">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
         </footer>
     </div>
 
