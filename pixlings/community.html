@@ -203,12 +203,182 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
         }
 
-        .pack-preview {
+        .pack-preview-container {
+            position: relative;
             width: 100%;
             height: 200px;
-            object-fit: cover;
             background: var(--surface-alt);
+        }
+
+        .pack-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
+        }
+
+        /* OVERLAY BADGES */
+        .card-badges {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: flex-start;
+        }
+
+        .badge-featured,
+        .badge-trending,
+        .badge-new {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-featured {
+            background: rgba(255, 215, 0, 0.95);
+            color: #000;
+        }
+
+        .badge-trending {
+            background: rgba(255, 87, 34, 0.95);
+            color: #fff;
+        }
+
+        .badge-new {
+            background: rgba(76, 175, 80, 0.95);
+            color: #fff;
+        }
+
+        /* TYPE BADGE */
+        .card-type {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
+
+        .type-badge {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .type-pack {
+            background: rgba(var(--secondary-rgb, 41, 102, 115), 0.95);
+            color: var(--background);
+        }
+
+        .type-pixling {
+            background: rgba(var(--tertiary-rgb, 176, 135, 174), 0.95);
+            color: var(--background);
+        }
+
+        /* RATING DISPLAY */
+        .pack-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .rating-stars {
+            color: #FFB400;
+        }
+
+        .rating-text {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .rating-count {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* METRICS GRID */
+        .pack-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 12px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .pack-metrics {
+                background: rgba(255, 255, 255, 0.04);
+            }
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-icon {
+            font-size: 1.2rem;
+        }
+
+        .metric-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* LOADING STATE */
+        .pack-card-loading {
+            pointer-events: none;
+        }
+
+        .skeleton {
+            background: linear-gradient(
+                90deg,
+                var(--surface-alt) 0%,
+                var(--surface) 50%,
+                var(--surface-alt) 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-image {
+            width: 100%;
+            height: 200px;
+        }
+
+        .skeleton-text {
+            height: 16px;
+            margin: 8px 0;
         }
 
         .pack-info {
@@ -536,10 +706,18 @@
             <input type="text" id="search" placeholder="Search packs...">
         </div>
         <div class="filters">
+            <select id="type-filter">
+                <option value="all">All Types</option>
+                <option value="pack">Packs Only</option>
+                <option value="pixling">Pixlings Only</option>
+            </select>
             <select id="sort">
                 <option value="newest">Newest First</option>
                 <option value="popular">Most Downloaded</option>
+                <option value="trending">Trending</option>
+                <option value="rating">Highest Rated</option>
                 <option value="name">Name (A-Z)</option>
+                <option value="updated">Recently Updated</option>
             </select>
             <select id="category">
                 <option value="all">All Categories</option>
@@ -549,6 +727,12 @@
                 <option value="minimal">Minimal</option>
                 <option value="colorful">Colorful</option>
                 <option value="beginner-friendly">Beginner-Friendly</option>
+            </select>
+            <select id="difficulty-filter">
+                <option value="all">All Difficulties</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
             </select>
         </div>
     </div>
@@ -578,7 +762,12 @@
     <section id="how-to-submit" class="section">
         <h2>How to Submit Your Pack</h2>
         <ol class="steps">
-            <li>Instructions Coming Soon</li>
+            <li>Create your pack following the <a href="custom-packs-guide.html">Custom Packs Guide</a></li>
+            <li>Host it on GitHub with a release (or use any direct download link)</li>
+            <li>Fork the <a href="https://github.com/bleelblep/pixlings-docs">pixlings-docs repo</a></li>
+            <li>Add your pack info to <code>packs.json</code></li>
+            <li>Add a preview image (PNG or GIF) to <code>images/packs/</code></li>
+            <li>Submit a Pull Request!</li>
         </ol>
     </section>
 
@@ -588,6 +777,7 @@
     </footer>
 </div>
 
+<script src="github-api.js"></script>
 <script src="community.js"></script>
 
 </body>
