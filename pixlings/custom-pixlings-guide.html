@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixlings — Creator Guide</title>
+    <title>Pixlings — Custom Pixlings Guide</title>
     <style>
         /* TERRARIUM COLORS */
         :root {
@@ -145,6 +145,11 @@
             margin: 0 0 16px;
         }
 
+        .prose strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
         /* CARD */
         .card {
             background: var(--surface);
@@ -220,6 +225,63 @@
             opacity: 0.7;
         }
 
+        code {
+            font-family: 'Courier New', monospace;
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+
+        /* ALERT */
+        .alert {
+            background: var(--surface-alt);
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+
+        .alert-title {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .alert-content {
+            font-size: 0.93rem;
+            color: var(--text);
+            margin: 0;
+        }
+
+        /* LISTS */
+        ul:not(.steps) {
+            padding-left: 24px;
+            margin: 12px 0;
+        }
+
+        ul:not(.steps) li {
+            margin-bottom: 8px;
+            font-size: 0.96rem;
+        }
+
+        /* LINKS */
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        a:hover {
+            border-bottom-color: var(--secondary);
+        }
+
         /* TABLE */
         .table-wrap {
             overflow-x: auto;
@@ -253,12 +315,12 @@
             border-bottom: none;
         }
 
-        .tick {
-            color: var(--secondary);
+        td code {
+            font-size: 0.8em;
         }
 
-        .cross {
-            color: var(--tertiary);
+        .tick {
+            color: var(--secondary);
         }
 
         /* FILE TREE */
@@ -278,133 +340,12 @@
             color: var(--secondary);
         }
 
-        .filetree .file {
-            opacity: 0.85;
-        }
-
         .filetree .indent {
             margin-left: 20px;
         }
 
         .filetree .indent2 {
             margin-left: 40px;
-        }
-
-        /* BULLETS */
-        .bullets {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .bullets li {
-            padding: 6px 0;
-            padding-left: 20px;
-            position: relative;
-            font-size: 0.96rem;
-        }
-
-        .bullets li::before {
-            content: "▸";
-            position: absolute;
-            left: 0;
-            color: var(--secondary);
-            font-size: 0.7rem;
-            top: 9px;
-        }
-
-        /* CALLOUT */
-        .callout {
-            background: rgba(0, 0, 0, 0.06);
-            border-left: 3px solid var(--primary);
-            border-radius: 0 10px 10px 0;
-            padding: 14px 18px;
-            margin: 16px 0;
-            font-size: 0.9rem;
-        }
-
-        .callout b {
-            color: var(--primary);
-        }
-
-        /* DIVIDER */
-        hr {
-            border: none;
-            border-top: 1px solid var(--rule);
-            margin: 48px 0;
-        }
-
-        /* FINAL NOTE */
-        .final {
-            text-align: center;
-            padding: 40px 20px;
-            background: var(--surface);
-            border-radius: 20px;
-        }
-
-        .final .glyph {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 16px;
-        }
-
-        .final p {
-            margin: 0 0 10px;
-            font-size: 1rem;
-            color: var(--text-muted);
-        }
-
-        .final p:last-child {
-            margin: 0;
-        }
-
-        .final em {
-            color: var(--primary);
-            font-style: normal;
-            font-weight: 600;
-        }
-
-        .next-step {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 32px 28px;
-            margin-bottom: 52px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .next-step p {
-            margin: 0 0 20px;
-            color: var(--text-muted);
-            font-size: 0.97rem;
-        }
-
-        .next-step a {
-            display: inline-block;
-            padding: 12px 28px;
-            background: var(--primary);
-            color: var(--background);
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: transform 0.2s;
-        }
-
-        .next-step a:hover {
-            transform: scale(1.05);
-        }
-
-        /* LINK */
-        a {
-            color: var(--secondary);
-            text-decoration: none;
-            border-bottom: 1px solid var(--rule);
-            transition: 0.15s;
-        }
-
-        a:hover {
-            border-bottom-color: var(--secondary);
         }
 
         /* FOOTER */
@@ -445,19 +386,39 @@
             }
         }
 
-        /* INLINE CODE */
-        code {
-            background: var(--code-bg);
-            color: var(--code-text);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
+        .next-step {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 32px 28px;
+            margin-bottom: 52px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .next-step p {
+            margin: 0 0 20px;
+            color: var(--text-muted);
+            font-size: 0.97rem;
+        }
+
+        .next-step a {
+            display: inline-block;
+            padding: 12px 28px;
+            background: var(--primary);
+            color: var(--background);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform 0.2s;
+        }
+
+        .next-step a:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-
 
 <!-- Ambient leaves -->
 <div class="leaf" style="left:10%;animation-duration:18s;animation-delay:-2s">🍃</div>
@@ -466,39 +427,64 @@
 <div class="leaf" style="left:65%;animation-duration:24s;animation-delay:-12s">🍃</div>
 <div class="leaf" style="left:82%;animation-duration:19s;animation-delay:-15s">🍃</div>
 
+<div class="page">
+    <header class="hero">
+        <div class="hero-eyebrow">Developer Documentation</div>
+        <h1>Custom Pixlings Guide</h1>
+        <p class="hero-lead">
+            Build your own Pixling from scratch using JSON animations designed for the Glyph Matrix.
+        </p>
+    </header>
 
-    <div class="page">
-        <div class="hero">
-            <div class="hero-eyebrow">🌱 Pixlings</div>
-            <h1>So you want to create your own little creature.</h1>
-            <p class="hero-lead">Pixlings live inside your Glyph Matrix. They're built from JSON animations. If you're comfortable working directly with the LED matrix, this method gives you complete control over how your Pixling moves and glows.</p>
+    <!-- OVERVIEW -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🌱</span>
+            <h2>What are Custom Pixlings?</h2>
         </div>
-
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">🛠</span>
-                <h2>Creating Animations</h2>
+        <p class="prose">
+            Pixlings are small animated creatures that live inside your Glyph Matrix. They're built from JSON animation files and support multiple states — idle, notification, charging, and more. If you're comfortable working directly with the LED matrix, this method gives you complete control over how your Pixling moves and glows.
+        </p>
+        <div class="alert">
+            <div class="alert-title">Next Step</div>
+            <div class="alert-content">
+                Once you've created your Pixlings, package them for distribution with the
+                <a href="custom-packs-guide.html">Custom Packs Guide</a>.
             </div>
-            <p class="prose">Build your Pixling animations using the <a href="https://glypheditor.pauwma.com/">Glyph Matrix Editor by pauwma</a>. It lets you work directly with the 27×18 matrix and control the brightness of every LED.</p>
+        </div>
+    </section>
+
+    <!-- CREATING ANIMATIONS -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🛠</span>
+            <h2>Creating Animations</h2>
+        </div>
+        <p class="prose">
+            Build your Pixling animations using the <a href="https://glypheditor.pauwma.com/">Glyph Matrix Editor by pauwma</a>. It lets you work directly with the glyph matrix and control the brightness of every LED.
+        </p>
+        <div class="card">
             <ol class="steps">
                 <li>Create your animation directly in the editor.</li>
                 <li>Export the animation as a <code>.json</code> file.</li>
                 <li>Include that JSON file in your Pixling zip.</li>
             </ol>
         </div>
+    </section>
 
-        <hr>
+    <!-- PACK.JSON -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📝</span>
+            <h2>pack.json Structure</h2>
+        </div>
+        <p class="prose">
+            Every Pixling must include a <code>pack.json</code> file in the root of the zip. The pack.json supports optional metadata fields that enable enhanced pack management features.
+        </p>
 
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">📦</span>
-                <h2>pack.json Structure</h2>
-            </div>
-            <p class="prose">Every Pixling must include a <code>pack.json</code> file in the root of the zip. The pack.json supports optional metadata fields that enable enhanced pack management features.</p>
-
-            <div class="code-label">Basic Example (Single Pixling)</div>
-            <div class="code-wrap">
-                <pre>{
+        <div class="code-label">Basic Example (Single Pixling)</div>
+        <div class="code-wrap">
+            <pre>{
   "name": "Doze",
   "subtitle": "Sleepy, gentle presence",
   "pixlings": [
@@ -534,11 +520,11 @@
     }
   ]
 }</pre>
-            </div>
+        </div>
 
-            <div class="code-label">Enhanced Example (Pack with Metadata)</div>
-            <div class="code-wrap">
-                <pre>{
+        <div class="code-label">Enhanced Example (Pack with Metadata)</div>
+        <div class="code-wrap">
+            <pre>{
   "name": "Elysium Starter Pack",
   "subtitle": "Official starter collection",
   "author": "Elysium Studios",
@@ -563,119 +549,123 @@
     }
   ]
 }</pre>
-            </div>
-
-            <p class="prose"><strong>Pack Metadata Benefits:</strong></p>
-            <ul class="prose">
-                <li><strong>Dedicated Tab:</strong> Packs with author, version, or description get their own tab in Terrarium (e.g., "Elysium Starter Pack")</li>
-                <li><strong>Pack Management:</strong> Export, share, and view detailed pack information</li>
-                <li><strong>Version Tracking:</strong> Keep track of pack versions for future updates</li>
-                <li><strong>Attribution:</strong> Credit creators with the author field</li>
-                <li><strong>Without Metadata:</strong> Individual pixlings are grouped in the "Custom" tab</li>
-            </ul>
-
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Field</th>
-                            <th>Required</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>name</code></td>
-                            <td>✅ Yes</td>
-                            <td>Pack name (shown as tab title if metadata present)</td>
-                        </tr>
-                        <tr>
-                            <td><code>subtitle</code></td>
-                            <td>✅ Yes</td>
-                            <td>Short description of the pack</td>
-                        </tr>
-                        <tr>
-                            <td><code>pixlings</code></td>
-                            <td>✅ Yes</td>
-                            <td>Array of pixling definitions</td>
-                        </tr>
-                        <tr>
-                            <td><code>author</code></td>
-                            <td>⚪ Optional</td>
-                            <td>Pack creator name (enables pack tab)</td>
-                        </tr>
-                        <tr>
-                            <td><code>version</code></td>
-                            <td>⚪ Optional</td>
-                            <td>Pack version (e.g., "1.0.0", enables pack tab)</td>
-                        </tr>
-                        <tr>
-                            <td><code>description</code></td>
-                            <td>⚪ Optional</td>
-                            <td>Detailed pack description (enables pack tab)</td>
-                        </tr>
-                        <tr>
-                            <td><code>created</code></td>
-                            <td>⚪ Optional</td>
-                            <td>Creation date (e.g., "2026-03-29")</td>
-                        </tr>
-                        <tr>
-                            <td><code>updateUrl</code></td>
-                            <td>⚪ Optional</td>
-                            <td>URL for future pack updates</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
 
-        <hr>
+        <p class="prose"><strong>Pack Metadata Benefits:</strong></p>
+        <ul>
+            <li><strong>Dedicated Tab:</strong> Packs with author, version, or description get their own tab in Terrarium (e.g., "Elysium Starter Pack")</li>
+            <li><strong>Pack Management:</strong> Export, share, and view detailed pack information</li>
+            <li><strong>Version Tracking:</strong> Keep track of pack versions for future updates</li>
+            <li><strong>Attribution:</strong> Credit creators with the author field</li>
+            <li><strong>Without Metadata:</strong> Individual Pixlings are grouped in the "Custom" tab</li>
+        </ul>
 
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">🎞</span>
-                <h2>Enter / Loop / Exit Animations</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>name</code></td>
+                        <td>✅ Yes</td>
+                        <td>Pack name (shown as tab title if metadata present)</td>
+                    </tr>
+                    <tr>
+                        <td><code>subtitle</code></td>
+                        <td>✅ Yes</td>
+                        <td>Short description of the pack</td>
+                    </tr>
+                    <tr>
+                        <td><code>pixlings</code></td>
+                        <td>✅ Yes</td>
+                        <td>Array of Pixling definitions</td>
+                    </tr>
+                    <tr>
+                        <td><code>author</code></td>
+                        <td>⚪ Optional</td>
+                        <td>Pack creator name (enables pack tab)</td>
+                    </tr>
+                    <tr>
+                        <td><code>version</code></td>
+                        <td>⚪ Optional</td>
+                        <td>Pack version (e.g., "1.0.0", enables pack tab)</td>
+                    </tr>
+                    <tr>
+                        <td><code>description</code></td>
+                        <td>⚪ Optional</td>
+                        <td>Detailed pack description (enables pack tab)</td>
+                    </tr>
+                    <tr>
+                        <td><code>created</code></td>
+                        <td>⚪ Optional</td>
+                        <td>Creation date (e.g., "2026-03-29")</td>
+                    </tr>
+                    <tr>
+                        <td><code>updateUrl</code></td>
+                        <td>⚪ Optional</td>
+                        <td>URL for future pack updates</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ENTER / LOOP / EXIT -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">🎞</span>
+            <h2>Enter / Loop / Exit Animations</h2>
+        </div>
+        <p class="prose">
+            All animation states support optional Enter / Loop / Exit transitions. The system automatically detects these based on filename patterns:
+        </p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filename Pattern</th>
+                        <th>Type</th>
+                        <th>Behavior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>*_Enter*</code></td>
+                        <td>Enter</td>
+                        <td>Plays once when the state begins</td>
+                    </tr>
+                    <tr>
+                        <td><code>*_Loop*</code></td>
+                        <td>Loop</td>
+                        <td>Repeats until the state ends</td>
+                    </tr>
+                    <tr>
+                        <td><code>*_Exit*</code></td>
+                        <td>Exit</td>
+                        <td>Plays once when the state ends</td>
+                    </tr>
+                    <tr>
+                        <td>No pattern</td>
+                        <td>Loop (default)</td>
+                        <td>Treated as a loop animation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="alert">
+            <div class="alert-title">How It Works</div>
+            <div class="alert-content">
+                Filenames are checked case-insensitively for <code>_enter</code>, <code>_loop</code>, or <code>_exit</code>. Files without these patterns are treated as loop animations. You can include multiple files of each type — they'll play in sequence.
             </div>
-            <p class="prose">All animation states support optional Enter / Loop / Exit transitions. The system automatically detects these based on filename patterns:</p>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Filename Pattern</th>
-                            <th>Type</th>
-                            <th>Behavior</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>*_Enter*</code></td>
-                            <td>Enter</td>
-                            <td>Plays once when the state begins</td>
-                        </tr>
-                        <tr>
-                            <td><code>*_Loop*</code></td>
-                            <td>Loop</td>
-                            <td>Repeats until the state ends</td>
-                        </tr>
-                        <tr>
-                            <td><code>*_Exit*</code></td>
-                            <td>Exit</td>
-                            <td>Plays once when the state ends</td>
-                        </tr>
-                        <tr>
-                            <td>No pattern</td>
-                            <td>Loop (default)</td>
-                            <td>Treated as a loop animation</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="callout">
-                <b>How it works:</b> Filenames are checked case-insensitively for <code>_enter</code>, <code>_loop</code>, or <code>_exit</code>. Files without these patterns are treated as loop animations. You can include multiple files of each type — they'll play in sequence.
-            </div>
-            <div class="code-label">Examples</div>
-            <div class="code-wrap">
-                <pre>// Full Enter → Loop → Exit pattern
+        </div>
+        <div class="code-label">Examples</div>
+        <div class="code-wrap">
+            <pre>// Full Enter → Loop → Exit pattern
 "Idle": [
   "Unicorn_Idle_Enter.json",    // Plays once at start
   "Unicorn_Idle_Loop.json",     // Loops continuously
@@ -698,145 +688,128 @@
   "Bear_Loop_Charging_B.json",
   "Bear_Exit_Charging.json"
 ]</pre>
-            </div>
         </div>
+    </section>
 
-        <hr>
-
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">📋</span>
-                <h2>Supported Animation States</h2>
-            </div>
-            <p class="prose">Pixlings supports six animation states. All states now support the Enter / Loop / Exit pattern.</p>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>State</th>
-                            <th>Enter/Loop/Exit</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>Idle</code></td>
-                            <td><span class="tick">✅</span></td>
-                            <td>Default state when nothing else is happening</td>
-                        </tr>
-                        <tr>
-                            <td><code>Notification</code></td>
-                            <td><span class="tick">✅</span></td>
-                            <td>Triggered by incoming notifications</td>
-                        </tr>
-                        <tr>
-                            <td><code>Charging</code></td>
-                            <td><span class="tick">✅</span></td>
-                            <td>Active while device is charging</td>
-                        </tr>
-                        <tr>
-                            <td><code>LowBattery</code></td>
-                            <td><span class="tick">✅</span></td>
-                            <td>Active when battery is below threshold</td>
-                        </tr>
-                        <tr>
-                            <td><code>Motion</code></td>
-                            <td><span class="tick">✅</span></td>
-                            <td>Triggered by device shake/movement</td>
-                        </tr>
-                        <tr>
-                            <td><code>Music</code></td>
-                            <td><span class="tick">✅</span></td>
-                            <td>Active during media playback</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <!-- ANIMATION STATES -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📋</span>
+            <h2>Supported Animation States</h2>
         </div>
+        <p class="prose">Pixlings supports six animation states. All states support the Enter / Loop / Exit pattern.</p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Enter/Loop/Exit</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Idle</code></td>
+                        <td><span class="tick">✅</span></td>
+                        <td>Default state when nothing else is happening</td>
+                    </tr>
+                    <tr>
+                        <td><code>Notification</code></td>
+                        <td><span class="tick">✅</span></td>
+                        <td>Triggered by incoming notifications</td>
+                    </tr>
+                    <tr>
+                        <td><code>Charging</code></td>
+                        <td><span class="tick">✅</span></td>
+                        <td>Active while device is charging</td>
+                    </tr>
+                    <tr>
+                        <td><code>LowBattery</code></td>
+                        <td><span class="tick">✅</span></td>
+                        <td>Active when battery is below threshold</td>
+                    </tr>
+                    <tr>
+                        <td><code>Motion</code></td>
+                        <td><span class="tick">✅</span></td>
+                        <td>Triggered by device shake/movement</td>
+                    </tr>
+                    <tr>
+                        <td><code>Music</code></td>
+                        <td><span class="tick">✅</span></td>
+                        <td>Active during media playback</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-        <hr>
-
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">📁</span>
-                <h2>Final Zip Structure</h2>
-            </div>
-            <p class="prose"><code>pack.json</code> goes in the root of the zip. All animation files go inside an <code>animations/</code> subfolder. Filenames in <code>pack.json</code> are plain names — no folder prefix needed.</p>
-            <div class="filetree">
+    <!-- ZIP STRUCTURE -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">📁</span>
+            <h2>Final Zip Structure</h2>
+        </div>
+        <p class="prose">
+            Put <code>pack.json</code> in the root of the zip. All animation files go inside an <code>animations/</code> subfolder. Filenames in <code>pack.json</code> are plain names — no folder prefix needed.
+        </p>
+        <div class="filetree">
 <span>MyPixling.zip</span>
 <div class="indent">│</div>
-<div class="indent">├── <span class="file">pack.json</span></div>
+<div class="indent">├── <span>pack.json</span></div>
 <div class="indent">└── <span class="dir">animations/</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Idle_Enter.json</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Idle_Loop.json</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Idle_Blink.json</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Enter_Bell.json</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Loop_Bell.json</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Exit_Bell.json</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Charging.json</span></div>
-<div class="indent2">├── <span class="file">TeddyBear_Motion.json</span></div>
-<div class="indent2">└── <span class="file">TeddyBear_Music.json</span></div>
-            </div>
+<div class="indent2">├── <span>TeddyBear_Idle_Enter.json</span></div>
+<div class="indent2">├── <span>TeddyBear_Idle_Loop.json</span></div>
+<div class="indent2">├── <span>TeddyBear_Idle_Blink.json</span></div>
+<div class="indent2">├── <span>TeddyBear_Enter_Bell.json</span></div>
+<div class="indent2">├── <span>TeddyBear_Loop_Bell.json</span></div>
+<div class="indent2">├── <span>TeddyBear_Exit_Bell.json</span></div>
+<div class="indent2">├── <span>TeddyBear_Charging.json</span></div>
+<div class="indent2">├── <span>TeddyBear_Motion.json</span></div>
+<div class="indent2">└── <span>TeddyBear_Music.json</span></div>
         </div>
+    </section>
 
-        <hr>
-
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">⚡</span>
-                <h2>Tips for Better Animations</h2>
-            </div>
-            <ul class="bullets">
-                <li>Keep silhouettes strong — readability matters at small sizes.</li>
-                <li>Avoid overly subtle motion — bold movement reads better on the matrix.</li>
-                <li>Make sure loops connect smoothly to themselves and to enter/exit transitions.</li>
-                <li>Test different brightness levels — dim animations feel very different from full brightness.</li>
-                <li>Keep frame counts efficient to reduce unnecessary processing.</li>
-                <li>Use Enter animations for "wake up" effects and Exit for "settling down" transitions.</li>
+    <!-- TIPS -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-icon">💡</span>
+            <h2>Tips for Better Animations</h2>
+        </div>
+        <div class="card">
+            <ul>
+                <li><strong>Keep silhouettes strong:</strong> Readability matters at small sizes on the glyph matrix.</li>
+                <li><strong>Avoid overly subtle motion:</strong> Bold movement reads better on the glyph matrix.</li>
+                <li><strong>Make loops connect smoothly:</strong> Ensure loops connect to themselves and to enter/exit transitions.</li>
+                <li><strong>Test different brightness levels:</strong> Dim animations feel very different from full brightness.</li>
+                <li><strong>Keep frame counts efficient:</strong> Reduce unnecessary processing with leaner animations.</li>
+                <li><strong>Use Enter animations for "wake up" effects:</strong> And Exit for "settling down" transitions.</li>
             </ul>
         </div>
+    </section>
 
-        <hr>
-
-        <div class="final">
-            <span class="glyph">🧠</span>
-            <p><em>The setup itself is simple.</em></p>
-            <p><em>The real work is making something that feels alive.</em></p>
-            <p>Take your time with the animation. Give it personality.<br>Your Pixling should feel like a tiny creature living in the lights.</p>
-        </div>
-
-        <div class="next-step">
-            <p>Ready to package and share your creations?</p>
-            <a href="custom-packs-guide.html">Next: Custom Packs Guide →</a>
-        </div>
-
-        <footer class="footer">
-            <p>Made with care by <strong>Bleelblep</strong></p>
-            <p><a href="index.html">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
-        </footer>
+    <div class="next-step">
+        <p>Ready to package and share your creations?</p>
+        <a href="custom-packs-guide.html">Next: Custom Packs Guide →</a>
     </div>
 
-    <script>
-        // Watermark
-        const wm = document.getElementById("watermark-inner");
-        const wmWords = ["PIXLINGS", "🌿", "PIXLINGS", "🍃"];
-        for (let i = 0; i < 120; i++) {
-            const span = document.createElement("span");
-            span.className = "watermark-word";
-            span.textContent = wmWords[i % wmWords.length];
-            wm.appendChild(span);
-        }
+    <footer class="footer">
+        <p>Made with care by <strong>Bleelblep</strong></p>
+        <p><a href="index.html">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+    </footer>
+</div>
 
-        // Ambient leaves
-        for (let i = 0; i < 12; i++) {
-            const leaf = document.createElement('div');
-            leaf.className = 'leaf';
-            leaf.textContent = ['🍃', '🌿', '🍂'][Math.floor(Math.random() * 3)];
-            leaf.style.left = Math.random() * 100 + '%';
-            leaf.style.animationDuration = (18 + Math.random() * 10) + 's';
-            leaf.style.animationDelay = -(Math.random() * 25) + 's';
-            document.body.appendChild(leaf);
-        }
-    </script>
+<script>
+// Add more leaves dynamically
+for (let i = 0; i < 12; i++) {
+    const leaf = document.createElement('div');
+    leaf.className = 'leaf';
+    leaf.textContent = ['🍃', '🌿', '🍂'][Math.floor(Math.random() * 3)];
+    leaf.style.left = Math.random() * 100 + '%';
+    leaf.style.animationDuration = (18 + Math.random() * 10) + 's';
+    leaf.style.animationDelay = -(Math.random() * 25) + 's';
+    document.body.appendChild(leaf);
+}
+</script>
+
 </body>
 </html>
