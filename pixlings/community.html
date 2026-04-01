@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixlings — Community Packs</title>
+    <style>
+        /* TERRARIUM COLORS */
+        :root {
+            --background: #D7C3AC;
+            --surface: #A1B5A7;
+            --surface-alt: #B8C9BB;
+            --primary: #2C504A;
+            --secondary: #296673;
+            --tertiary: #B087AE;
+            --text: #1A2E2A;
+            --text-muted: #4A6460;
+            --code-bg: #1A2E2A;
+            --code-text: #A8D1C8;
+            --rule: rgba(44, 80, 74, 0.18);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #141008;
+                --surface: #1E1A10;
+                --surface-alt: #252016;
+                --primary: #A8D1C8;
+                --secondary: #88BDC9;
+                --tertiary: #C9A8C6;
+                --text: #EDE0CF;
+                --text-muted: #8A9E99;
+                --code-bg: #0D0A04;
+                --code-text: #A8D1C8;
+                --rule: rgba(168, 209, 200, 0.12);
+            }
+        }
+
+        /* BASE */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.75;
+        }
+
+        /* AMBIENT LEAVES */
+        .leaf {
+            position: fixed;
+            font-size: 16px;
+            opacity: 0.35;
+            pointer-events: none;
+            animation: leafDrift linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes leafDrift {
+            from {
+                transform: translateY(-8vh) rotate(0deg);
+            }
+            to {
+                transform: translateY(108vh) rotate(360deg);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .leaf {
+                animation: none;
+            }
+        }
+
+        /* LAYOUT */
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 840px;
+            margin: 0 auto;
+            padding: 80px 28px 120px;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero-icon {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 20px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-icon {
+                animation: none;
+            }
+        }
+
+        .hero h1 {
+            margin: 0 0 20px;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 400;
+            color: var(--primary);
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        #search {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid var(--rule);
+            border-radius: 12px;
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'Georgia', serif;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        #search:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        select {
+            padding: 14px 18px;
+            border: 2px solid var(--rule);
+            border-radius: 12px;
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'Georgia', serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* PACK GRID */
+        .pack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 28px;
+            margin-bottom: 60px;
+        }
+
+        /* PACK CARD */
+        .pack-card {
+            background: var(--surface);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pack-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .pack-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--surface-alt);
+            display: block;
+        }
+
+        .pack-info {
+            padding: 24px 28px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .pack-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+
+        .pack-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .pack-badge {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 99px;
+            background: var(--secondary);
+            color: var(--background);
+            white-space: nowrap;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .pack-author {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .pack-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .pack-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .pack-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pack-tag {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 99px;
+            background: rgba(0, 0, 0, 0.08);
+            color: var(--text-muted);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .pack-tag {
+                background: rgba(255, 255, 255, 0.08);
+            }
+        }
+
+        .pack-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .pack-button {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: 'Georgia', serif;
+            font-size: 0.95rem;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .pack-button-primary {
+            background: var(--primary);
+            color: var(--background);
+        }
+
+        .pack-button-primary:hover {
+            opacity: 0.9;
+        }
+
+        .pack-button-secondary {
+            background: rgba(0, 0, 0, 0.08);
+            color: var(--text);
+        }
+
+        .pack-button-secondary:hover {
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .pack-button-secondary {
+                background: rgba(255, 255, 255, 0.08);
+            }
+            .pack-button-secondary:hover {
+                background: rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* SUBMIT SECTION */
+        .submit-section {
+            margin-bottom: 60px;
+        }
+
+        .submit-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 48px 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .submit-card h2 {
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--primary);
+            margin: 0 0 16px;
+        }
+
+        .submit-card p {
+            color: var(--text-muted);
+            margin: 0 0 24px;
+            font-size: 1.05rem;
+        }
+
+        .submit-button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: var(--primary);
+            color: var(--background);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* SECTION */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--primary);
+            margin: 0 0 24px;
+        }
+
+        .steps {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 32px 40px;
+            margin: 0;
+            counter-reset: step-counter;
+            list-style: none;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin-bottom: 20px;
+            padding-left: 40px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .steps li:last-child {
+            margin-bottom: 0;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: var(--background);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .steps a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .steps a:hover {
+            border-bottom-color: var(--secondary);
+        }
+
+        .steps code {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1.5px solid var(--rule);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        .footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .footer a:hover {
+            border-bottom-color: var(--secondary);
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+            .page {
+                padding: 60px 20px 100px;
+            }
+            .pack-grid {
+                grid-template-columns: 1fr;
+            }
+            .controls {
+                flex-direction: column;
+            }
+            .filters {
+                width: 100%;
+            }
+            .filters select {
+                flex: 1;
+            }
+            .submit-card {
+                padding: 32px 24px;
+            }
+            .steps {
+                padding: 24px 28px;
+            }
+            .steps li {
+                padding-left: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <header class="hero">
+        <span class="hero-icon">🌍</span>
+        <h1>Community Packs</h1>
+        <p class="hero-subtitle">Discover pixlings created by the community</p>
+    </header>
+
+    <!-- Controls Section -->
+    <div class="controls">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search packs...">
+        </div>
+        <div class="filters">
+            <select id="sort">
+                <option value="newest">Newest First</option>
+                <option value="popular">Most Downloaded</option>
+                <option value="name">Name (A-Z)</option>
+            </select>
+            <select id="category">
+                <option value="all">All Categories</option>
+                <option value="official">Official</option>
+                <option value="cute">Cute</option>
+                <option value="abstract">Abstract</option>
+                <option value="minimal">Minimal</option>
+                <option value="colorful">Colorful</option>
+                <option value="beginner-friendly">Beginner-Friendly</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Pack Grid -->
+    <div id="pack-grid" class="pack-grid">
+        <!-- Dynamically populated via JavaScript -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="empty-state" style="display: none;">
+        <span class="empty-icon">🍂</span>
+        <p>No packs match your search</p>
+    </div>
+
+    <!-- Submit Section -->
+    <section class="submit-section">
+        <div class="submit-card">
+            <span class="submit-icon">✨</span>
+            <h2>Share Your Pixlings</h2>
+            <p>Created a custom pack? Share it with the community!</p>
+            <a href="#how-to-submit" class="submit-button">How to Submit</a>
+        </div>
+    </section>
+
+    <!-- How to Submit Section -->
+    <section id="how-to-submit" class="section">
+        <h2>How to Submit Your Pack</h2>
+        <ol class="steps">
+            <li>Create your pack following the <a href="custom-packs-guide.html">Custom Packs Guide</a></li>
+            <li>Host it on GitHub with a release (or use any direct download link)</li>
+            <li>Fork the <a href="https://github.com/bleelblep/pixlings-docs">pixlings-docs repo</a></li>
+            <li>Add your pack info to <code>packs.json</code></li>
+            <li>Add a preview image (PNG or GIF) to <code>images/packs/</code></li>
+            <li>Submit a Pull Request!</li>
+        </ol>
+    </section>
+
+    <footer class="footer">
+        <p>Made with care by <strong>Bleelblep</strong></p>
+        <p><a href="index.html">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+    </footer>
+</div>
+
+<script src="community.js"></script>
+
+</body>
+</html>
