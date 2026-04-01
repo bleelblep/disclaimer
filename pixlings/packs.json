@@ -1,19 +1,74 @@
 {
-  "packs": [
+  "version": "2.0.0",
+  "lastUpdated": "2026-04-02T12:00:00Z",
+  "items": [
     {
-      "id": "test-pack",
-      "name": "Test / Example Pack",
+      "id": "elysium-starter-pack",
+      "type": "pack",
+      "name": "Elysium Starter Pack",
+      "author": "Bleelblep",
+      "version": "1.0.0",
+      "description": "A curated collection of 5 adorable pixlings to get you started on your Pixlings journey.",
+
+      "pixlingCount": 5,
+
+      "categories": ["official", "cute", "beginner-friendly"],
+      "tags": ["official", "starter", "animated", "cute"],
+
+      "downloadUrl": "https://github.com/bleelblep/elysium-pack/releases/latest/download/elysium-starter.zip",
+      "githubUrl": "https://github.com/bleelblep/elysium-pack",
+      "githubRepo": "bleelblep/elysium-pack",
+      "githubAssetName": "elysium-starter.zip",
+
+      "previewImage": "images/packs/elysium-starter.png",
+      "createdDate": "2026-03-29",
+      "lastUpdated": "2026-04-01",
+
+      "downloads": 1250,
+      "downloadsStatic": 1250,
+      "rating": 4.8,
+      "ratingCount": 15,
+
+      "featured": true,
+      "trending": false,
+      "trendingScore": 0,
+
+      "difficulty": "beginner",
+      "requiredApp": "1.0.0"
+    },
+    {
+      "id": "test-pixling",
+      "type": "pixling",
+      "name": "Test / Example Pixling",
       "author": "Bleelblep",
       "version": "3.0.0",
       "description": "This is a test / example pack with unfinished pixlings",
-      "pixlingCount": 2,
-      "categories": ["official", "cute", "test"],
+
+      "pixlingCount": 1,
+
+      "categories": ["official", "test"],
+      "tags": ["official", "test", "example", "wip"],
+
       "downloadUrl": "https://github.com/bleelblep/testpack/releases/latest/download/Test_Pack_2.zip",
       "githubUrl": "https://github.com/bleelblep/testpack",
+      "githubRepo": "bleelblep/testpack",
+      "githubAssetName": "Test_Pack_2.zip",
+
       "previewImage": "https://raw.githubusercontent.com/bleelblep/testpack/refs/heads/main/preview.png",
       "createdDate": "2026-03-29",
+      "lastUpdated": "2026-04-02",
+
       "downloads": 0,
-      "featured": true
+      "downloadsStatic": 0,
+      "rating": 0,
+      "ratingCount": 0,
+
+      "featured": true,
+      "trending": false,
+      "trendingScore": 0,
+
+      "difficulty": "beginner",
+      "requiredApp": "1.0.0"
     }
   ]
 }
