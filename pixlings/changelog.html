@@ -10,6 +10,7 @@
 :root {
   --background: #D7C3AC;
   --surface: #A1B5A7;
+  --surface-alt: #B8C9BB;
   --primary: #2C504A;
   --secondary: #296673;
   --tertiary: #B087AE;
@@ -17,13 +18,14 @@
   --text-muted: #4A6460;
   --code-bg: #1A2E2A;
   --code-text: #A8D1C8;
-  --rule: rgba(44,80,74,0.15);
+  --rule: rgba(44,80,74,0.18);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #141008;
     --surface: #1E1A10;
+    --surface-alt: #252016;
     --primary: #A8D1C8;
     --secondary: #88BDC9;
     --tertiary: #C9A8C6;
@@ -43,8 +45,7 @@ body {
   font-family: 'Georgia', serif;
   background: var(--background);
   color: var(--text);
-  line-height: 1.7;
-  min-height: 100dvh;
+  line-height: 1.75;
 }
 
 /* LEAVES */
@@ -68,9 +69,9 @@ body {
 .page {
   position: relative;
   z-index: 1;
-  max-width: 720px;
+  max-width: 840px;
   margin: 0 auto;
-  padding: 60px 28px 100px;
+  padding: 80px 28px 120px;
 }
 
 /* HERO */
@@ -331,9 +332,34 @@ code {
   font-size: 0.83em;
 }
 
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding-top: 40px;
+  border-top: 1.5px solid var(--rule);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 60px;
+}
+
+.footer p {
+  margin: 8px 0;
+}
+
+.footer a {
+  color: var(--secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.footer a:hover {
+  border-bottom-color: var(--secondary);
+}
+
 /* MOBILE */
 @media (max-width: 600px) {
-  .page { padding: 40px 20px 80px; }
+  .page { padding: 60px 20px 100px; }
   .timeline { padding-left: 22px; }
   .release::before { left: -28px; }
 }
@@ -352,6 +378,11 @@ code {
 
   <div class="timeline" id="timeline"></div>
 
+  <footer class="footer">
+    <p>Made with care by <strong>Bleelblep</strong></p>
+    <p><a href="https://bleelblep.github.io/disclaimer/pixlings/">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+  </footer>
+
 </div>
 
 <script>
@@ -366,10 +397,46 @@ code {
 
 const RELEASES = [
   {
-    version: "0.7.0",
-    date: "2026-03-31",
+    version: "0.7.1",
+    date: "2026-04-01",
     badge: "latest",
     latest: true,
+    summary: "Activity dashboard with detailed statistics tracking for notifications, motion, music, charging, and battery usage. Plus a new master toggle to disable all Pixlings features at once.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Statistics screen showing activity tracking across all pixling interactions",
+          "Track notification, motion, music, charging, and low battery events in real-time",
+          "Time period selector: view statistics for Today, Week, Month, or All Time",
+          "Battery impact estimation showing service active time and estimated battery usage (~1.5% per hour)",
+          "Most Used Pixlings list displaying your top 5 favorite companions",
+          "Event count cards with icons for each activity type (notifications, motion, music, charging, low battery)",
+          "Background statistics collection with efficient batched database writes",
+          "Statistics accessible from home screen navigation",
+          "Statistics now track events from Auto React mode (previously only tracked when Glyph Composer toy was active)",
+          "Global \"Enable Pixlings\" toggle in About screen — master off switch to disable all features without uninstalling",
+          "Activity tracking toggle to pause statistics collection while keeping Pixlings active"
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Fixed changelog showing on first install — now only displays for existing users after updates",
+          "Changelog no longer appears for new users completing onboarding",
+          "Statistics now properly initialize on app start (StatsTracker now initializes in Application class)",
+          "Fixed statistics not tracking Auto React events"
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.7.0",
+    date: "2026-03-31",
+    badge: "",
+    latest: false,
     summary: "Automatic pack update checking with one-tap updates for custom packs hosted on GitHub or other platforms.",
     groups: [
       {
@@ -781,16 +848,14 @@ function toggleRelease(card) {
 renderChangelog()
 
 /* Leaves */
-const leaves = ["🍃","🌿","🍂"]
-const leafCount = window.innerWidth < 700 ? 5 : 10
-for (let i = 0; i < leafCount; i++) {
-  const l = document.createElement("div")
-  l.className = "leaf"
-  l.innerText = leaves[Math.floor(Math.random() * leaves.length)]
-  l.style.left = Math.random() * 100 + "vw"
-  l.style.animationDuration = (18 + Math.random() * 18) + "s"
-  l.style.animationDelay = Math.random() * 20 + "s"
-  document.body.appendChild(l)
+for (let i = 0; i < 12; i++) {
+  const leaf = document.createElement('div');
+  leaf.className = 'leaf';
+  leaf.textContent = ['🍃', '🌿', '🍂'][Math.floor(Math.random() * 3)];
+  leaf.style.left = Math.random() * 100 + '%';
+  leaf.style.animationDuration = (18 + Math.random() * 10) + 's';
+  leaf.style.animationDelay = -(Math.random() * 25) + 's';
+  document.body.appendChild(leaf);
 }
 </script>
 

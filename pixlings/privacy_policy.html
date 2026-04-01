@@ -10,6 +10,7 @@
 :root {
   --background: #D7C3AC;
   --surface: #A1B5A7;
+  --surface-alt: #B8C9BB;
   --primary: #2C504A;
   --secondary: #296673;
   --tertiary: #B087AE;
@@ -17,13 +18,14 @@
   --text-muted: #4A6460;
   --code-bg: #1A2E2A;
   --code-text: #A8D1C8;
-  --rule: rgba(44,80,74,0.15);
+  --rule: rgba(44,80,74,0.18);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #141008;
     --surface: #1E1A10;
+    --surface-alt: #252016;
     --primary: #A8D1C8;
     --secondary: #88BDC9;
     --tertiary: #C9A8C6;
@@ -43,8 +45,7 @@ body {
   font-family: 'Georgia', serif;
   background: var(--background);
   color: var(--text);
-  line-height: 1.7;
-  min-height: 100dvh;
+  line-height: 1.75;
 }
 
 /* LEAVES */
@@ -68,9 +69,9 @@ body {
 .page {
   position: relative;
   z-index: 1;
-  max-width: 720px;
+  max-width: 840px;
   margin: 0 auto;
-  padding: 60px 28px 100px;
+  padding: 80px 28px 120px;
 }
 
 /* HERO */
@@ -289,27 +290,32 @@ code {
 
 /* FOOTER */
 .footer {
-  margin-top: 60px;
-  padding-top: 24px;
-  border-top: 1.5px solid var(--rule);
   text-align: center;
-}
-.footer p {
-  font-size: 0.85rem;
+  padding-top: 40px;
+  border-top: 1.5px solid var(--rule);
   color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 60px;
+}
+
+.footer p {
   margin: 8px 0;
 }
+
 .footer a {
   color: var(--secondary);
   text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
 }
+
 .footer a:hover {
-  text-decoration: underline;
+  border-bottom-color: var(--secondary);
 }
 
 /* MOBILE */
 @media (max-width: 600px) {
-  .page { padding: 40px 20px 80px; }
+  .page { padding: 60px 20px 100px; }
   .not-collected { grid-template-columns: 1fr; }
 }
 
@@ -377,10 +383,23 @@ code {
     <p>All data is stored locally on your device:</p>
     <ul>
       <li><strong>Preferences:</strong> Your app settings, theme choices, and configuration options are stored in local SharedPreferences.</li>
-      <li><strong>Database:</strong> Pixling configurations and your app selection preferences are stored in a local SQLite database.</li>
+      <li><strong>Database:</strong> Pixling configurations, your app selection preferences, and optional activity statistics are stored in a local SQLite database.</li>
       <li><strong>Custom Animations:</strong> Any custom pixling animations you import are stored in the app's private storage directory.</li>
+      <li><strong>Activity Statistics:</strong> If enabled, local statistics track event counts (notifications, motion, music, charging) for the Statistics dashboard. This data never leaves your device.</li>
     </ul>
     <p><strong>None of this data is transmitted to external servers.</strong></p>
+  </div>
+
+  <div class="section">
+    <h2>Your Control & Choices</h2>
+    <p>You have complete control over Pixlings functionality and data collection:</p>
+    <ul>
+      <li><strong>Master Toggle:</strong> The "Enable Pixlings" setting in About allows you to disable all app functionality with one tap, without uninstalling. When disabled, no animations play and no background services run.</li>
+      <li><strong>Activity Tracking:</strong> You can disable activity statistics tracking at any time in About settings. This stops all event collection for the Statistics dashboard while keeping animations active.</li>
+      <li><strong>Per-App Control:</strong> Choose exactly which apps trigger notifications and music animations in the Allowlist settings.</li>
+      <li><strong>System Priority:</strong> Control when Pixlings pauses (during calls, for Glyph Timer) or manually pause via the Manual Pause toggle.</li>
+      <li><strong>Data Deletion:</strong> Use "Clear Cache" in About to delete temporary files, or uninstall the app to remove all data from your device.</li>
+    </ul>
   </div>
 
   <div class="section">
@@ -429,10 +448,10 @@ code {
     <p>We may update this Privacy Policy from time to time. Any changes will be reflected in the "Last Updated" date at the top of this policy. We encourage you to review this policy periodically.</p>
   </div>
 
-  <div class="footer">
-    <p>Questions? Contact us at <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
-    <p><em>This privacy policy applies to the Pixlings application available on Google Play.</em></p>
-  </div>
+  <footer class="footer">
+    <p>Made with care by <strong>Bleelblep</strong></p>
+    <p><a href="https://bleelblep.github.io/disclaimer/pixlings/">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+  </footer>
 
 </div>
 
@@ -561,16 +580,14 @@ function togglePermission(card) {
 renderPermissions();
 
 /* Leaves */
-const leaves = ["🍃","🌿","🍂"];
-const leafCount = window.innerWidth < 700 ? 5 : 10;
-for (let i = 0; i < leafCount; i++) {
-  const l = document.createElement("div");
-  l.className = "leaf";
-  l.innerText = leaves[Math.floor(Math.random() * leaves.length)];
-  l.style.left = Math.random() * 100 + "vw";
-  l.style.animationDuration = (18 + Math.random() * 18) + "s";
-  l.style.animationDelay = Math.random() * 20 + "s";
-  document.body.appendChild(l);
+for (let i = 0; i < 12; i++) {
+  const leaf = document.createElement('div');
+  leaf.className = 'leaf';
+  leaf.textContent = ['🍃', '🌿', '🍂'][Math.floor(Math.random() * 3)];
+  leaf.style.left = Math.random() * 100 + '%';
+  leaf.style.animationDuration = (18 + Math.random() * 10) + 's';
+  leaf.style.animationDelay = -(Math.random() * 25) + 's';
+  document.body.appendChild(leaf);
 }
 </script>
 

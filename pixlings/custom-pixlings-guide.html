@@ -78,9 +78,9 @@
         .page {
             position: relative;
             z-index: 1;
-            max-width: 780px;
+            max-width: 840px;
             margin: 0 auto;
-            padding: 60px 28px 100px;
+            padding: 80px 28px 120px;
         }
 
         /* HEADER */
@@ -376,10 +376,35 @@
             border-bottom-color: var(--secondary);
         }
 
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1.5px solid var(--rule);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        .footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .footer a:hover {
+            border-bottom-color: var(--secondary);
+        }
+
         /* MOBILE */
         @media (max-width: 600px) {
             .page {
-                padding: 40px 20px 80px;
+                padding: 60px 20px 100px;
             }
             .card {
                 padding: 18px 20px;
@@ -449,7 +474,7 @@
                 <span class="section-icon">🛠</span>
                 <h2>Creating Animations</h2>
             </div>
-            <p class="prose">Build your Pixling animations using the <a href="https://glypheditor.pauwma.com/">Glyph Matrix Editor by pauwma</a>. It lets you work directly with the glyph matrix and control the brightness of every LED.</p>
+            <p class="prose">Build your Pixling animations using the <a href="https://glypheditor.pauwma.com/">Glyph Matrix Editor by pauwma</a>. It lets you work directly with the 27×18 matrix and control the brightness of every LED.</p>
             <ol class="steps">
                 <li>Create your animation directly in the editor.</li>
                 <li>Export the animation as a <code>.json</code> file.</li>
@@ -774,6 +799,11 @@
             <p><em>The real work is making something that feels alive.</em></p>
             <p>Take your time with the animation. Give it personality.<br>Your Pixling should feel like a tiny creature living in the lights.</p>
         </div>
+
+        <footer class="footer">
+            <p>Made with care by <strong>Bleelblep</strong></p>
+            <p><a href="https://bleelblep.github.io/disclaimer/pixlings/">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+        </footer>
     </div>
 
     <script>
@@ -788,17 +818,14 @@
         }
 
         // Ambient leaves
-        const leaves = ["🍃", "🌿", "🍂"];
-        const count = window.innerWidth < 700 ? 6 : 12;
-
-        for (let i = 0; i < count; i++) {
-            const l = document.createElement("div");
-            l.className = "leaf";
-            l.innerText = leaves[Math.floor(Math.random() * leaves.length)];
-            l.style.left = Math.random() * 100 + "vw";
-            l.style.animationDuration = (18 + Math.random() * 18) + "s";
-            l.style.animationDelay = Math.random() * 20 + "s";
-            document.body.appendChild(l);
+        for (let i = 0; i < 12; i++) {
+            const leaf = document.createElement('div');
+            leaf.className = 'leaf';
+            leaf.textContent = ['🍃', '🌿', '🍂'][Math.floor(Math.random() * 3)];
+            leaf.style.left = Math.random() * 100 + '%';
+            leaf.style.animationDuration = (18 + Math.random() * 10) + 's';
+            leaf.style.animationDelay = -(Math.random() * 25) + 's';
+            document.body.appendChild(leaf);
         }
     </script>
 </body>
