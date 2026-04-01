@@ -414,39 +414,6 @@
             }
         }
 
-        /* WATERMARK */
-        .watermark {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-            opacity: 0.045;
-        }
-        @media (prefers-color-scheme: dark) {
-            .watermark { opacity: 0.065; }
-        }
-        .watermark-inner {
-            position: absolute;
-            inset: -20%;
-            display: flex;
-            flex-wrap: wrap;
-            align-content: flex-start;
-            transform: rotate(-22deg);
-            transform-origin: center center;
-        }
-        .watermark-word {
-            font-family: 'Courier New', monospace;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: .2em;
-            text-transform: uppercase;
-            color: var(--primary);
-            white-space: nowrap;
-            padding: 12px 18px;
-            line-height: 1;
-        }
-
         /* INLINE CODE */
         code {
             background: var(--code-bg);
@@ -459,9 +426,16 @@
     </style>
 </head>
 <body>
-    <div class="watermark" aria-hidden="true">
-        <div class="watermark-inner" id="watermark-inner"></div>
-    </div>
+
+
+<!-- Ambient leaves -->
+<div class="leaf" style="left:10%;animation-duration:18s;animation-delay:-2s">🍃</div>
+<div class="leaf" style="left:25%;animation-duration:22s;animation-delay:-8s">🍃</div>
+<div class="leaf" style="left:45%;animation-duration:20s;animation-delay:-5s">🍃</div>
+<div class="leaf" style="left:65%;animation-duration:24s;animation-delay:-12s">🍃</div>
+<div class="leaf" style="left:82%;animation-duration:19s;animation-delay:-15s">🍃</div>
+
+
     <div class="page">
         <div class="hero">
             <div class="hero-eyebrow">🌱 Pixlings</div>
