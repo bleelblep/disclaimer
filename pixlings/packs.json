@@ -1,18 +1,17 @@
 {
   "packs": [
     {
-      "id": "elysium-starter-pack",
-      "name": "Elysium Starter Pack",
+      "id": "test-pack",
+      "name": "Test / Example Pack",
       "author": "Bleelblep",
       "version": "1.0.0",
-      "description": "A curated collection of 5 adorable pixlings to get you started on your Pixlings journey.",
-      "pixlingCount": 5,
+      "description": This is a test / example pack with unfinished pixlings",
+      "pixlingCount": 2,
       "categories": ["official", "cute", "beginner-friendly"],
-      "downloadUrl": "https://github.com/bleelblep/elysium-pack/releases/latest/download/elysium-starter.zip",
-      "githubUrl": "https://github.com/bleelblep/elysium-pack",
-      "previewImage": "images/packs/elysium-starter.png",
+      "downloadUrl": "https://github.com/bleelblep/testpack/releases/latest/download/Test_Pack_2.zip",
+      "githubUrl": "https://github.com/bleelblep/testpack",
+      "previewImage": "https://raw.githubusercontent.com/bleelblep/testpack/refs/heads/main/preview.png",
       "createdDate": "2026-03-29",
-      "downloads": 1250,
       "featured": true
     }
   ]
