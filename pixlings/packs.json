@@ -3,12 +3,12 @@
   "lastUpdated": "2026-04-02T12:00:00Z",
   "items": [
     {
-      "id": "elysium-starter-pack",
+      "id": "placeholder",
       "type": "pack",
-      "name": "Elysium Starter Pack",
+      "name": "Placeholder Pack",
       "author": "Bleelblep",
       "version": "1.0.0",
-      "description": "A curated collection of 5 adorable pixlings to get you started on your Pixlings journey.",
+      "description": "A placeholder pack example. doesnt actually exist.",
 
       "pixlingCount": 5,
 
@@ -23,11 +23,6 @@
       "previewImage": "images/packs/elysium-starter.png",
       "createdDate": "2026-03-29",
       "lastUpdated": "2026-04-01",
-
-      "downloads": 1250,
-      "downloadsStatic": 1250,
-      "rating": 4.8,
-      "ratingCount": 15,
 
       "featured": true,
       "trending": false,
