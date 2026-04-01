@@ -397,10 +397,56 @@ code {
 
 const RELEASES = [
   {
-    version: "0.7.1",
+    version: "0.7.2",
     date: "2026-04-01",
     badge: "latest",
     latest: true,
+    summary: "Session-based battery tracking with actual device battery monitoring. Community packs showcase page for discovering and sharing custom Pixlings.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Session-based battery tracking — now shows actual battery drain alongside estimated usage",
+          "Real battery monitoring compares device battery levels at session start and end",
+          "Battery statistics display both Actual and Estimated usage side-by-side for transparency",
+          "Session counter shows total number of active service sessions tracked",
+          "Per-pixling usage statistics now properly collected and displayed in Most Used list",
+          "Service uptime tracking fixed — active time is now accurately recorded for each session",
+          "Community Packs showcase page on GitHub Pages — discover custom Pixlings created by the community",
+          "Search, filter by category, and sort packs (newest, most downloaded, alphabetical)",
+          "Rich pack cards with preview images, descriptions, download counts, author info, and GitHub links",
+          "Pack submission system — creators can share custom packs via GitHub Pull Requests to <code>packs.json</code>",
+          "Step-by-step submission guide for packaging and distributing community packs",
+          "Community page accessible from main documentation hub with terrarium theme styling"
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "Battery statistics now show Actual (measured) vs Estimated (calculated) battery usage",
+          "Statistics screen redesigned to accommodate actual battery tracking metrics",
+          "Database schema updated to v16 with new fields for actual battery drain and session tracking"
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Service uptime now tracked correctly via SessionTracker (previously never called)",
+          "Battery estimation now works (was showing 0% due to missing uptime tracking)",
+          "PixlingUsageStats table now populated with actual usage data (was unused)",
+          "Real battery tracking captures actual device battery consumption during sessions"
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.7.1",
+    date: "2026-04-01",
+    badge: "",
+    latest: false,
     summary: "Activity dashboard with detailed statistics tracking for notifications, motion, music, charging, and battery usage. Plus a new master toggle to disable all Pixlings features at once.",
     groups: [
       {
