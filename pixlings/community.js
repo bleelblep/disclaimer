@@ -292,13 +292,18 @@ function renderMetrics(itemType, pixlingCount, downloads, lastUpdated) {
 
 // Get last updated date (GitHub API > manual field > created date)
 function getLastUpdated(item, metrics) {
-    if (metrics?.updatedAt) {
-        return new Date(metrics.updatedAt);
+    const candidates = [
+        metrics?.updatedAt,
+        item.lastUpdated,
+        item.createdDate
+    ];
+    for (const val of candidates) {
+        if (val) {
+            const d = new Date(val);
+            if (!isNaN(d.getTime())) return d;
+        }
     }
-    if (item.lastUpdated) {
-        return new Date(item.lastUpdated);
-    }
-    return new Date(item.createdDate);
+    return null;
 }
 
 // Check if item should show trending badge
@@ -340,11 +345,12 @@ function formatDownloads(count) {
 
 // Format relative time
 function formatRelativeTime(date) {
+    if (!date || isNaN(date.getTime())) return 'unknown';
     const now = Date.now();
     const diff = now - date.getTime();
     const days = Math.floor(diff / (24 * 60 * 60 * 1000));
 
-    if (days === 0) return 'today';
+    if (days <= 0) return 'today';
     if (days === 1) return 'yesterday';
     if (days < 7) return `${days}d ago`;
     if (days < 30) return `${Math.floor(days / 7)}w ago`;
@@ -426,7 +432,7 @@ function filterAndRender() {
             case 'updated': {
                 const aUpdated = getLastUpdated(a, githubMetrics.get(a.id));
                 const bUpdated = getLastUpdated(b, githubMetrics.get(b.id));
-                return bUpdated - aUpdated;
+                return (bUpdated?.getTime() ?? 0) - (aUpdated?.getTime() ?? 0);
             }
 
             case 'name':
