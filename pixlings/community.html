@@ -139,6 +139,34 @@
             min-width: 200px;
         }
 
+        .refresh-button {
+            padding: 14px 20px;
+            border: 2px solid var(--rule);
+            border-radius: 12px;
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'Georgia', serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .refresh-button:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--background);
+        }
+
+        .refresh-button:active {
+            transform: scale(0.98);
+        }
+
+        .refresh-button.refreshing {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         #search {
             width: 100%;
             padding: 14px 20px;
@@ -705,6 +733,9 @@
         <div class="search-bar">
             <input type="text" id="search" placeholder="Search packs...">
         </div>
+        <button id="refresh-metrics" class="refresh-button" title="Refresh download counts from GitHub">
+            🔄 Refresh Metrics
+        </button>
         <div class="filters">
             <select id="type-filter">
                 <option value="all">All Types</option>

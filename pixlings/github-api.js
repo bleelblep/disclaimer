@@ -15,7 +15,7 @@
 
 const GITHUB_API_BASE = 'https://api.github.com';
 const CACHE_DURATION_MEMORY = 10 * 60 * 1000; // 10 minutes
-const CACHE_DURATION_STORAGE = 60 * 60 * 1000; // 1 hour
+const CACHE_DURATION_STORAGE = 60 * 60 * 1000; // 1 hour (set to 60000 for 1 minute while testing)
 const CACHE_KEY_PREFIX = 'gh_cache_';
 const STORAGE_CACHE_KEY = 'pixlings_github_metrics_cache';
 
@@ -196,12 +196,12 @@ class GitHubMetricsClient {
                 throw new Error(`GitHub API error: ${response.status} for ${owner}/${repo}`);
             }
 
-            const repo = await response.json();
+            const repoData = await response.json();
 
             const metrics = {
-                stars: repo.stargazers_count,
-                watchers: repo.watchers_count,
-                updatedAt: repo.updated_at
+                stars: repoData.stargazers_count,
+                watchers: repoData.watchers_count,
+                updatedAt: repoData.updated_at
             };
 
             this.setCache(cacheKey, metrics);
