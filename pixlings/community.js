@@ -446,12 +446,31 @@ function trackDownload(itemId) {
     ViewTracker.recordView(itemId);
 }
 
+// Refresh metrics button
+async function refreshMetrics() {
+    const button = document.getElementById('refresh-metrics');
+    button.classList.add('refreshing');
+    button.textContent = '⏳ Refreshing...';
+
+    // Clear cache
+    if (githubClient) {
+        githubClient.clearCache();
+    }
+
+    // Re-fetch metrics
+    await fetchGitHubMetrics();
+
+    button.classList.remove('refreshing');
+    button.textContent = '🔄 Refresh Metrics';
+}
+
 // Event listeners
 document.getElementById('search').addEventListener('input', filterAndRender);
 document.getElementById('type-filter').addEventListener('change', filterAndRender);
 document.getElementById('sort').addEventListener('change', filterAndRender);
 document.getElementById('category').addEventListener('change', filterAndRender);
 document.getElementById('difficulty-filter').addEventListener('change', filterAndRender);
+document.getElementById('refresh-metrics').addEventListener('click', refreshMetrics);
 
 // Initialize on page load
 window.addEventListener('DOMContentLoaded', () => {
