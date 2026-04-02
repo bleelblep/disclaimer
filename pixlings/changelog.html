@@ -76,7 +76,7 @@ body {
 
 /* HERO */
 .hero {
-  margin-bottom: 56px;
+  margin-bottom: 60px;
 }
 .hero-eyebrow {
   font-family: 'Courier New', monospace;
@@ -89,7 +89,7 @@ body {
 }
 .hero h1 {
   margin: 0 0 14px;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
   font-weight: 400;
   color: var(--primary);
   line-height: 1.15;
@@ -367,13 +367,6 @@ code {
 </style>
 </head>
 <body>
-<!-- Ambient leaves -->
-<div class="leaf" style="left:10%;animation-duration:18s;animation-delay:-2s">🍃</div>
-<div class="leaf" style="left:25%;animation-duration:22s;animation-delay:-8s">🍃</div>
-<div class="leaf" style="left:45%;animation-duration:20s;animation-delay:-5s">🍃</div>
-<div class="leaf" style="left:65%;animation-duration:24s;animation-delay:-12s">🍃</div>
-<div class="leaf" style="left:82%;animation-duration:19s;animation-delay:-15s">🍃</div>
-
 
 <div class="page">
 
@@ -387,7 +380,7 @@ code {
 
   <footer class="footer">
     <p>Made with care by <strong>Bleelblep</strong></p>
-    <p><a href="index.html">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
+    <p><a href="https://bleelblep.github.io/disclaimer/pixlings/">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
   </footer>
 
 </div>
@@ -404,10 +397,108 @@ code {
 
 const RELEASES = [
   {
-    version: "0.7.2",
-    date: "2026-04-01",
+    version: "0.7.4",
+    date: "2026-04-03",
     badge: "latest",
     latest: true,
+    summary: "In-app preview now always shows animation — no more blank screens. Media app allowlist now correctly disables all apps by default and loads with the same smooth feel as notifications. Fixed idle animation picker showing full file paths for sideloaded packs. Animation state broadcasting enhanced with phase tracking for perfect sync between preview and physical Glyph Matrix.",
+    groups: [
+      {
+        tag: "new",
+        label: "New",
+        items: [
+          "Enhanced <code>GlyphAnimationState</code> broadcasting — service now broadcasts animation phase (ENTER/LOOP/EXIT), current asset name, system state, and loop count",
+          "Dual-mode preview system — mirrors service when active, shows standalone animation when inactive",
+          "Standalone preview mode with full animation playback when service is not active",
+          "Animation phase tracking visible in preview for debugging (ENTER/LOOP/EXIT phases)"
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "Preview no longer shows blank \"Service Inactive\" overlay — always displays animation regardless of service state",
+          "Notification flow error handling with <code>.catch()</code> and background threading via <code>flowOn(Dispatchers.Default)</code>",
+          "Preview synchronization — no more desync between in-app preview and physical glyph matrix",
+          "<strong>Media allowlist bug:</strong> Media apps are now <strong>disabled by default</strong> (proper whitelist behavior) — previously ALL media apps could trigger reactions by default",
+          "Media app allowlist now loads with the same feel as notifications — screen appears first, then the app list populates",
+          "Per-app list screen now uses the correct shared element enter/exit animation when opened from the Media screen",
+          "Default Idle Animation dropdown no longer shows full file path for sideloaded packs — displays clean animation name only"
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "Preview seamlessly switches between mirror mode (service active) and standalone mode (service inactive)",
+          "Loop counts now calculated on-the-fly from pixling configuration for simpler state management",
+          "<code>GlyphMatrixMirror</code> now consumes enhanced <code>animationState</code> instead of just frame pixels",
+          "Removed duplicate UI loop count tracking — service is now single source of truth"
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.7.3",
+    date: "2026-04-02",
+    badge: "",
+    latest: false,
+    summary: "Major stability overhaul fixing 9 critical bugs. Resolves memory leaks, race conditions, battery drain, crashes, and data loss issues. Complete rewrite of concurrency and state management.",
+    groups: [
+      {
+        tag: "fixed",
+        label: "Fixed — Critical Severity",
+        items: [
+          "<strong>App allowlist bug:</strong> Notification apps are now <strong>disabled by default</strong> (proper allowlist/whitelist behavior) — previously <strong>ALL apps</strong> on your device would trigger notification reactions by default",
+          "<strong>Memory leak:</strong> Service cleanup now properly waits for data to save before destroying resources — session data and statistics no longer lost when service stops",
+          "<strong>Race condition:</strong> State management completely rewritten with proper mutex synchronization — animations no longer glitch or play in wrong states"
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed — High Severity",
+        items: [
+          "<strong>Battery drain:</strong> Wake lock now releases properly even if app crashes, with 10-minute timeout safety measure",
+          "<strong>Crash prevention:</strong> Replaced unsafe non-null assertions (<code>!!</code>) in pack import with safe error handling — corrupted packs now show error instead of crashing",
+          "<strong>Data race:</strong> Fixed Pixling value race condition — statistics and sessions now track correct Pixling when rapidly switching between them"
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed — Medium Severity",
+        items: [
+          "<strong>Concurrent modification:</strong> Fixed state updates during animation cleanup — all state modifications now protected by mutex locks",
+          "<strong>Deadlock prevention:</strong> Documented lock ordering policy and verified no deadlock scenarios exist between state and matrix mutexes",
+          "<strong>Silent failures:</strong> Statistics tracker now logs errors when repository is null instead of silently failing — helps diagnose tracking issues"
+        ]
+      },
+      {
+        tag: "fixed",
+        label: "Fixed — Other Issues",
+        items: [
+          "Fixed notifications triggering even when Pixlings is globally disabled",
+          "Fixed glyph preview misalignment when status chip changes size (e.g., loop counter changing)",
+          "Glyph preview and status chip now positioned independently for stable layout"
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "Per-app allowlist screen redesigned with <strong>Enabled</strong> and <strong>Disabled</strong> sections",
+          "App counts now shown for each section (e.g., \"ENABLED (5)\")",
+          "Service cleanup uses <code>runBlocking</code> instead of coroutine launch to ensure completion",
+          "All state updates across services now properly synchronized with mutex protection",
+          "Lock ordering policy documented in code to prevent future deadlock bugs"
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.7.2",
+    date: "2026-04-01",
+    badge: "",
+    latest: false,
     summary: "Session-based battery tracking with actual device battery monitoring. Community packs showcase page for discovering and sharing custom Pixlings.",
     groups: [
       {
