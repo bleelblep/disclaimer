@@ -397,10 +397,78 @@ code {
 
 const RELEASES = [
   {
-    version: "0.7.4",
-    date: "2026-04-03",
+    version: "0.7.6",
+    date: "2026-04-09",
     badge: "latest",
     latest: true,
+    summary: "Security fix for ZIP pack import, several crash fixes, and a round of performance improvements. No new features — just a cleaner, more reliable engine under the hood.",
+    groups: [
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "<strong>Security — ZIP Slip:</strong> Malicious pack ZIP entries (e.g. <code>../../shared_prefs/…</code>) can no longer escape the import directory and overwrite app data",
+          "<strong>Crash — pack import:</strong> <code>confirmImport()</code> no longer throws <code>NullPointerException</code> when a pack name resolves to null — uses the already-validated name instead",
+          "<strong>Crash — custom pack import:</strong> Removed unsafe force-unwrap on <code>defaultIdleAnimation</code> — no longer crashes when the field is present but the smart-cast cannot propagate",
+          "<strong>Wake lock safety cap:</strong> Wake lock now has a 10-minute hard timeout — previously held indefinitely if the service was killed without calling <code>onDestroy</code>",
+          "<strong>Observer leak:</strong> <code>ContentObserver</code> (brightness) and <code>TelephonyCallback</code> (call state) are now properly unregistered when either service stops",
+          "<strong>Session race condition:</strong> <code>SessionTracker</code> now uses a mutex — concurrent service starts can no longer silently overwrite an active session and lose its data",
+          "<strong>Navigation:</strong> Completing onboarding no longer leaves setup screens on the back stack — back button from Home no longer returns to setup"
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Performance",
+        items: [
+          "<strong>Statistics screen:</strong> Large datasets (All Time) load dramatically faster — replaced full-table row scan with a SQL <code>GROUP BY</code> query",
+          "<strong>Notification handling:</strong> Allowed-apps list is now cached in memory — no longer issues a database query on every incoming notification",
+          "<strong>App Allowlist screen:</strong> App icons no longer allocate new bitmaps on every scroll recomposition",
+          "<strong>App Allowlist screen:</strong> Removed artificial 900 ms loading delay — list appears as soon as data is ready",
+          "<strong>Statistics updates:</strong> All state values now batch-update together to prevent one-frame flicker between old and new values",
+          "<strong>Event recording:</strong> Activity tracking preference is now cached — no longer reads <code>SharedPreferences</code> on every recorded event"
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.7.5",
+    date: "2026-04-06",
+    badge: "",
+    latest: false,
+    summary: "Statistics screen debug tools removed. UI polish with loading skeleton, animated refresh, and clearer empty states. Fixed Glyph Toy cycling to 'off' showing the Pixling when App React is on. Unified allowlist to block-by-default. Eliminated ANR risk in service teardown.",
+    groups: [
+      {
+        tag: "fixed",
+        label: "Fixed",
+        items: [
+          "<strong>Glyph Toy 'off' bug (App React):</strong> Cycling to the off option no longer shows the Pixling when App React is enabled — idle frames are no longer pushed to the app matrix, and non-charging reactions now close the display after finishing",
+          "<strong>Glyph Toy 'off' bug (AOD snapshot):</strong> Service now ignores <code>ACTION_AOD_UPDATE</code> when not the selected toy, preventing a stale frame from appearing during cycling",
+          "<strong>App React animation cleanup:</strong> Reactions (Music, Motion, LowBattery) no longer leave the last frame frozen — app matrix is closed properly after the animation finishes",
+          "<strong>Allowlist consistency:</strong> Unknown apps are now blocked by default in both notification and music allowlists across all services (was inconsistent — some paths defaulted to allow)",
+          "<strong>ANR risk:</strong> Service <code>onDestroy()</code> no longer blocks the main thread while saving session data — now fire-and-forget with a 2s timeout",
+          "<strong>Wake lock:</strong> Removed 10-minute hard timeout — wake lock now releases cleanly on service teardown for long sessions"
+        ]
+      },
+      {
+        tag: "changed",
+        label: "Changed",
+        items: [
+          "App React mode now shows brief reactions — only Charging loops forever, all other states play their configured loop count then clear the display",
+          "Statistics screen debug tools removed — Debug Mode card, Test Data button, and Flush Events button are gone",
+          "Statistics screen shows a loading skeleton while data is being fetched",
+          "Refresh button spins while statistics are loading",
+          "\"Most Used Pixlings\" section now labeled <strong>ALL TIME</strong> to clarify it is not filtered by the selected time period",
+          "Battery usage displays <strong>—</strong> with a \"Tracked after first full session\" note instead of 0.0% when no data exists yet",
+          "Service active time displays <strong>—</strong> instead of \"0s\" when not yet tracked"
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.7.4",
+    date: "2026-04-03",
+    badge: "",
+    latest: false,
     summary: "In-app preview now always shows animation — no more blank screens. Media app allowlist now correctly disables all apps by default and loads with the same smooth feel as notifications. Fixed idle animation picker showing full file paths for sideloaded packs. Animation state broadcasting enhanced with phase tracking for perfect sync between preview and physical Glyph Matrix.",
     groups: [
       {
