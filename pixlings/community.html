@@ -1,815 +1,733 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixlings — Community Packs</title>
-    <style>
-        /* TERRARIUM COLORS */
-        :root {
-            --background: #D7C3AC;
-            --surface: #A1B5A7;
-            --surface-alt: #B8C9BB;
-            --primary: #2C504A;
-            --secondary: #296673;
-            --tertiary: #B087AE;
-            --text: #1A2E2A;
-            --text-muted: #4A6460;
-            --code-bg: #1A2E2A;
-            --code-text: #A8D1C8;
-            --rule: rgba(44, 80, 74, 0.18);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --background: #141008;
-                --surface: #1E1A10;
-                --surface-alt: #252016;
-                --primary: #A8D1C8;
-                --secondary: #88BDC9;
-                --tertiary: #C9A8C6;
-                --text: #EDE0CF;
-                --text-muted: #8A9E99;
-                --code-bg: #0D0A04;
-                --code-text: #A8D1C8;
-                --rule: rgba(168, 209, 200, 0.12);
-            }
-        }
-
-        /* BASE */
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Georgia', serif;
-            background: var(--background);
-            color: var(--text);
-            line-height: 1.75;
-        }
-
-        /* AMBIENT LEAVES */
-        .leaf {
-            position: fixed;
-            font-size: 16px;
-            opacity: 0.35;
-            pointer-events: none;
-            animation: leafDrift linear infinite;
-            z-index: 0;
-        }
-
-        @keyframes leafDrift {
-            from {
-                transform: translateY(-8vh) rotate(0deg);
-            }
-            to {
-                transform: translateY(108vh) rotate(360deg);
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .leaf {
-                animation: none;
-            }
-        }
-
-        /* LAYOUT */
-        .page {
-            position: relative;
-            z-index: 1;
-            max-width: 840px;
-            margin: 0 auto;
-            padding: 80px 28px 120px;
-        }
-
-        /* HERO */
-        .hero {
-            text-align: center;
-            margin-bottom: 56px;
-        }
-
-        .hero-icon {
-            font-size: 4rem;
-            display: block;
-            margin-bottom: 20px;
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-12px);
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .hero-icon {
-                animation: none;
-            }
-        }
-
-        .hero h1 {
-            margin: 0 0 20px;
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 400;
-            color: var(--primary);
-            line-height: 1.1;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* CONTROLS */
-        .controls {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .search-bar {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .refresh-button {
-            padding: 14px 20px;
-            border: 2px solid var(--rule);
-            border-radius: 12px;
-            background: var(--surface);
-            color: var(--text);
-            font-family: 'Georgia', serif;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .refresh-button:hover {
-            border-color: var(--primary);
-            background: var(--primary);
-            color: var(--background);
-        }
-
-        .refresh-button:active {
-            transform: scale(0.98);
-        }
-
-        .refresh-button.refreshing {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        #search {
-            width: 100%;
-            padding: 14px 20px;
-            border: 2px solid var(--rule);
-            border-radius: 12px;
-            background: var(--surface);
-            color: var(--text);
-            font-family: 'Georgia', serif;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-
-        #search:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .filters {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        select {
-            padding: 14px 18px;
-            border: 2px solid var(--rule);
-            border-radius: 12px;
-            background: var(--surface);
-            color: var(--text);
-            font-family: 'Georgia', serif;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        /* PACK GRID */
-        .pack-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 28px;
-            margin-bottom: 60px;
-        }
-
-        /* PACK CARD */
-        .pack-card {
-            background: var(--surface);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pack-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-        }
-
-        .pack-preview-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            background: var(--surface-alt);
-        }
-
-        .pack-preview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* OVERLAY BADGES */
-        .card-badges {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            align-items: flex-start;
-        }
-
-        .badge-featured,
-        .badge-trending,
-        .badge-new {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .badge-featured {
-            background: rgba(255, 215, 0, 0.95);
-            color: #000;
-        }
-
-        .badge-trending {
-            background: rgba(255, 87, 34, 0.95);
-            color: #fff;
-        }
-
-        .badge-new {
-            background: rgba(76, 175, 80, 0.95);
-            color: #fff;
-        }
-
-        /* TYPE BADGE */
-        .card-type {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-        }
-
-        .type-badge {
-            font-size: 0.65rem;
-            padding: 4px 10px;
-            border-radius: 99px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .type-pack {
-            background: rgba(var(--secondary-rgb, 41, 102, 115), 0.95);
-            color: var(--background);
-        }
-
-        .type-pixling {
-            background: rgba(var(--tertiary-rgb, 176, 135, 174), 0.95);
-            color: var(--background);
-        }
-
-        /* RATING DISPLAY */
-        .pack-rating {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-        }
-
-        .rating-stars {
-            color: #FFB400;
-        }
-
-        .rating-text {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .rating-count {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        /* METRICS GRID */
-        .pack-metrics {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 16px 0;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.04);
-            border-radius: 12px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .pack-metrics {
-                background: rgba(255, 255, 255, 0.04);
-            }
-        }
-
-        .metric {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .metric-icon {
-            font-size: 1.2rem;
-        }
-
-        .metric-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .metric-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* LOADING STATE */
-        .pack-card-loading {
-            pointer-events: none;
-        }
-
-        .skeleton {
-            background: linear-gradient(
-                90deg,
-                var(--surface-alt) 0%,
-                var(--surface) 50%,
-                var(--surface-alt) 100%
-            );
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .skeleton-image {
-            width: 100%;
-            height: 200px;
-        }
-
-        .skeleton-text {
-            height: 16px;
-            margin: 8px 0;
-        }
-
-        .pack-info {
-            padding: 24px 28px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .pack-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-            gap: 12px;
-        }
-
-        .pack-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .pack-badge {
-            font-size: 0.65rem;
-            padding: 4px 10px;
-            border-radius: 99px;
-            background: var(--secondary);
-            color: var(--background);
-            white-space: nowrap;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-        }
-
-        .pack-author {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-
-        .pack-description {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 16px;
-            flex: 1;
-        }
-
-        .pack-meta {
-            display: flex;
-            gap: 16px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .pack-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .pack-tag {
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 99px;
-            background: rgba(0, 0, 0, 0.08);
-            color: var(--text-muted);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .pack-tag {
-                background: rgba(255, 255, 255, 0.08);
-            }
-        }
-
-        .pack-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .pack-button {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-family: 'Georgia', serif;
-            font-size: 0.95rem;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.2s;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .pack-button-primary {
-            background: var(--primary);
-            color: var(--background);
-        }
-
-        .pack-button-primary:hover {
-            opacity: 0.9;
-        }
-
-        .pack-button-secondary {
-            background: rgba(0, 0, 0, 0.08);
-            color: var(--text);
-        }
-
-        .pack-button-secondary:hover {
-            background: rgba(0, 0, 0, 0.12);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .pack-button-secondary {
-                background: rgba(255, 255, 255, 0.08);
-            }
-            .pack-button-secondary:hover {
-                background: rgba(255, 255, 255, 0.12);
-            }
-        }
-
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            display: block;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .empty-state p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-
-        /* SUBMIT SECTION */
-        .submit-section {
-            margin-bottom: 60px;
-        }
-
-        .submit-card {
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 48px 40px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .submit-icon {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 20px;
-        }
-
-        .submit-card h2 {
-            font-size: 2rem;
-            font-weight: 400;
-            color: var(--primary);
-            margin: 0 0 16px;
-        }
-
-        .submit-card p {
-            color: var(--text-muted);
-            margin: 0 0 24px;
-            font-size: 1.05rem;
-        }
-
-        .submit-button {
-            display: inline-block;
-            padding: 14px 32px;
-            background: var(--primary);
-            color: var(--background);
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-
-        .submit-button:hover {
-            transform: scale(1.05);
-        }
-
-        /* SECTION */
-        .section {
-            margin-bottom: 60px;
-        }
-
-        .section h2 {
-            font-size: 2rem;
-            font-weight: 400;
-            color: var(--primary);
-            margin: 0 0 24px;
-        }
-
-        .steps {
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 32px 40px;
-            margin: 0;
-            counter-reset: step-counter;
-            list-style: none;
-        }
-
-        .steps li {
-            counter-increment: step-counter;
-            margin-bottom: 20px;
-            padding-left: 40px;
-            position: relative;
-            line-height: 1.7;
-        }
-
-        .steps li:last-child {
-            margin-bottom: 0;
-        }
-
-        .steps li::before {
-            content: counter(step-counter);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 28px;
-            height: 28px;
-            background: var(--primary);
-            color: var(--background);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .steps a {
-            color: var(--secondary);
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.2s;
-        }
-
-        .steps a:hover {
-            border-bottom-color: var(--secondary);
-        }
-
-        .steps code {
-            background: var(--code-bg);
-            color: var(--code-text);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-
-        /* FOOTER */
-        .footer {
-            text-align: center;
-            padding-top: 40px;
-            border-top: 1.5px solid var(--rule);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .footer p {
-            margin: 8px 0;
-        }
-
-        .footer a {
-            color: var(--secondary);
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.2s;
-        }
-
-        .footer a:hover {
-            border-bottom-color: var(--secondary);
-        }
-
-        /* MOBILE */
-        @media (max-width: 600px) {
-            .page {
-                padding: 60px 20px 100px;
-            }
-            .pack-grid {
-                grid-template-columns: 1fr;
-            }
-            .controls {
-                flex-direction: column;
-            }
-            .filters {
-                width: 100%;
-            }
-            .filters select {
-                flex: 1;
-            }
-            .submit-card {
-                padding: 32px 24px;
-            }
-            .steps {
-                padding: 24px 28px;
-            }
-            .steps li {
-                padding-left: 36px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixlings — Community Packs</title>
+<style>
+
+/* TERRARIUM COLORS */
+:root {
+  --background: #D7C3AC;
+  --surface: #A1B5A7;
+  --surface-alt: #B8C9BB;
+  --primary: #2C504A;
+  --secondary: #296673;
+  --tertiary: #B087AE;
+  --text: #1A2E2A;
+  --text-muted: #4A6460;
+  --code-bg: #1A2E2A;
+  --code-text: #A8D1C8;
+  --rule: rgba(44,80,74,0.18);
+  /* RGB triples for rgba() usage */
+  --secondary-rgb: 41, 102, 115;
+  --tertiary-rgb: 176, 135, 174;
+  /* Reusable radii & shadows */
+  --radius-card: 20px;
+  --radius-control: 12px;
+  --shadow-card: 0 4px 20px rgba(0,0,0,0.1);
+  --shadow-card-hover: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #141008;
+    --surface: #1E1A10;
+    --surface-alt: #252016;
+    --primary: #A8D1C8;
+    --secondary: #88BDC9;
+    --tertiary: #C9A8C6;
+    --text: #EDE0CF;
+    --text-muted: #8A9E99;
+    --code-bg: #0D0A04;
+    --code-text: #A8D1C8;
+    --rule: rgba(168,209,200,0.12);
+    --secondary-rgb: 136, 189, 201;
+    --tertiary-rgb: 201, 168, 198;
+  }
+}
+
+/* BASE */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Georgia', serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.75;
+}
+
+/* LEAVES */
+.leaf {
+  position: fixed;
+  font-size: 16px;
+  opacity: .35;
+  pointer-events: none;
+  animation: leafDrift linear infinite;
+  z-index: 0;
+}
+@keyframes leafDrift {
+  from { transform: translateY(-8vh) rotate(0deg); }
+  to   { transform: translateY(108vh) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaf { animation: none; }
+}
+
+/* LAYOUT */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 80px 28px 120px;
+}
+
+/* HERO */
+.hero {
+  margin-bottom: 52px;
+  text-align: center;
+}
+.hero-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 16px;
+  animation: float 4s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-icon { animation: none; }
+}
+.hero h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 400;
+  color: var(--primary);
+  line-height: 1.15;
+}
+.hero-lead {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* SECTION LABEL */
+.section-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: .8;
+  margin-bottom: 20px;
+}
+
+/* DISCOVERY SECTION */
+#discovery { margin-bottom: 80px; }
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+  align-items: center;
+}
+
+#search {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid var(--rule);
+  border-radius: var(--radius-control);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-family: 'Georgia', serif;
+  font-size: 0.95rem;
+  transition: border-color .2s;
+}
+#search::placeholder { color: var(--text-muted); opacity: .7; }
+#search:focus { outline: none; border-color: var(--primary); }
+
+#sort {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  border: 2px solid var(--rule);
+  border-radius: var(--radius-control);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-family: 'Georgia', serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+#sort:focus { outline: none; border-color: var(--primary); }
+
+/* API NOTICE (rate-limit passive bar) */
+.api-notice {
+  background: var(--surface-alt);
+  border-left: 3px solid var(--tertiary);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* PACK GRID */
+.pack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+/* PACK CARD */
+.pack-card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.pack-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* PREVIEW */
+.pack-preview-wrap {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  background: var(--surface-alt);
+}
+.pack-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* BADGES */
+.card-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.badge-featured { background: rgba(255,215,0,0.95); color: #1a1200; }
+
+.type-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+}
+.type-pack    { background: rgba(var(--secondary-rgb), 0.9); color: #fff; }
+.type-pixling { background: rgba(var(--tertiary-rgb),  0.9); color: #fff; }
+
+/* CARD BODY */
+.pack-info {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.pack-name {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.3;
+}
+.pack-author {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.pack-desc {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.6;
+  flex: 1;
+}
+.pack-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+.pack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.pack-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+}
+.pack-actions {
+  display: flex;
+  gap: 10px;
+}
+.pack-button {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: var(--radius-control);
+  font-family: 'Georgia', serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: opacity .2s, transform .1s;
+}
+.pack-button:hover { opacity: .85; transform: translateY(-1px); }
+.pack-button:active { transform: translateY(0); }
+.pack-button-primary {
+  background: var(--primary);
+  color: var(--background);
+}
+.pack-button-secondary {
+  background: var(--surface-alt);
+  color: var(--text);
+  border: 1.5px solid var(--rule);
+}
+
+/* SKELETON CARDS */
+.pack-card--skeleton { pointer-events: none; }
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-alt) 0%,
+    var(--surface) 50%,
+    var(--surface-alt) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+.skeleton--image  { height: 200px; border-radius: 0; width: 100%; }
+.skeleton--title  { height: 20px; width: 65%; margin-bottom: 10px; }
+.skeleton--short  { height: 14px; width: 40%; }
+.skeleton--text   { height: 14px; margin-bottom: 8px; }
+
+/* EMPTY & ERROR STATES */
+.empty-state,
+.error-state {
+  text-align: center;
+  padding: 64px 28px;
+  color: var(--text-muted);
+}
+.empty-state p,
+.error-state p { margin: 8px 0; }
+.state-icon { font-size: 2.4rem; display: block; margin-bottom: 12px; }
+.state-title { font-size: 1.1rem; color: var(--text); font-weight: 600; margin-bottom: 6px; }
+.state-detail { font-size: 0.9rem; }
+.retry-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 28px;
+  background: var(--primary);
+  color: var(--background);
+  border: none;
+  border-radius: var(--radius-control);
+  font-family: 'Georgia', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.retry-button:hover { opacity: .85; }
+
+/* SUBMIT SECTION */
+#submit-pack { margin-bottom: 60px; }
+
+.submit-card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* Collapsed trigger row */
+.submit-card summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 28px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background .2s;
+}
+.submit-card summary::-webkit-details-marker { display: none; }
+.submit-card summary:hover { background: var(--surface-alt); }
+
+.submit-summary-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1; }
+.submit-summary-text { flex: 1; }
+.submit-summary-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0 0 2px;
+}
+.submit-summary-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+.submit-chevron {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  transition: transform .25s ease;
+  flex-shrink: 0;
+}
+.submit-card[open] .submit-chevron { transform: rotate(180deg); }
+
+/* Divider shown only when open */
+.submit-divider {
+  height: 1px;
+  background: var(--rule);
+  margin: 0 28px;
+  display: none;
+}
+.submit-card[open] .submit-divider { display: block; }
+
+/* Form body */
+.submit-body {
+  padding: 28px 40px 36px;
+}
+
+.submit-intro {
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  margin: 0 0 28px;
+  line-height: 1.65;
+}
+
+/* FORM FIELDS */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.field-group label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.field-group .hint {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+.field-group input,
+.field-group textarea {
+  padding: 12px 16px;
+  border: 2px solid var(--rule);
+  border-radius: var(--radius-control);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-family: 'Georgia', serif;
+  font-size: 0.95rem;
+  transition: border-color .2s;
+  width: 100%;
+}
+.field-group textarea { resize: vertical; min-height: 80px; }
+.field-group input:focus,
+.field-group textarea:focus { outline: none; border-color: var(--primary); }
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.validation-msg {
+  color: #c0392b;
+  font-size: 0.88rem;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(192,57,43,0.08);
+  border-radius: 8px;
+  border-left: 3px solid #c0392b;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: var(--background);
+  border: none;
+  border-radius: var(--radius-control);
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+}
+.submit-button:hover { opacity: .88; transform: translateY(-1px); }
+.submit-button:active { transform: translateY(0); }
+
+/* HOW TO SUBMIT */
+#how-to-submit { margin-bottom: 60px; }
+
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: step;
+}
+.step {
+  position: relative;
+  padding: 20px 20px 20px 60px;
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+  counter-increment: step;
+}
+.step::before {
+  content: counter(step);
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--background);
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.step-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0 0 4px;
+}
+.step-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+.step-desc a {
+  color: var(--secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s;
+}
+.step-desc a:hover { border-bottom-color: var(--secondary); }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding-top: 40px;
+  border-top: 1.5px solid var(--rule);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 60px;
+}
+.footer p { margin: 8px 0; }
+.footer a {
+  color: var(--secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s;
+}
+.footer a:hover { border-bottom-color: var(--secondary); }
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .page { padding: 60px 20px 100px; }
+  .pack-grid { grid-template-columns: 1fr; gap: 20px; }
+  .controls { flex-direction: column; align-items: stretch; }
+  .submit-card summary { padding: 18px 20px; }
+  .submit-body { padding: 20px 20px 28px; }
+  .submit-divider { margin: 0 20px; }
+  .field-row { grid-template-columns: 1fr; }
+  .step { padding: 18px 18px 18px 56px; }
+}
+
+</style>
 </head>
 <body>
 
 <div class="page">
-    <header class="hero">
-        <span class="hero-icon">🌍</span>
-        <h1>Community Packs</h1>
-        <p class="hero-subtitle">Discover pixlings created by the community</p>
-    </header>
 
-    <!-- Controls Section -->
+  <!-- HERO -->
+  <header>
+    <div class="hero">
+      <span class="hero-icon">🌍</span>
+      <h1>Community Packs</h1>
+      <p class="hero-lead">Discover pixlings crafted by the community</p>
+    </div>
+  </header>
+
+  <!-- DISCOVERY -->
+  <section id="discovery">
+    <p class="section-label">Browse</p>
     <div class="controls">
-        <div class="search-bar">
-            <input type="text" id="search" placeholder="Search packs...">
-        </div>
-        <button id="refresh-metrics" class="refresh-button" title="Refresh download counts from GitHub">
-            🔄 Refresh Metrics
-        </button>
-        <div class="filters">
-            <select id="type-filter">
-                <option value="all">All Types</option>
-                <option value="pack">Packs Only</option>
-                <option value="pixling">Pixlings Only</option>
-            </select>
-            <select id="sort">
-                <option value="newest">Newest First</option>
-                <option value="popular">Most Downloaded</option>
-                <option value="trending">Trending</option>
-                <option value="rating">Highest Rated</option>
-                <option value="name">Name (A-Z)</option>
-                <option value="updated">Recently Updated</option>
-            </select>
-            <select id="category">
-                <option value="all">All Categories</option>
-                <option value="official">Official</option>
-                <option value="cute">Cute</option>
-                <option value="abstract">Abstract</option>
-                <option value="minimal">Minimal</option>
-                <option value="colorful">Colorful</option>
-                <option value="beginner-friendly">Beginner-Friendly</option>
-            </select>
-            <select id="difficulty-filter">
-                <option value="all">All Difficulties</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-            </select>
-        </div>
+      <input type="search" id="search" placeholder="Search packs…" aria-label="Search packs" autocomplete="off">
+      <select id="sort" aria-label="Sort by">
+        <option value="newest">Newest first</option>
+        <option value="popular">Most downloaded</option>
+        <option value="name">A – Z</option>
+      </select>
     </div>
-
-    <!-- Pack Grid -->
-    <div id="pack-grid" class="pack-grid">
-        <!-- Dynamically populated via JavaScript -->
+    <div id="api-notice" class="api-notice" hidden>
+      Download counts are temporarily unavailable (GitHub rate limit). Showing cached totals where available.
     </div>
-
-    <!-- Empty State -->
-    <div id="empty-state" class="empty-state" style="display: none;">
-        <span class="empty-icon">🍂</span>
-        <p>No packs match your search</p>
+    <div id="pack-grid" class="pack-grid" aria-live="polite"></div>
+    <div id="empty-state" class="empty-state" hidden>
+      <span class="state-icon">🌿</span>
+      <p class="state-title">No packs found</p>
+      <p class="state-detail" id="empty-detail"></p>
     </div>
+    <div id="error-state" class="error-state" hidden>
+      <span class="state-icon">🍂</span>
+      <p class="state-title">Couldn't load packs</p>
+      <p class="state-detail" id="error-detail"></p>
+      <button class="retry-button" onclick="retryLoad()">Try again</button>
+    </div>
+  </section>
 
-    <!-- Submit Section -->
-    <section class="submit-section">
-        <div class="submit-card">
-            <span class="submit-icon">✨</span>
-            <h2>Share Your Pixlings</h2>
-            <p>Created a custom pack? Share it with the community!</p>
-            <a href="#how-to-submit" class="submit-button">How to Submit</a>
+  <!-- SUBMIT -->
+  <section id="submit-pack">
+    <p class="section-label">Share your work</p>
+    <details class="submit-card">
+      <summary>
+        <span class="submit-summary-icon">✨</span>
+        <span class="submit-summary-text">
+          <p class="submit-summary-title">Share Your Pack</p>
+          <p class="submit-summary-sub">Submit your pixlings to the community registry</p>
+        </span>
+        <span class="submit-chevron" aria-hidden="true">▼</span>
+      </summary>
+      <div class="submit-divider"></div>
+      <div class="submit-body">
+      <p class="submit-intro">
+        Fill in the details below and click <strong>Open GitHub Issue</strong>. A pre-filled issue will open in a new tab — submit it and a maintainer will add your pack to the registry.
+      </p>
+      <form id="submit-form" novalidate>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="f-name">Pack name <span aria-hidden="true">*</span></label>
+            <input type="text" id="f-name" required maxlength="60" placeholder="Elysium Starter Pack">
+          </div>
+          <div class="field-group">
+            <label for="f-author">Your GitHub username <span aria-hidden="true">*</span></label>
+            <input type="text" id="f-author" required maxlength="39" placeholder="bleelblep">
+          </div>
         </div>
-    </section>
+        <div class="field-group">
+          <label for="f-desc">Description <span aria-hidden="true">*</span> <span class="hint">(max 280 chars)</span></label>
+          <textarea id="f-desc" required maxlength="280" rows="3" placeholder="A short description of what's in your pack…"></textarea>
+        </div>
+        <div class="field-group">
+          <label for="f-download">Download URL <span aria-hidden="true">*</span> <span class="hint">GitHub Release .zip link</span></label>
+          <input type="url" id="f-download" required placeholder="https://github.com/you/repo/releases/latest/download/pack.zip">
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="f-preview">Preview image URL <span class="hint">(optional)</span></label>
+            <input type="url" id="f-preview" placeholder="https://raw.githubusercontent.com/…">
+          </div>
+          <div class="field-group">
+            <label for="f-count">Number of pixlings</label>
+            <input type="number" id="f-count" min="1" max="999" value="1">
+          </div>
+        </div>
+        <div id="submit-validation" class="validation-msg" hidden></div>
+        <button type="submit" class="submit-button">Open GitHub Issue →</button>
+      </form>
+      </div><!-- .submit-body -->
+    </details>
+  </section>
 
-    <!-- How to Submit Section -->
-    <section id="how-to-submit" class="section">
-        <h2>How to Submit Your Pack</h2>
-        <ol class="steps">
-            <li>Create your pack following the <a href="custom-packs-guide.html">Custom Packs Guide</a></li>
-            <li>Host it on GitHub with a release (or use any direct download link)</li>
-            <li>Fork the <a href="https://github.com/bleelblep/disclaimer">disclaimer repo</a></li>
-            <li>Add your pack info to <code>pixlings/packs.json</code></li>
-            <li>Add a preview image (PNG or GIF) to <code>pixlings/images/packs/</code></li>
-            <li>Submit a Pull Request!</li>
-        </ol>
-    </section>
+  <!-- HOW TO SUBMIT -->
+  <section id="how-to-submit">
+    <p class="section-label">How it works</p>
+    <ol class="steps">
+      <li class="step">
+        <p class="step-title">Create your pack</p>
+        <p class="step-desc">Follow the <a href="custom-packs-guide.html">Custom Packs Guide</a> to build your pack.json and animations folder, then ZIP everything up.</p>
+      </li>
+      <li class="step">
+        <p class="step-title">Host it on GitHub Releases</p>
+        <p class="step-desc">Create a GitHub repository, make a Release, and upload your ZIP file. Copy the download URL for the next step.</p>
+      </li>
+      <li class="step">
+        <p class="step-title">Fill the form above</p>
+        <p class="step-desc">Submit the form — it opens a pre-filled GitHub Issue. A maintainer reviews it and adds your pack to the registry, usually within a day or two.</p>
+      </li>
+    </ol>
+  </section>
 
-    <footer class="footer">
-        <p>Made with care by <strong>Bleelblep</strong></p>
-        <p><a href="index.html">← Back to Home</a> • Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
-    </footer>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>Made with care by <strong>Bleelblep</strong></p>
+    <p>
+      <a href="index.html">← Back to Home</a> •
+      <a href="custom-packs-guide.html">Pack Creation Guide</a> •
+      <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a>
+    </p>
+  </footer>
+
 </div>
 
 <script src="github-api.js"></script>
 <script src="community.js"></script>
-
 </body>
 </html>

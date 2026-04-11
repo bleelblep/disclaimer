@@ -1,496 +1,388 @@
-/**
- * Community Packs JavaScript
- * Handles pack display, filtering, sorting, and GitHub API integration
- */
+/* ============================================================
+   Pixlings Community — community.js
+   Loads packs.json, renders pack cards, handles search/sort,
+   submission form, and background GitHub metrics fetching.
+   ============================================================ */
 
-// Global state
-let allItems = [];
-let githubMetrics = new Map();
+'use strict';
+
+// --------------- State ---------------
+let allPacks = [];
+let githubMetrics = new Map(); // id → { downloads, updatedAt }
 let githubClient = null;
 
-// View tracking localStorage key
-const VIEW_TRACKER_KEY = 'pixlings_viewed_items';
+// --------------- Init ---------------
+window.addEventListener('DOMContentLoaded', init);
 
-// Initialize GitHub API client
-function initializeGitHubClient() {
+async function init() {
     githubClient = new GitHubMetricsClient();
-    console.log('GitHub API client initialized');
+    attachEventListeners();
+    spawnLeaves();
+    showSkeletons(6);
+    await loadPacks();
+    fetchMetricsBackground(); // non-blocking
 }
 
-// View tracking utilities
-class ViewTracker {
-    static recordView(itemId) {
-        try {
-            const viewed = this.getViewedItems();
-            if (!viewed.includes(itemId)) {
-                viewed.push(itemId);
-                localStorage.setItem(VIEW_TRACKER_KEY, JSON.stringify(viewed));
-            }
-        } catch (e) {
-            console.warn('Failed to record view:', e);
-        }
-    }
-
-    static getViewedItems() {
-        try {
-            const data = localStorage.getItem(VIEW_TRACKER_KEY);
-            return data ? JSON.parse(data) : [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    static hasViewed(itemId) {
-        return this.getViewedItems().includes(itemId);
-    }
-
-    static isNew(itemId, createdDate) {
-        const hasViewed = this.hasViewed(itemId);
-        const daysSinceCreated = (Date.now() - new Date(createdDate).getTime()) / (24 * 60 * 60 * 1000);
-        const isRecent = daysSinceCreated < 7;
-        return !hasViewed && isRecent;
-    }
+function retryLoad() {
+    hideErrorState();
+    showSkeletons(6);
+    loadPacks().then(() => fetchMetricsBackground());
 }
 
-// Load items from packs.json
-async function loadItems() {
+// --------------- Data Loading ---------------
+async function loadPacks() {
     try {
-        // Try to fetch packs.json - works for both local and GitHub Pages
-        const response = await fetch('packs.json');
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Handle both old and new schema formats
-        allItems = data.items || data.packs || [];
-
-        console.log(`Loaded ${allItems.length} items from packs.json`);
-
-        // Render immediately with static data
-        filterAndRender();
-
-        // Fetch fresh GitHub metrics in background
-        fetchGitHubMetrics();
-
-    } catch (error) {
-        console.error('Failed to load items:', error);
-        document.getElementById('empty-state').style.display = 'block';
-        document.getElementById('empty-state').querySelector('p').textContent = 'Failed to load items. Please try again later.';
+        const res = await fetch('packs.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        // Support both .items (v2) and .packs (legacy) schema
+        allPacks = json.items || json.packs || [];
+        renderGrid();
+    } catch (err) {
+        console.error('Failed to load packs.json:', err);
+        showErrorState('Could not reach the packs registry. Check your connection and try again.');
     }
 }
 
-// Fetch GitHub metrics for all items with GitHub repos
-async function fetchGitHubMetrics() {
-    if (!githubClient) {
-        console.warn('GitHub client not initialized');
+async function fetchMetricsBackground() {
+    if (!githubClient) return;
+    try {
+        const result = await githubClient.batchFetchMetrics(allPacks);
+        // batchFetchMetrics returns { metrics, rateLimited }
+        const metrics = result && result.metrics ? result.metrics : result;
+        const rateLimited = result && result.rateLimited;
+
+        if (metrics) {
+            metrics.forEach((data, id) => {
+                githubMetrics.set(id, data);
+            });
+        }
+        if (rateLimited) showApiNotice();
+        renderGrid(); // refresh cards with live download counts
+    } catch (err) {
+        console.warn('Background metrics fetch failed:', err);
+    }
+}
+
+// --------------- Rendering ---------------
+function renderGrid() {
+    const query = document.getElementById('search').value.trim().toLowerCase();
+    const sortBy = document.getElementById('sort').value;
+
+    let packs = filterPacks(allPacks, query);
+    packs = sortPacks(packs, sortBy);
+
+    if (packs.length === 0) {
+        document.getElementById('pack-grid').innerHTML = '';
+        showEmptyState(query
+            ? `No packs match "${escapeHtml(query)}" — try a shorter term.`
+            : 'No packs in the registry yet. Be the first to submit one!');
         return;
     }
 
-    try {
-        // Check rate limit first
-        const rateLimit = await githubClient.checkRateLimit();
-        if (rateLimit) {
-            console.log(`GitHub API rate limit: ${rateLimit.remaining}/${rateLimit.limit} remaining`);
-
-            if (rateLimit.remaining < 10) {
-                console.warn('GitHub API rate limit low, using cached/static data');
-                return;
-            }
-        }
-
-        // Filter items with GitHub repos
-        const itemsWithGithub = allItems.filter(item => item.githubRepo);
-
-        if (itemsWithGithub.length === 0) {
-            console.log('No items with GitHub repos to fetch metrics for');
-            return;
-        }
-
-        console.log(`Fetching GitHub metrics for ${itemsWithGithub.length} items...`);
-
-        // Fetch metrics with progress tracking
-        githubMetrics = await githubClient.batchFetchMetrics(
-            itemsWithGithub,
-            (processed, total) => {
-                console.log(`Fetching metrics: ${processed}/${total}`);
-            }
-        );
-
-        console.log(`Fetched metrics for ${githubMetrics.size} items`);
-
-        // Re-render with fresh GitHub data
-        filterAndRender();
-
-    } catch (error) {
-        console.warn('Failed to fetch GitHub metrics:', error);
-    }
+    hideEmptyState();
+    document.getElementById('pack-grid').innerHTML = packs.map(renderCard).join('');
 }
 
-// Render items
-function renderItems(items) {
-    const grid = document.getElementById('pack-grid');
-    const emptyState = document.getElementById('empty-state');
+function renderCard(pack) {
+    const name    = escapeHtml(pack.name    || 'Unnamed Pack');
+    const author  = escapeHtml(pack.author  || 'Unknown');
+    const desc    = escapeHtml(pack.description || '');
+    const type    = escapeHtml((pack.type || 'pack').toLowerCase());
+    const count   = parseInt(pack.pixlingCount, 10) || 0;
+    const dlUrl   = escapeHtml(pack.downloadUrl || '#');
+    const ghUrl   = pack.githubUrl ? escapeHtml(pack.githubUrl) : '';
+    const date    = pack.createdDate || pack.lastUpdated || '';
+    const tags    = (pack.tags || pack.categories || []).slice(0, 4);
 
-    if (items.length === 0) {
-        grid.innerHTML = '';
-        emptyState.style.display = 'block';
-        emptyState.querySelector('p').textContent = 'No items match your search';
-        return;
-    }
+    const previewSrc  = escapeHtml(getPreviewSrc(pack));
+    const dlCount     = formatDownloads(getDownloadCount(pack));
+    const relDate     = formatRelativeDate(date);
+    const countLabel  = count > 0 ? `📦 ${count} pixling${count !== 1 ? 's' : ''}` : type;
 
-    emptyState.style.display = 'none';
+    const featuredBadge = pack.featured
+        ? `<span class="badge badge-featured">Featured</span>`
+        : '';
 
-    grid.innerHTML = items.map(item => renderItemCard(item)).join('');
-}
+    const ghButton = ghUrl
+        ? `<a href="${ghUrl}" class="pack-button pack-button-secondary" target="_blank" rel="noopener">GitHub</a>`
+        : '';
 
-// Render individual item card
-function renderItemCard(item) {
-    const metrics = githubMetrics.get(item.id);
-    const downloads = metrics?.downloads || item.downloadsStatic || item.downloads || 0;
-    const lastUpdated = getLastUpdated(item, metrics);
-    const trending = shouldShowTrendingBadge(item);
-    const isNew = ViewTracker.isNew(item.id, item.createdDate);
+    const tagsHtml = tags.length
+        ? `<div class="pack-tags">${tags.map(t => `<span class="pack-tag">${escapeHtml(t)}</span>`).join('')}</div>`
+        : '';
 
-    // Ensure item has a type
-    const itemType = item.type || 'pack';
-    const pixlingCount = item.pixlingCount || 1;
+    // Use a safe inline onerror — name is already HTML-escaped, double-escaped for JS string
+    const nameForJs = (pack.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const idForJs   = (pack.id   || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
     return `
-        <div class="pack-card" data-type="${itemType}" data-id="${item.id}">
-            <div class="pack-preview-container">
-                <img src="${item.previewImage}" alt="${escapeHtml(item.name)}"
-                     class="pack-preview" loading="lazy"
-                     onerror="this.style.display='none'">
-
-                ${renderOverlayBadges(item, trending, isNew)}
-
-                <div class="card-type">
-                    ${renderTypeBadge(itemType, pixlingCount)}
-                </div>
-            </div>
-
-            <div class="pack-info">
-                <div class="pack-header">
-                    <h3 class="pack-name">${escapeHtml(item.name)}</h3>
-                </div>
-
-                <p class="pack-author">by ${escapeHtml(item.author || 'Unknown')}</p>
-
-                ${item.rating && item.rating > 0 ? renderRating(item.rating, item.ratingCount || 0) : ''}
-
-                <p class="pack-description">${escapeHtml(item.description)}</p>
-
-                ${renderMetrics(itemType, pixlingCount, downloads, lastUpdated)}
-
-                <div class="pack-tags">
-                    ${(item.tags || item.categories || []).slice(0, 4).map(tag =>
-                        `<span class="pack-tag">${escapeHtml(tag)}</span>`
-                    ).join('')}
-                </div>
-
-                <div class="pack-actions">
-                    <a href="${item.downloadUrl}"
-                       class="pack-button pack-button-primary"
-                       onclick="trackDownload('${item.id}')">
-                        Download
-                    </a>
-                    ${item.githubUrl ? `
-                        <a href="${item.githubUrl}" target="_blank"
-                           rel="noopener noreferrer"
-                           class="pack-button pack-button-secondary">
-                            GitHub
-                        </a>
-                    ` : ''}
-                </div>
-            </div>
-        </div>
-    `;
+<div class="pack-card" data-id="${escapeHtml(pack.id || '')}">
+  <div class="pack-preview-wrap">
+    <img src="${previewSrc}" alt="${name}" class="pack-preview" loading="lazy"
+         onerror="this.onerror=null;this.src=generatePlaceholderDataUrl('${nameForJs}','${idForJs}')">
+    <div class="card-badges">${featuredBadge}</div>
+    <span class="type-badge type-${type}">${escapeHtml(countLabel)}</span>
+  </div>
+  <div class="pack-info">
+    <h3 class="pack-name">${name}</h3>
+    <p class="pack-author">by ${author}</p>
+    <p class="pack-desc">${desc}</p>
+    <div class="pack-footer">
+      <span class="pack-downloads">⬇ ${dlCount}</span>
+      <span class="pack-date">${relDate}</span>
+    </div>
+    ${tagsHtml}
+    <div class="pack-actions">
+      <a href="${dlUrl}" class="pack-button pack-button-primary" download>Download</a>
+      ${ghButton}
+    </div>
+  </div>
+</div>`;
 }
 
-// Render overlay badges (featured, trending, new)
-function renderOverlayBadges(item, trending, isNew) {
-    const badges = [];
-
-    if (item.featured) {
-        badges.push('<span class="badge-featured">⭐ FEATURED</span>');
-    }
-
-    if (trending) {
-        badges.push('<span class="badge-trending">🔥 TRENDING</span>');
-    }
-
-    if (isNew) {
-        badges.push('<span class="badge-new">✨ NEW</span>');
-    }
-
-    if (badges.length === 0) return '';
-
-    return `
-        <div class="card-badges">
-            ${badges.join('')}
-        </div>
-    `;
+// --------------- Skeleton / States ---------------
+function showSkeletons(n) {
+    const skeleton = `
+<div class="pack-card pack-card--skeleton" aria-hidden="true">
+  <div class="pack-preview-wrap">
+    <div class="skeleton skeleton--image"></div>
+  </div>
+  <div class="pack-info">
+    <div class="skeleton skeleton--title" style="margin-top:4px"></div>
+    <div class="skeleton skeleton--text skeleton--short"></div>
+    <div class="skeleton skeleton--text" style="margin-top:8px"></div>
+    <div class="skeleton skeleton--text"></div>
+    <div class="skeleton skeleton--text skeleton--short"></div>
+  </div>
+</div>`;
+    document.getElementById('pack-grid').innerHTML = skeleton.repeat(n);
+    hideEmptyState();
+    hideErrorState();
 }
 
-// Render type badge
-function renderTypeBadge(type, pixlingCount) {
-    if (type === 'pack') {
-        return `<span class="type-badge type-pack">📦 Pack (${pixlingCount})</span>`;
+function showEmptyState(message) {
+    const el = document.getElementById('empty-state');
+    document.getElementById('empty-detail').textContent = message;
+    el.hidden = false;
+}
+function hideEmptyState() {
+    document.getElementById('empty-state').hidden = true;
+}
+
+function showErrorState(message) {
+    document.getElementById('pack-grid').innerHTML = '';
+    const el = document.getElementById('error-state');
+    document.getElementById('error-detail').textContent = message;
+    el.hidden = false;
+    hideEmptyState();
+}
+function hideErrorState() {
+    document.getElementById('error-state').hidden = true;
+}
+
+function showApiNotice() {
+    document.getElementById('api-notice').hidden = false;
+}
+
+// --------------- Filter & Sort ---------------
+function filterPacks(packs, query) {
+    if (!query) return packs;
+    return packs.filter(p => {
+        const haystack = [
+            p.name, p.author, p.description,
+            ...(p.tags || []), ...(p.categories || [])
+        ].join(' ').toLowerCase();
+        return haystack.includes(query);
+    });
+}
+
+function sortPacks(packs, by) {
+    const sorted = [...packs];
+    if (by === 'popular') {
+        sorted.sort((a, b) => getDownloadCount(b) - getDownloadCount(a));
+    } else if (by === 'name') {
+        sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     } else {
-        return `<span class="type-badge type-pixling">✨ Pixling</span>`;
+        // newest (default)
+        sorted.sort((a, b) => {
+            const da = new Date(b.createdDate || b.lastUpdated || 0);
+            const db = new Date(a.createdDate || a.lastUpdated || 0);
+            return da - db;
+        });
+    }
+    return sorted;
+}
+
+// --------------- Image Helpers ---------------
+function getPreviewSrc(pack) {
+    // Prefer absolute URL → relative path → generated placeholder
+    if (pack.previewImageUrl) return pack.previewImageUrl;
+    if (pack.previewImage && pack.previewImage.startsWith('http')) return pack.previewImage;
+    if (pack.previewImage) return pack.previewImage;
+    return generatePlaceholderDataUrl(pack.name || '', pack.id || '');
+}
+
+function hashString(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h) ^ str.charCodeAt(i);
+    return h >>> 0;
+}
+
+function generatePlaceholderDataUrl(name, id) {
+    try {
+        const seed = hashString(name + id);
+        const canvas = document.createElement('canvas');
+        canvas.width = 400;
+        canvas.height = 200;
+        const ctx = canvas.getContext('2d');
+        const h1 = (seed % 360 + 360) % 360;
+        const h2 = (h1 + 137) % 360; // golden angle offset — always visually distinct
+        const grad = ctx.createLinearGradient(0, 0, 400, 200);
+        grad.addColorStop(0, `hsl(${h1}, 35%, 55%)`);
+        grad.addColorStop(1, `hsl(${h2}, 30%, 45%)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 400, 200);
+        const initials = name.split(' ').map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.font = 'bold 56px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(initials || '?', 200, 100);
+        return canvas.toDataURL('image/png');
+    } catch (e) {
+        return ''; // canvas blocked — browser shows broken-img fallback
     }
 }
 
-// Render rating display
-function renderRating(rating, ratingCount) {
-    const stars = renderStars(rating);
-    return `
-        <div class="pack-rating">
-            <span class="rating-stars">${stars}</span>
-            <span class="rating-text">${rating.toFixed(1)}</span>
-            <span class="rating-count">(${ratingCount} ${ratingCount === 1 ? 'review' : 'reviews'})</span>
-        </div>
-    `;
+// --------------- Metrics Helpers ---------------
+function getDownloadCount(pack) {
+    const live = githubMetrics.get(pack.id);
+    if (live && typeof live.downloads === 'number') return live.downloads;
+    return pack.downloadsStatic || pack.downloads || 0;
 }
 
-// Render star rating
-function renderStars(rating) {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = (rating % 1) >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    return '⭐'.repeat(fullStars) +
-           (hasHalfStar ? '⭐' : '') +
-           '☆'.repeat(emptyStars);
+function formatDownloads(n) {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1_000)     return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return String(n);
 }
 
-// Render metrics grid
-function renderMetrics(itemType, pixlingCount, downloads, lastUpdated) {
-    return `
-        <div class="pack-metrics">
-            <div class="metric">
-                <span class="metric-icon">${itemType === 'pack' ? '📦' : '✨'}</span>
-                <span class="metric-value">${pixlingCount}</span>
-                <span class="metric-label">${pixlingCount === 1 ? 'pixling' : 'pixlings'}</span>
-            </div>
-            <div class="metric">
-                <span class="metric-icon">⬇️</span>
-                <span class="metric-value">${formatDownloads(downloads)}</span>
-                <span class="metric-label">downloads</span>
-            </div>
-            <div class="metric">
-                <span class="metric-icon">🕒</span>
-                <span class="metric-value">${formatRelativeTime(lastUpdated)}</span>
-                <span class="metric-label">updated</span>
-            </div>
-        </div>
-    `;
-}
-
-// Get last updated date (GitHub API > manual field > created date)
-function getLastUpdated(item, metrics) {
-    const candidates = [
-        metrics?.updatedAt,
-        item.lastUpdated,
-        item.createdDate
-    ];
-    for (const val of candidates) {
-        if (val) {
-            const d = new Date(val);
-            if (!isNaN(d.getTime())) return d;
-        }
-    }
-    return null;
-}
-
-// Check if item should show trending badge
-function shouldShowTrendingBadge(item) {
-    // Manual trending flag
-    if (item.trending) return true;
-
-    // Or: high trending score (auto-calculated)
-    const score = calculateTrendingScore(item, githubMetrics.get(item.id));
-    return score > 10;
-}
-
-// Calculate trending score
-function calculateTrendingScore(item, githubMetrics) {
-    // Manual override
-    if (item.trending) return 1000;
-
-    const downloads = githubMetrics?.downloads || item.downloadsStatic || item.downloads || 0;
-    const daysSincePublished = (Date.now() - new Date(item.createdDate).getTime()) / (24 * 60 * 60 * 1000);
-
-    if (daysSincePublished <= 0) return 0;
-
-    const downloadsPerDay = downloads / daysSincePublished;
-    const recencyBoost = Math.max(0, 30 - daysSincePublished) / 30; // Higher for items < 30 days old
-
-    return downloadsPerDay * (1 + recencyBoost);
-}
-
-// Format download count
-function formatDownloads(count) {
-    if (count >= 1000000) {
-        return (count / 1000000).toFixed(1) + 'M';
-    }
-    if (count >= 1000) {
-        return (count / 1000).toFixed(1) + 'k';
-    }
-    return count.toString();
-}
-
-// Format relative time
-function formatRelativeTime(date) {
-    if (!date || isNaN(date.getTime())) return 'unknown';
-    const now = Date.now();
-    const diff = now - date.getTime();
-    const days = Math.floor(diff / (24 * 60 * 60 * 1000));
-
-    if (days <= 0) return 'today';
-    if (days === 1) return 'yesterday';
-    if (days < 7) return `${days}d ago`;
-    if (days < 30) return `${Math.floor(days / 7)}w ago`;
+function formatRelativeDate(dateStr) {
+    if (!dateStr) return '';
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const days = Math.floor(diff / 86_400_000);
+    if (days < 1)   return 'today';
+    if (days < 7)   return `${days}d ago`;
+    if (days < 30)  return `${Math.floor(days / 7)}w ago`;
     if (days < 365) return `${Math.floor(days / 30)}mo ago`;
     return `${Math.floor(days / 365)}y ago`;
 }
 
-// Escape HTML to prevent XSS
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+// --------------- Submission Form ---------------
+function attachEventListeners() {
+    document.getElementById('search').addEventListener('input', renderGrid);
+    document.getElementById('sort').addEventListener('change', renderGrid);
+    document.getElementById('submit-form').addEventListener('submit', openSubmitIssue);
 }
 
-// Filter and render items
-function filterAndRender() {
-    const searchTerm = document.getElementById('search').value.toLowerCase();
-    const typeFilter = document.getElementById('type-filter').value;
-    const sortBy = document.getElementById('sort').value;
-    const category = document.getElementById('category').value;
-    const difficulty = document.getElementById('difficulty-filter').value;
+function validateSubmitForm() {
+    const name     = document.getElementById('f-name').value.trim();
+    const author   = document.getElementById('f-author').value.trim();
+    const desc     = document.getElementById('f-desc').value.trim();
+    const download = document.getElementById('f-download').value.trim();
 
-    // Filter
-    let filtered = allItems.filter(item => {
-        // Search filter
-        const matchesSearch =
-            item.name.toLowerCase().includes(searchTerm) ||
-            (item.author || '').toLowerCase().includes(searchTerm) ||
-            item.description.toLowerCase().includes(searchTerm) ||
-            (item.categories || []).some(cat => cat.toLowerCase().includes(searchTerm)) ||
-            (item.tags || []).some(tag => tag.toLowerCase().includes(searchTerm)) ||
-            (item.type || 'pack').toLowerCase().includes(searchTerm);
+    if (!name)     return { valid: false, message: 'Pack name is required.' };
+    if (!author)   return { valid: false, message: 'GitHub username is required.' };
+    if (!desc)     return { valid: false, message: 'Description is required.' };
+    if (!download) return { valid: false, message: 'Download URL is required.' };
 
-        // Type filter
-        const matchesType = typeFilter === 'all' || (item.type || 'pack') === typeFilter;
-
-        // Category filter
-        const matchesCategory = category === 'all' ||
-            (item.categories || []).includes(category) ||
-            (item.tags || []).includes(category);
-
-        // Difficulty filter
-        const matchesDifficulty = difficulty === 'all' ||
-            (item.difficulty || 'beginner') === difficulty;
-
-        return matchesSearch && matchesType && matchesCategory && matchesDifficulty;
-    });
-
-    // Sort
-    filtered.sort((a, b) => {
-        switch(sortBy) {
-            case 'newest':
-                return new Date(b.createdDate) - new Date(a.createdDate);
-
-            case 'popular': {
-                const aMetrics = githubMetrics.get(a.id);
-                const bMetrics = githubMetrics.get(b.id);
-                const aDownloads = aMetrics?.downloads || a.downloadsStatic || a.downloads || 0;
-                const bDownloads = bMetrics?.downloads || b.downloadsStatic || b.downloads || 0;
-                return bDownloads - aDownloads;
-            }
-
-            case 'trending': {
-                const aScore = calculateTrendingScore(a, githubMetrics.get(a.id));
-                const bScore = calculateTrendingScore(b, githubMetrics.get(b.id));
-                return bScore - aScore;
-            }
-
-            case 'rating': {
-                const aRating = a.rating || 0;
-                const bRating = b.rating || 0;
-                if (bRating !== aRating) {
-                    return bRating - aRating;
-                }
-                // Secondary sort by rating count
-                return (b.ratingCount || 0) - (a.ratingCount || 0);
-            }
-
-            case 'updated': {
-                const aUpdated = getLastUpdated(a, githubMetrics.get(a.id));
-                const bUpdated = getLastUpdated(b, githubMetrics.get(b.id));
-                return (bUpdated?.getTime() ?? 0) - (aUpdated?.getTime() ?? 0);
-            }
-
-            case 'name':
-                return a.name.localeCompare(b.name);
-
-            default:
-                return 0;
-        }
-    });
-
-    renderItems(filtered);
-}
-
-// Track download (with view tracking)
-function trackDownload(itemId) {
-    console.log(`Downloaded: ${itemId}`);
-    ViewTracker.recordView(itemId);
-}
-
-// Refresh metrics button
-async function refreshMetrics() {
-    const button = document.getElementById('refresh-metrics');
-    button.classList.add('refreshing');
-    button.textContent = '⏳ Refreshing...';
-
-    // Clear cache
-    if (githubClient) {
-        githubClient.clearCache();
+    try { new URL(download); } catch {
+        return { valid: false, message: 'Download URL must be a valid URL (https://…).' };
     }
 
-    // Re-fetch metrics
-    await fetchGitHubMetrics();
+    const preview = document.getElementById('f-preview').value.trim();
+    if (preview) {
+        try { new URL(preview); } catch {
+            return { valid: false, message: 'Preview image URL must be a valid URL (https://…).' };
+        }
+    }
 
-    button.classList.remove('refreshing');
-    button.textContent = '🔄 Refresh Metrics';
+    return { valid: true, message: '' };
 }
 
-// Event listeners
-document.getElementById('search').addEventListener('input', filterAndRender);
-document.getElementById('type-filter').addEventListener('change', filterAndRender);
-document.getElementById('sort').addEventListener('change', filterAndRender);
-document.getElementById('category').addEventListener('change', filterAndRender);
-document.getElementById('difficulty-filter').addEventListener('change', filterAndRender);
-document.getElementById('refresh-metrics').addEventListener('click', refreshMetrics);
+function getFormData() {
+    return {
+        name:     document.getElementById('f-name').value.trim(),
+        author:   document.getElementById('f-author').value.trim(),
+        desc:     document.getElementById('f-desc').value.trim(),
+        download: document.getElementById('f-download').value.trim(),
+        preview:  document.getElementById('f-preview').value.trim() || 'none',
+        count:    document.getElementById('f-count').value.trim() || '1',
+    };
+}
 
-// Initialize on page load
-window.addEventListener('DOMContentLoaded', () => {
-    initializeGitHubClient();
-    loadItems();
-});
+function buildIssueBody(data) {
+    return [
+        '## Pack Submission',
+        '',
+        `**Pack Name:** ${data.name}`,
+        `**Author (GitHub):** @${data.author}`,
+        `**Description:** ${data.desc}`,
+        `**Download URL:** ${data.download}`,
+        `**Preview Image:** ${data.preview}`,
+        `**Pixling Count:** ${data.count}`,
+        '',
+        '---',
+        '*Submitted via the Pixlings community page*',
+    ].join('\n');
+}
 
-// Add leaves animation (same as other pages)
-for (let i = 0; i < 12; i++) {
-    const leaf = document.createElement('div');
-    leaf.className = 'leaf';
-    leaf.textContent = ['🍃', '🌿', '🍂'][Math.floor(Math.random() * 3)];
-    leaf.style.left = Math.random() * 100 + '%';
-    leaf.style.animationDuration = (18 + Math.random() * 10) + 's';
-    leaf.style.animationDelay = -(Math.random() * 25) + 's';
-    document.body.appendChild(leaf);
+function showValidationMsg(message) {
+    const el = document.getElementById('submit-validation');
+    el.textContent = message;
+    el.hidden = false;
+}
+
+function openSubmitIssue(e) {
+    e.preventDefault();
+    document.getElementById('submit-validation').hidden = true;
+
+    const result = validateSubmitForm();
+    if (!result.valid) {
+        showValidationMsg(result.message);
+        return;
+    }
+
+    const data  = getFormData();
+    const title = encodeURIComponent(`New Pack: ${data.name}`);
+    const body  = encodeURIComponent(buildIssueBody(data));
+    const url   = `https://github.com/bleelblep/pixlings-docs/issues/new?title=${title}&labels=pack-submission&body=${body}`;
+    window.open(url, '_blank', 'noopener');
+}
+
+// --------------- Leaf Animation ---------------
+function spawnLeaves() {
+    const emojis = ['🍃', '🌿', '🍂', '✨'];
+    const count  = 8;
+    for (let i = 0; i < count; i++) {
+        const leaf = document.createElement('div');
+        leaf.className = 'leaf';
+        leaf.textContent = emojis[i % emojis.length];
+        leaf.style.left = `${Math.random() * 100}vw`;
+        leaf.style.animationDuration = `${18 + Math.random() * 10}s`;
+        leaf.style.animationDelay    = `${-Math.random() * 20}s`;
+        document.body.appendChild(leaf);
+    }
+}
+
+// --------------- Utility ---------------
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;')
+        .replace(/'/g,  '&#39;');
 }

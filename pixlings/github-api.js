@@ -22,7 +22,27 @@ const STORAGE_CACHE_KEY = 'pixlings_github_metrics_cache';
 class GitHubMetricsClient {
     constructor() {
         this.memoryCache = new Map();
+        this.lastRateLimit = null; // { remaining, resetAt }
         this.loadCacheFromStorage();
+    }
+
+    /**
+     * Returns true if we know we are currently rate-limited.
+     */
+    isRateLimited() {
+        if (!this.lastRateLimit) return false;
+        return this.lastRateLimit.remaining === 0 && Date.now() < this.lastRateLimit.resetAt;
+    }
+
+    /**
+     * Update rate-limit state from response headers.
+     */
+    updateRateLimitFromHeaders(headers) {
+        const remaining = parseInt(headers.get('X-RateLimit-Remaining') || '-1', 10);
+        const reset     = parseInt(headers.get('X-RateLimit-Reset')     || '0',  10);
+        if (remaining >= 0) {
+            this.lastRateLimit = { remaining, resetAt: reset * 1000 };
+        }
     }
 
     /**
@@ -147,6 +167,8 @@ class GitHubMetricsClient {
                 headers: this.getHeaders()
             });
 
+            this.updateRateLimitFromHeaders(response.headers);
+
             if (!response.ok) {
                 throw new Error(`GitHub API error: ${response.status} for ${owner}/${repo}`);
             }
@@ -218,13 +240,12 @@ class GitHubMetricsClient {
      */
     async batchFetchMetrics(items, onProgress = null) {
         const results = new Map();
-        const delayBetweenRequests = 100; // 100ms between requests
+        const delayBetweenRequests = 100; // ms between requests
 
-        // Check rate limit before starting
-        const rateLimit = await this.checkRateLimit();
-        if (rateLimit && rateLimit.remaining < 10) {
-            console.warn(`GitHub API rate limit low: ${rateLimit.remaining} remaining. Using cached data only.`);
-            return results;
+        // If we already know we're rate-limited, skip immediately
+        if (this.isRateLimited()) {
+            console.warn('GitHub API rate-limited. Returning cached data only.');
+            return { metrics: results, rateLimited: true };
         }
 
         let processed = 0;
@@ -241,31 +262,21 @@ class GitHubMetricsClient {
                 continue;
             }
 
+            // Abort batch if we hit the rate limit mid-flight
+            if (this.isRateLimited()) {
+                console.warn('Rate limit reached mid-batch. Stopping early.');
+                break;
+            }
+
             try {
-                // Fetch release metrics
-                const releaseMetrics = await this.getReleaseMetrics(
-                    owner,
-                    repo,
-                    item.githubAssetName
-                );
-
+                const releaseMetrics = await this.getReleaseMetrics(owner, repo, item.githubAssetName);
                 await this.sleep(delayBetweenRequests);
-
-                // Fetch repo metrics
                 const repoMetrics = await this.getRepoMetrics(owner, repo);
 
-                // Combine metrics
-                results.set(item.id, {
-                    ...releaseMetrics,
-                    ...repoMetrics
-                });
-
+                results.set(item.id, { ...releaseMetrics, ...repoMetrics });
                 processed++;
 
-                // Call progress callback if provided
-                if (onProgress) {
-                    onProgress(processed, items.length);
-                }
+                if (onProgress) onProgress(processed, items.length);
 
                 await this.sleep(delayBetweenRequests);
             } catch (error) {
@@ -274,10 +285,9 @@ class GitHubMetricsClient {
             }
         }
 
-        // Save final cache to localStorage
         this.saveCacheToStorage();
 
-        return results;
+        return { metrics: results, rateLimited: this.isRateLimited() };
     }
 
     /**
