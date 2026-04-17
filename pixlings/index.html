@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixlings — Quiet Life in Your Glyph</title>
     <meta name="description" content="Ambient creatures that live in your Nothing Phone's Glyph Matrix.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <style>
         /* TERRARIUM COLORS */
         :root {
@@ -21,20 +22,18 @@
             --rule: rgba(44, 80, 74, 0.18);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --background: #141008;
-                --surface: #1E1A10;
-                --surface-alt: #252016;
-                --primary: #A8D1C8;
-                --secondary: #88BDC9;
-                --tertiary: #C9A8C6;
-                --text: #EDE0CF;
-                --text-muted: #8A9E99;
-                --code-bg: #0D0A04;
-                --code-text: #A8D1C8;
-                --rule: rgba(168, 209, 200, 0.12);
-            }
+        :root[data-theme="dark"] {
+            --background: #141008;
+            --surface: #1E1A10;
+            --surface-alt: #252016;
+            --primary: #A8D1C8;
+            --secondary: #88BDC9;
+            --tertiary: #C9A8C6;
+            --text: #EDE0CF;
+            --text-muted: #8A9E99;
+            --code-bg: #0D0A04;
+            --code-text: #A8D1C8;
+            --rule: rgba(168, 209, 200, 0.12);
         }
 
         * { box-sizing: border-box; }
@@ -67,6 +66,51 @@
         .back:hover {
             color: var(--primary);
             transform: translateX(-2px);
+        }
+
+        /* THEME TOGGLE */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 10;
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--surface);
+            color: var(--text-muted);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            font-size: 0.95rem;
+            line-height: 1;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            transition: color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .theme-toggle:hover,
+        .theme-toggle:focus-visible {
+            color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            outline: none;
+        }
+
+        .theme-toggle [data-theme-icon] {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .theme-toggle, .theme-toggle [data-theme-icon] { transition: none; }
+            .theme-toggle:hover [data-theme-icon] { transform: none; }
         }
 
         /* AMBIENT LEAVES */
@@ -232,12 +276,16 @@
             .link-grid { grid-template-columns: 1fr; }
             .link-card { padding: 24px 20px; }
             .back { top: 16px; left: 16px; }
+            .theme-toggle { top: 16px; right: 16px; width: 32px; height: 32px; }
         }
     </style>
 </head>
 <body>
 
 <a href="../" class="back">← bleelblep</a>
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+    <span data-theme-icon>☾</span>
+</button>
 
 <!-- Ambient leaves -->
 <div class="leaf" style="left:8%;animation-duration:20s;animation-delay:-3s">🍃</div>
@@ -333,6 +381,8 @@ for (let i = 0; i < 12; i++) {
     document.body.appendChild(leaf);
 }
 </script>
+
+<script src="../assets/theme.js" defer></script>
 
 </body>
 </html>

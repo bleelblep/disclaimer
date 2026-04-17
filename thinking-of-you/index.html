@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>thinking of you ♡</title>
     <meta name="description" content="A small glyph matrix toy that quietly syncs light between two nothing phones.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -27,22 +28,20 @@
             --shadow-lg: 0 12px 40px rgba(74, 44, 42, 0.14);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #B84A4A;
-                --card: #FDF4E8;
-                --text: #6A2A2A;
-                --text-dim: #A06868;
-                --accent: #E85A6B;
-                --border: rgba(253, 244, 232, 0.4);
-                --kaomoji: #F4B6BA;
-                --lavender: #C8B8E8;
-                --lavender-deep: #5A3A8A;
-                --lavender-soft: rgba(200, 184, 232, 0.3);
-                --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.18);
-                --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.24);
-                --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.32);
-            }
+        :root[data-theme="dark"] {
+            --bg: #B84A4A;
+            --card: #FDF4E8;
+            --text: #6A2A2A;
+            --text-dim: #A06868;
+            --accent: #E85A6B;
+            --border: rgba(253, 244, 232, 0.4);
+            --kaomoji: #F4B6BA;
+            --lavender: #C8B8E8;
+            --lavender-deep: #5A3A8A;
+            --lavender-soft: rgba(200, 184, 232, 0.3);
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.18);
+            --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.24);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.32);
         }
 
         * { box-sizing: border-box; }
@@ -59,9 +58,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        @media (prefers-color-scheme: dark) {
-            body { color: #FDF4E8; }
-        }
+        [data-theme="dark"] body { color: #FDF4E8; }
 
         .container {
             max-width: 720px;
@@ -89,6 +86,51 @@
         .back:hover {
             color: var(--accent);
             transform: translateX(-2px);
+        }
+
+        /* THEME TOGGLE */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--card);
+            color: var(--text);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            font-size: 0.95rem;
+            line-height: 1;
+            padding: 0;
+            font-family: inherit;
+            box-shadow: var(--shadow-sm);
+            transition: color 0.15s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        .theme-toggle:hover,
+        .theme-toggle:focus-visible {
+            color: var(--accent);
+            outline: none;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-toggle [data-theme-icon] {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .theme-toggle, .theme-toggle [data-theme-icon] { transition: none; }
+            .theme-toggle:hover [data-theme-icon] { transform: none; }
         }
 
         /* HERO */
@@ -146,9 +188,7 @@
             line-height: 1.05;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .hero h1 { color: #FDF4E8; }
-        }
+        [data-theme="dark"] .hero h1 { color: #FDF4E8; }
 
         .hero-tag {
             display: inline-block;
@@ -170,9 +210,7 @@
             font-weight: 500;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .hero p { color: rgba(253, 244, 232, 0.8); }
-        }
+        [data-theme="dark"] .hero p { color: rgba(253, 244, 232, 0.8); }
 
         /* PULL QUOTE */
         .quote {
@@ -259,11 +297,9 @@
             color: var(--lavender-deep);
         }
 
-        @media (prefers-color-scheme: dark) {
-            .card code {
-                background: rgba(90, 58, 138, 0.2);
-                color: var(--lavender-deep);
-            }
+        [data-theme="dark"] .card code {
+            background: rgba(90, 58, 138, 0.2);
+            color: var(--lavender-deep);
         }
 
         /* HOW IT WORKS STEPS */
@@ -409,12 +445,16 @@
             .card, .github-wrap, .note { padding: 24px; }
             .quote { font-size: 1.15rem; padding: 32px 0; }
             .back { top: 14px; left: 14px; font-size: 0.8rem; padding: 6px 12px; }
+            .theme-toggle { top: 14px; right: 14px; width: 32px; height: 32px; }
         }
     </style>
 </head>
 <body>
 
 <a href="../" class="back">← bleelblep</a>
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+    <span data-theme-icon>☾</span>
+</button>
 
 <header class="hero">
     <div class="container">
@@ -537,6 +577,8 @@
         <div>thinking of you · made by bleelblep</div>
     </div>
 </footer>
+
+<script src="../assets/theme.js" defer></script>
 
 </body>
 </html>
