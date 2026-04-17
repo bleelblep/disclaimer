@@ -1,0 +1,25 @@
+{
+  "generated": "2026-04-17T08:02:37.683Z",
+  "items": [
+    {
+      "src": "arcade.png",
+      "caption": "arcade"
+    },
+    {
+      "src": "coin_intro.png",
+      "caption": "coin intro"
+    },
+    {
+      "src": "controls.png",
+      "caption": "controls"
+    },
+    {
+      "src": "countdown.png",
+      "caption": "countdown"
+    },
+    {
+      "src": "games.png",
+      "caption": "games"
+    }
+  ]
+}

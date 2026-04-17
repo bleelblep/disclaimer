@@ -316,8 +316,7 @@
 
         .project-tag.wip { color: #8A5620; background: rgba(245, 209, 153, 0.5); }
         .project-tag.open { color: #5A3A8A; background: rgba(200, 184, 232, 0.5); }
-        .project-tag.soon { color: var(--text-dim); background: var(--bg); }
-        .project-tag.shelf { color: var(--text-dim); background: rgba(160, 104, 104, 0.12); }
+        .project-tag.experimental { color: #8A5620; background: rgba(245, 209, 153, 0.5); }
 
         .project-desc {
             font-size: 0.98rem;
@@ -343,15 +342,6 @@
         }
 
         .project:hover .arrow { transform: translateX(4px); }
-
-        .project.placeholder {
-            opacity: 0.55;
-            cursor: default;
-            pointer-events: none;
-            border: 1.5px dashed var(--border);
-            background: transparent;
-            box-shadow: none;
-        }
 
         /* FOOTER */
         .footer {
@@ -414,7 +404,7 @@
                 <div class="project-swatch swatch-peach">🌱</div>
                 <div class="project-head">
                     <h3 class="project-name">pixlings</h3>
-                    <span class="project-tag">closed beta</span>
+                    <span class="project-tag">live</span>
                 </div>
                 <p class="project-desc">
                     ambient creatures living inside your nothing phone's glyph matrix. they move, react,
@@ -472,16 +462,22 @@
                 </div>
             </a>
 
-            <div class="project placeholder">
-                <div class="project-swatch swatch-warm">?</div>
+            <a href="../glyphcade/" class="project">
+                <div class="project-swatch swatch-warm">🕹</div>
                 <div class="project-head">
-                    <h3 class="project-name">something next</h3>
-                    <span class="project-tag soon">soon</span>
+                    <h3 class="project-name">glyphcade</h3>
+                    <span class="project-tag experimental">experimental</span>
                 </div>
                 <p class="project-desc">
-                    there'll be more here when there's something worth showing.
+                    a tiny arcade cabinet that runs on the nothing phone 3's glyph matrix.
+                    six retro games, zero main screen.
                 </p>
-            </div>
+                <div class="project-meta">
+                    <span>android · nothing phone 3</span>
+                    <span>·</span>
+                    <span>view <span class="arrow">→</span></span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
