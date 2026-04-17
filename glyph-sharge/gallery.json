@@ -1,0 +1,11 @@
+{
+  "items": [
+    { "src": "1.png", "caption": "home · service + features" },
+    { "src": "5.png", "caption": "information · a tour of the seven knobs" },
+    { "src": "2.png", "caption": "glow gate · custom unlock animation" },
+    { "src": "3.png", "caption": "configure · animation picker" },
+    { "src": "4.png", "caption": "configure · duration & sound alerts" },
+    { "src": "7.png", "caption": "quiet hours · sleep schedule" },
+    { "src": "6.png", "caption": "settings · typography, theme, quiet hours" }
+  ]
+}

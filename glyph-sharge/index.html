@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>glyph sharge — control your glyphs</title>
+    <meta name="description" content="Glyph Sharge — battery peeks, USB theft guards, unlock animations, and quiet hours for your Nothing Phone.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/gallery.css">
+    <style>
+        /* PASTEL LAVENDER · MATCHES APP UI */
+        :root {
+            --bg: #E8DEF0;
+            --surface: #FFFFFF;
+            --surface-alt: #F1E9F7;
+            --surface-tint: #DCCFE8;
+            --text: #1A1524;
+            --text-dim: #6B5A7C;
+            --accent: #6B3FE0;
+            --accent-deep: #4A28B0;
+            --accent-soft: rgba(107, 63, 224, 0.12);
+            --c-red: #D54A52;
+            --c-coral: #E06860;
+            --c-green: #3DA560;
+            --c-orange: #E88A3E;
+            --c-amber: #D9A634;
+            --c-blue: #4A7BD4;
+            --c-purple: #8555D9;
+            --border: rgba(26, 21, 36, 0.1);
+            --rule: rgba(26, 21, 36, 0.14);
+
+            --shadow-sm: 0 1.5px 8px rgba(26, 21, 36, 0.06);
+            --shadow-md: 0 10px 28px rgba(26, 21, 36, 0.08);
+            --shadow-lg: 0 24px 64px rgba(26, 21, 36, 0.14);
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #15111D;
+            --surface: #1E1928;
+            --surface-alt: #281F33;
+            --surface-tint: #2E2440;
+            --text: #F2EBF8;
+            --text-dim: #A092B0;
+            --accent: #B09AFF;
+            --accent-deep: #8A70E0;
+            --accent-soft: rgba(176, 154, 255, 0.14);
+            --c-red: #E87680;
+            --c-coral: #EC8A80;
+            --c-green: #6EC890;
+            --c-orange: #EDA86A;
+            --c-amber: #E8C262;
+            --c-blue: #7AA0E8;
+            --c-purple: #B49AE8;
+            --border: rgba(242, 235, 248, 0.12);
+            --rule: rgba(242, 235, 248, 0.16);
+
+            --shadow-sm: 0 2px 14px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+            --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-weight: 400;
+            font-size: 1.02rem;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Soft decorative wash behind the hero */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -180px;
+            right: -120px;
+            width: 480px;
+            height: 480px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--surface-tint) 0%, transparent 65%);
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(10px);
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            top: 280px;
+            left: -180px;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(12px);
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* FLOATING CONTROLS */
+        .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+            padding: 10px 18px;
+            background: var(--surface);
+            border-radius: 999px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.15s;
+        }
+
+        .back:hover {
+            color: var(--accent);
+            transform: translateX(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--surface);
+            color: var(--text);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            font-family: inherit;
+            box-shadow: var(--shadow-sm);
+            transition: color 0.15s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .theme-toggle:hover,
+        .theme-toggle:focus-visible {
+            color: var(--accent);
+            outline: none;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-toggle [data-theme-icon] {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .back, .theme-toggle, .theme-toggle [data-theme-icon] { transition: none; }
+            .back:hover, .theme-toggle:hover { transform: none; }
+            .theme-toggle:hover [data-theme-icon] { transform: none; }
+        }
+
+        /* HERO */
+        .hero {
+            padding: 120px 0 28px;
+            text-align: left;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 22px;
+            font-weight: 500;
+        }
+
+        .hero-eyebrow::before {
+            content: "";
+            width: 24px;
+            height: 1px;
+            background: var(--text-dim);
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-weight: 400;
+            font-size: clamp(3.2rem, 9vw, 5.4rem);
+            line-height: 1;
+            letter-spacing: -0.01em;
+            margin: 0 0 14px;
+            color: var(--text);
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: clamp(1.3rem, 3vw, 1.75rem);
+            color: var(--text-dim);
+            font-weight: 400;
+            line-height: 1.35;
+            margin: 0 0 22px;
+            max-width: 600px;
+        }
+
+        .hero p.hero-blurb {
+            font-size: 1.08rem;
+            color: var(--text);
+            max-width: 600px;
+            margin: 0 0 26px;
+            line-height: 1.65;
+        }
+
+        .hero-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 16px;
+            letter-spacing: -0.005em;
+            line-height: 1;
+        }
+
+        .chip.active {
+            color: #FFFFFF;
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 4px 14px rgba(107, 63, 224, 0.3);
+        }
+
+        .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #FFFFFF;
+        }
+
+        /* SECTION */
+        .section-label {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin: 36px 0 8px;
+            font-weight: 500;
+        }
+
+        h2.section-title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-weight: 400;
+            font-size: clamp(1.9rem, 4vw, 2.6rem);
+            line-height: 1.05;
+            letter-spacing: -0.015em;
+            margin: 0 0 22px;
+            color: var(--text);
+        }
+
+        h2.section-title em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--surface);
+            border-radius: 28px;
+            padding: 30px 32px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card h3 {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            font-size: 1.5rem;
+            margin: 0 0 14px;
+            letter-spacing: -0.01em;
+            color: var(--text);
+        }
+
+        .card h3 em { font-style: italic; color: var(--accent); }
+
+        .card p {
+            color: var(--text);
+            margin: 0 0 12px;
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+
+        .card p:last-child { margin-bottom: 0; }
+
+        .card strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* FEATURE LIST — matches the app's home-screen feel */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 12px;
+            margin: 8px 0 22px;
+        }
+
+        .feature {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 22px 22px 24px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+        }
+
+        .feature:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+            color: #FFFFFF;
+        }
+
+        .feature:nth-child(1) .feature-icon { background: var(--c-red); }
+        .feature:nth-child(2) .feature-icon { background: var(--c-coral); }
+        .feature:nth-child(3) .feature-icon { background: var(--c-green); }
+        .feature:nth-child(4) .feature-icon { background: var(--c-orange); }
+        .feature:nth-child(5) .feature-icon { background: var(--c-purple); }
+        .feature:nth-child(6) .feature-icon { background: var(--c-blue); }
+        .feature:nth-child(7) .feature-icon { background: var(--c-amber); }
+
+        .feature-name {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            font-size: 1.28rem;
+            margin: 0 0 6px;
+            letter-spacing: -0.01em;
+            color: var(--text);
+        }
+
+        .feature-desc {
+            font-size: 0.93rem;
+            color: var(--text-dim);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* DEVICE LIST */
+        .devices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .device {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+            background: var(--surface-alt);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .device-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--c-green);
+        }
+
+        .device.no {
+            color: var(--text-dim);
+            text-decoration: line-through;
+            text-decoration-color: var(--rule);
+        }
+
+        .device.no .device-dot { background: var(--rule); }
+
+        /* GALLERY */
+        .gallery-section { margin-bottom: 16px; }
+        .gallery-section p { margin-bottom: 12px; }
+
+        /* HIGHLIGHTS LIST */
+        .highlights {
+            margin: 4px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .highlights li {
+            display: flex;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--rule);
+            align-items: flex-start;
+        }
+
+        .highlights li:last-child { border-bottom: 0; padding-bottom: 0; }
+        .highlights li:first-child { padding-top: 4px; }
+
+        .highlight-num {
+            flex-shrink: 0;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            padding-top: 3px;
+        }
+
+        .highlight-body {
+            flex: 1;
+            color: var(--text);
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .highlight-body strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        /* NOTE */
+        .note {
+            border-radius: 20px;
+            padding: 22px 26px;
+            margin-bottom: 16px;
+            background: var(--accent-soft);
+            color: var(--text);
+            font-size: 0.96rem;
+            line-height: 1.6;
+            border-left: 3px solid var(--accent);
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .note strong { font-weight: 700; color: var(--accent); }
+
+        .note a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            font-weight: 600;
+        }
+
+        /* INSTALL / CTA */
+        .install-wrap {
+            background: var(--text);
+            color: var(--bg);
+            border-radius: 32px;
+            padding: 40px 34px 42px;
+            margin-bottom: 16px;
+            text-align: left;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .install-wrap::before {
+            content: "";
+            position: absolute;
+            inset: -60px -30px auto auto;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 60%);
+            opacity: 0.55;
+            pointer-events: none;
+            filter: blur(8px);
+        }
+
+        [data-theme="dark"] .install-wrap {
+            background: var(--surface-tint);
+            color: var(--text);
+        }
+
+        .install-eyebrow {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.72rem;
+            color: var(--accent);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            position: relative;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .install-eyebrow { color: var(--accent); }
+
+        .install-title {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            margin: 0 0 10px;
+            letter-spacing: -0.015em;
+            line-height: 1.1;
+            position: relative;
+        }
+
+        .install-title em { font-style: italic; color: var(--accent); }
+
+        .install-wrap p {
+            color: rgba(255, 255, 255, 0.75);
+            max-width: 440px;
+            margin: 0 0 22px;
+            font-size: 1rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        [data-theme="dark"] .install-wrap p { color: var(--text-dim); }
+
+        .gh-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--accent);
+            color: #FFFFFF;
+            padding: 14px 26px;
+            border-radius: 999px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: -0.005em;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s;
+            box-shadow: 0 6px 20px rgba(107, 63, 224, 0.35);
+        }
+
+        .gh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(107, 63, 224, 0.45);
+            background: var(--accent-deep);
+        }
+
+        [data-theme="dark"] .gh-btn {
+            color: var(--bg);
+            background: var(--accent);
+        }
+
+        [data-theme="dark"] .gh-btn:hover {
+            background: #C9B0FF;
+        }
+
+        .install-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 20px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.5) !important;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        [data-theme="dark"] .install-meta { color: var(--text-dim) !important; }
+
+        .install-meta span { white-space: nowrap; }
+
+        .install-meta .sep {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        [data-theme="dark"] .install-meta .sep { color: var(--rule); }
+
+        /* FOOTER */
+        .footer {
+            padding: 36px 0 56px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.88rem;
+        }
+
+        .footer-marker {
+            font-family: 'Instrument Serif', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 620px) {
+            .container { padding: 0 20px; }
+            .hero { padding: 88px 0 20px; }
+            .back { top: 14px; left: 14px; font-size: 0.8rem; padding: 8px 14px; }
+            .theme-toggle { top: 14px; right: 14px; width: 36px; height: 36px; }
+            .card, .install-wrap { padding: 24px 22px; border-radius: 22px; }
+            .install-wrap { padding: 30px 24px 32px; }
+            .features { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .feature { padding: 18px 16px 20px; border-radius: 18px; }
+            .feature-icon { width: 36px; height: 36px; font-size: 1.1rem; margin-bottom: 12px; }
+            .feature-name { font-size: 1.15rem; }
+            body::before, body::after { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="../" class="back">← bleelblep</a>
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+    <span data-theme-icon>☾</span>
+</button>
+
+<header class="hero">
+    <div class="container">
+        <div class="hero-eyebrow">for your nothing phone</div>
+        <h1>Glyph <em>Sharge</em></h1>
+        <p class="hero-sub">a quiet control centre for the lights on the back of your phone.</p>
+        <p class="hero-blurb">
+            shake for battery. guard the usb port. swap the unlock animation. let the phone rest at night.
+            seven small utilities, all toggleable, all running on nothing's <strong>official glyph api</strong>.
+        </p>
+        <div class="hero-chips">
+            <span class="chip active"><span class="chip-dot"></span>v1.0.24 · glow gate</span>
+            <span class="chip">material you</span>
+            <span class="chip">stable</span>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="card">
+        <h3>what is it</h3>
+        <p>
+            <strong>Glyph Sharge</strong> turns the nothing phone's glyph leds into a proper control
+            surface. it watches your battery, guards your usb port, runs unlock animations, and schedules
+            quiet time — all behind a material-you interface that follows your wallpaper palette.
+        </p>
+        <p>
+            nothing runs in the background secretly. every feature is a toggle. pick the ones you want,
+            leave the rest off.
+        </p>
+    </section>
+
+    <div class="section-label">seven knobs to turn</div>
+    <h2 class="section-title">features, <em>all toggleable</em></h2>
+
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-name">Power Peek</h3>
+            <p class="feature-desc">shake the phone to flash the battery % on the glyphs. adjustable sensitivity.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🛡</div>
+            <h3 class="feature-name">Glyph Guard</h3>
+            <p class="feature-desc">usb theft alert — unplug without permission and the phone lights up loud.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🔓</div>
+            <h3 class="feature-name">Glow Gate</h3>
+            <p class="feature-desc">custom unlock animation, rendered on the matrix every time you come back.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🔔</div>
+            <h3 class="feature-name">Low Battery Alert</h3>
+            <p class="feature-desc">threshold-based warnings before your phone taps out. set it and forget it.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">📈</div>
+            <h3 class="feature-name">Battery Story</h3>
+            <p class="feature-desc">charging sessions visualised. see how you charge, how long, and how healthy.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🌙</div>
+            <h3 class="feature-name">Quiet Hours</h3>
+            <p class="feature-desc">scheduled glyph-off window. the phone rests while you rest.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">💡</div>
+            <h3 class="feature-name">Glyph Service</h3>
+            <p class="feature-desc">start, stop, or reconfigure the underlying service without leaving the app.</p>
+        </div>
+    </div>
+
+    <section class="card">
+        <h3>supported <em>phones</em></h3>
+        <p>glyph sharge uses the <strong>official nothing glyph api</strong> — no debug mode, no root, no workarounds. tested on:</p>
+        <div class="devices">
+            <span class="device"><span class="device-dot"></span>Phone (1)</span>
+            <span class="device"><span class="device-dot"></span>Phone (2)</span>
+            <span class="device"><span class="device-dot"></span>Phone (2a)</span>
+            <span class="device"><span class="device-dot"></span>Phone (2a+)</span>
+            <span class="device"><span class="device-dot"></span>Phone (3a)</span>
+            <span class="device"><span class="device-dot"></span>Phone (3a) Pro</span>
+            <span class="device no"><span class="device-dot"></span>Phone (3)</span>
+        </div>
+    </section>
+
+    <section class="card gallery-section">
+        <h3>a quick <em>tour</em></h3>
+        <p>a few screens from the app:</p>
+        <div data-gallery="./images/" data-gallery-manifest="./gallery.json" aria-label="glyph sharge screenshots"></div>
+    </section>
+
+    <div class="section-label">why this one</div>
+    <h2 class="section-title">what makes it <em>different</em></h2>
+
+    <section class="card">
+        <ul class="highlights">
+            <li>
+                <span class="highlight-num">01</span>
+                <span class="highlight-body"><strong>Official API, no hacks.</strong> uses nothing's sanctioned glyph api key — no debug mode, no root, no reverse engineering. it plays nicely with the system.</span>
+            </li>
+            <li>
+                <span class="highlight-num">02</span>
+                <span class="highlight-body"><strong>Real utility, not just lights.</strong> usb theft guard and low-battery alerts solve actual problems, not just decoration. the rest is a nice bonus.</span>
+            </li>
+            <li>
+                <span class="highlight-num">03</span>
+                <span class="highlight-body"><strong>Material You through and through.</strong> follows your wallpaper palette, both light and dark themes, three font options — system, Ndot, Ntype.</span>
+            </li>
+            <li>
+                <span class="highlight-num">04</span>
+                <span class="highlight-body"><strong>Everything is a toggle.</strong> if you only want power peek, only power peek runs. nothing is forced on you.</span>
+            </li>
+        </ul>
+    </section>
+
+    <div class="note">
+        <strong>heads up:</strong> glyph sharge does not support the phone (3) — the glyph matrix on that device works differently. if you're on a phone (3), try <a href="../glyphcade/">glyphcade</a> or <a href="../pixlings/">pixlings</a> instead.
+    </div>
+
+    <section class="install-wrap">
+        <div class="install-eyebrow">▸ get it</div>
+        <h2 class="install-title">grab the <em>latest build</em></h2>
+        <p>source and releases live on github. v1.0.24 glow gate is the current drop — july 2025.</p>
+        <a href="https://github.com/bleelblep/Glyph-Sharge" target="_blank" rel="noopener" class="gh-btn">
+            <span>view on github</span>
+            <span>→</span>
+        </a>
+        <div class="install-meta">
+            <span>stable</span>
+            <span class="sep">·</span>
+            <span>material you</span>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-marker">sharge</div>
+        <div>made by bleelblep · everything runs locally ♡</div>
+    </div>
+</footer>
+
+<script src="../assets/theme.js" defer></script>
+<script src="../assets/gallery.js" defer></script>
+
+</body>
+</html>
