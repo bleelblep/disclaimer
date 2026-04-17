@@ -41,6 +41,27 @@
         apply(current === 'dark' ? 'light' : 'dark', true);
     }
 
+    function wireBack() {
+        document.querySelectorAll('a.back, [data-back]').forEach(function (link) {
+            if (link.dataset.backWired) return;
+            link.dataset.backWired = '1';
+            link.addEventListener('click', function (e) {
+                // Respect modifier keys / non-primary clicks (open in new tab etc.)
+                if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                var ref = document.referrer;
+                if (ref) {
+                    try {
+                        var refOrigin = new URL(ref).origin;
+                        if (refOrigin === window.location.origin && window.history.length > 1) {
+                            e.preventDefault();
+                            window.history.back();
+                        }
+                    } catch (err) { /* malformed referrer — fall through to href */ }
+                }
+            });
+        });
+    }
+
     function wire() {
         document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
             if (btn.dataset.themeWired) return;
@@ -50,6 +71,7 @@
                 toggle();
             });
         });
+        wireBack();
         refresh();
     }
 

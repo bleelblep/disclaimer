@@ -172,8 +172,6 @@
 
         .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
 
-        [data-theme="dark"] .theme-toggle { color: #FDF4E8; }
-
         @media (prefers-reduced-motion: reduce) {
             .theme-toggle, .theme-toggle [data-theme-icon] { transition: none; }
             .theme-toggle:hover [data-theme-icon] { transform: none; }
@@ -315,9 +313,40 @@
         }
 
         .project-tag.wip { color: #8A5620; background: rgba(245, 209, 153, 0.5); }
+        .project-tag.beta { color: #8A3070; background: rgba(244, 168, 208, 0.4); }
         .project-tag.open { color: #5A3A8A; background: rgba(200, 184, 232, 0.5); }
         .project-tag.experimental { color: #8A5620; background: rgba(245, 209, 153, 0.5); }
         .project-tag.stable { color: #2E7B4E; background: rgba(62, 165, 96, 0.18); }
+        .project-tag.private {
+            color: var(--text-dim);
+            background: transparent;
+            border: 1.5px dashed var(--border);
+            padding: 3px 10px;
+        }
+        [data-theme="dark"] .project-tag.private { color: rgba(253, 244, 232, 0.75); }
+
+        /* PRIVATE DRAWER — muted, tucked away */
+        .drawer-intro {
+            font-size: 0.92rem;
+            color: var(--text-dim);
+            margin: -10px 0 22px;
+            max-width: 560px;
+            font-style: italic;
+        }
+        [data-theme="dark"] .drawer-intro { color: rgba(253, 244, 232, 0.7); }
+
+        .project.drawer {
+            background: transparent;
+            border: 1.5px dashed var(--border);
+            box-shadow: none;
+        }
+        .project.drawer:hover {
+            background: var(--card);
+            box-shadow: var(--shadow-sm);
+            border-style: solid;
+        }
+
+        .swatch-amber { background: #F0A830; color: #3A1A08; }
 
         .project-desc {
             font-size: 0.98rem;
@@ -405,7 +434,7 @@
                 <div class="project-swatch swatch-peach">🌱</div>
                 <div class="project-head">
                     <h3 class="project-name">pixlings</h3>
-                    <span class="project-tag">live</span>
+                    <span class="project-tag beta">closed beta</span>
                 </div>
                 <p class="project-desc">
                     ambient creatures living inside your nothing phone's glyph matrix. they move, react,
@@ -494,6 +523,43 @@
                     <span>android · nothing phone 3</span>
                     <span>·</span>
                     <span>view <span class="arrow">→</span></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2 class="section-title">private drawer</h2>
+            <span class="section-count">1</span>
+        </div>
+        <p class="drawer-intro">things that aren't really shipped — mostly for me. peek if you like.</p>
+
+        <div class="projects">
+            <a href="../glupo/" class="project drawer">
+                <div class="project-swatch swatch-amber" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#3A1A08" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="14" cy="14" rx="11" ry="3" fill="#3A1A08" stroke="none" />
+                        <path d="M8 13c0-3 2.7-5 6-5s6 2 6 5" />
+                        <circle cx="5" cy="21" r="1" fill="#3A1A08" stroke="none" />
+                        <circle cx="14" cy="23" r="1" fill="#3A1A08" stroke="none" />
+                        <circle cx="23" cy="21" r="1" fill="#3A1A08" stroke="none" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">glupo</h3>
+                    <span class="project-tag private">personal</span>
+                </div>
+                <p class="project-desc">
+                    the parent sandbox. a kitchen-sink glyph app where new toys live before they
+                    leave the nest — music, weather, quick settings, a ufo that abducts cows.
+                </p>
+                <div class="project-meta">
+                    <span>android · nothing phone 3 · unreleased</span>
+                    <span>·</span>
+                    <span>peek <span class="arrow">→</span></span>
                 </div>
             </a>
         </div>

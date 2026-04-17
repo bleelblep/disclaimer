@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>glupo — the private drawer</title>
+    <meta name="description" content="Glupo — a personal sandbox app for the Nothing Phone 3 glyph matrix. Where toys live before they leave the nest.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        /* ── GLUPO: mid-century retro futurism ──
+           amber sunsets, dark brown wood-paneled walls,
+           starbursts on atomic-age diner menus. */
+        :root {
+            --bg: #F0A830;               /* warm amber — main surface */
+            --bg-cream: #F5ECD7;         /* cream — card/panel */
+            --bg-cream-alt: #E8D4B0;     /* darker cream — hover/inset */
+            --brand: #3A1A08;            /* dark brown — header/ink */
+            --brand-ink: #2A1205;
+            --accent: #C8821A;           /* golden brown */
+            --red: #C8372D;              /* atomic red */
+            --teal: #4A8FA8;             /* retro teal */
+            --muted: #7A4A10;            /* muted brown */
+            --border: #E8D0B0;
+            --rule: rgba(58, 26, 8, 0.18);
+            --rule-strong: rgba(58, 26, 8, 0.45);
+
+            --ink-on-amber: #3A1A08;
+            --ink-on-cream: #2A1205;
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #2A1A08;               /* very dark brown */
+            --bg-cream: #4A3018;         /* card */
+            --bg-cream-alt: #5A4028;     /* inset */
+            --brand: #1A0A00;            /* near black */
+            --brand-ink: #F0C870;
+            --accent: #E09830;           /* bright amber */
+            --red: #E05040;
+            --teal: #5AAAC8;
+            --muted: #A06820;
+            --border: #5A4028;
+            --rule: rgba(240, 200, 112, 0.18);
+            --rule-strong: rgba(240, 200, 112, 0.5);
+
+            --ink-on-amber: #F0C870;
+            --ink-on-cream: #F0C870;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--ink-on-amber);
+            font-weight: 400;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── Atomic-age grain overlay ── */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(58, 26, 8, 0.12) 1px, transparent 0);
+            background-size: 4px 4px;
+            opacity: 0.5;
+            mix-blend-mode: multiply;
+        }
+        [data-theme="dark"] body::before {
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.35) 1px, transparent 0);
+            mix-blend-mode: normal;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 0 28px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── Floating back + theme ── */
+        .back, .theme-toggle {
+            position: fixed;
+            top: 22px;
+            z-index: 20;
+            background: var(--brand);
+            color: var(--bg);
+            border: 2px solid var(--brand);
+            border-radius: 999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-decoration: none;
+            padding: 9px 18px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 4px 4px 0 var(--rule-strong);
+            cursor: pointer;
+        }
+        .back { left: 22px; }
+        .theme-toggle {
+            right: 22px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: inline-grid;
+            place-items: center;
+            font-size: 1rem;
+        }
+        [data-theme="dark"] .back,
+        [data-theme="dark"] .theme-toggle {
+            background: var(--brand-ink);
+            color: var(--brand);
+            border-color: var(--brand-ink);
+        }
+        .back:hover, .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--rule-strong);
+        }
+        .theme-toggle [data-theme-icon] { display: inline-block; }
+
+        /* ── HERO: starburst + orbital rings + typographic block ── */
+        .hero {
+            position: relative;
+            padding: 120px 0 80px;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .hero-orbit {
+            position: absolute;
+            top: 80px;
+            right: -120px;
+            width: 520px;
+            height: 520px;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        .hero-orbit circle, .hero-orbit ellipse {
+            fill: none;
+            stroke: var(--brand);
+            stroke-width: 2;
+        }
+        .hero-orbit .dot { fill: var(--red); stroke: none; }
+        .hero-orbit .dot-teal { fill: var(--teal); stroke: none; }
+        .hero-orbit .dot-accent { fill: var(--accent); stroke: none; }
+        [data-theme="dark"] .hero-orbit circle,
+        [data-theme="dark"] .hero-orbit ellipse { stroke: var(--brand-ink); }
+
+        @keyframes orbit-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .hero-orbit .spin-1 {
+            animation: orbit-spin 60s linear infinite;
+            transform-origin: 260px 260px;
+        }
+        .hero-orbit .spin-2 {
+            animation: orbit-spin 38s linear infinite reverse;
+            transform-origin: 260px 260px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-orbit .spin-1, .hero-orbit .spin-2 { animation: none; }
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--brand);
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 999px;
+            padding: 6px 14px 5px;
+            margin-bottom: 28px;
+        }
+        [data-theme="dark"] .eyebrow { color: var(--brand-ink); background: transparent; border-color: var(--brand-ink); }
+
+        .eyebrow-star {
+            color: var(--red);
+            font-size: 1rem;
+            line-height: 0;
+        }
+
+        .hero h1 {
+            font-family: 'Rubik Mono One', 'Space Grotesk', sans-serif;
+            font-size: clamp(3.2rem, 9vw, 6.2rem);
+            font-weight: 400;
+            line-height: 0.88;
+            letter-spacing: -0.01em;
+            color: var(--brand);
+            margin: 0 0 24px;
+            text-transform: lowercase;
+        }
+        [data-theme="dark"] .hero h1 { color: var(--brand-ink); }
+
+        .hero-tagline {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+            color: var(--brand);
+            max-width: 560px;
+            margin: 0 0 32px;
+            line-height: 1.35;
+        }
+        [data-theme="dark"] .hero-tagline { color: var(--brand-ink); }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 7px 14px;
+            border-radius: 999px;
+            border: 1.5px solid var(--brand);
+            background: transparent;
+            color: var(--brand);
+        }
+        [data-theme="dark"] .chip { color: var(--brand-ink); border-color: var(--brand-ink); }
+
+        .chip.solid {
+            background: var(--red);
+            color: var(--bg-cream);
+            border-color: var(--red);
+        }
+        .chip.teal {
+            background: var(--teal);
+            color: var(--bg-cream);
+            border-color: var(--teal);
+        }
+
+        /* ── SECTIONS ── */
+        .section { padding: 64px 0; position: relative; }
+
+        .section-rule {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 36px;
+        }
+        .section-rule-line {
+            flex: 1;
+            height: 2px;
+            background: var(--brand);
+        }
+        [data-theme="dark"] .section-rule-line { background: var(--brand-ink); }
+
+        .section-rule-num {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.95rem;
+            color: var(--brand);
+            letter-spacing: 0.1em;
+        }
+        [data-theme="dark"] .section-rule-num { color: var(--brand-ink); }
+
+        .section-rule-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--brand);
+        }
+        [data-theme="dark"] .section-rule-title { color: var(--brand-ink); }
+
+        .section h2 {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-weight: 400;
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1;
+            letter-spacing: -0.01em;
+            color: var(--brand);
+            margin: 0 0 18px;
+            text-transform: lowercase;
+        }
+        [data-theme="dark"] .section h2 { color: var(--brand-ink); }
+
+        .section-lede {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 1.15rem;
+            color: var(--brand);
+            max-width: 640px;
+            margin: 0 0 36px;
+            line-height: 1.45;
+        }
+        [data-theme="dark"] .section-lede { color: var(--brand-ink); }
+
+        /* ── TOY GRID ── */
+        .toys {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .toy {
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 20px;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 6px 6px 0 var(--rule-strong);
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: var(--ink-on-cream);
+            text-decoration: none;
+            min-height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+        [data-theme="dark"] .toy { border-color: var(--brand-ink); }
+
+        .toy:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 9px 9px 0 var(--rule-strong);
+        }
+
+        .toy.static { pointer-events: none; }
+        .toy.static:hover { transform: none; box-shadow: 6px 6px 0 var(--rule-strong); }
+
+        .toy-badge {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            color: var(--muted);
+        }
+
+        .toy-badge-num {
+            color: var(--red);
+        }
+
+        .toy-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 2px solid var(--brand);
+            display: grid;
+            place-items: center;
+            color: var(--brand);
+            margin-bottom: 2px;
+        }
+        [data-theme="dark"] .toy-icon {
+            background: var(--bg-cream-alt);
+            border-color: var(--brand-ink);
+            color: var(--brand-ink);
+        }
+
+        .toy-icon svg { width: 36px; height: 36px; }
+
+        .toy-name {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-weight: 400;
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            color: var(--brand);
+            margin: 0;
+            text-transform: lowercase;
+            line-height: 1.05;
+        }
+        [data-theme="dark"] .toy-name { color: var(--brand-ink); }
+
+        .toy-desc {
+            font-size: 0.96rem;
+            color: var(--muted);
+            margin: 0;
+            flex: 1;
+            line-height: 1.55;
+        }
+        [data-theme="dark"] .toy-desc { color: #D0B080; }
+
+        .toy-foot {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--teal);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toy-foot.red { color: var(--red); }
+        .toy-foot.accent { color: var(--accent); }
+
+        /* ── POSTER / LIBRARY CARD ── */
+        .library-card {
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 8px 8px 0 var(--rule-strong);
+            color: var(--ink-on-cream);
+            position: relative;
+            overflow: hidden;
+        }
+        [data-theme="dark"] .library-card { border-color: var(--brand-ink); }
+
+        .library-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 40px; right: 40px;
+            height: 2px;
+            background: repeating-linear-gradient(to right,
+                var(--brand) 0, var(--brand) 8px,
+                transparent 8px, transparent 14px);
+            opacity: 0.5;
+        }
+        [data-theme="dark"] .library-card::before {
+            background: repeating-linear-gradient(to right,
+                var(--brand-ink) 0, var(--brand-ink) 8px,
+                transparent 8px, transparent 14px);
+        }
+
+        .library-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1.5px solid var(--rule);
+            padding-bottom: 14px;
+            margin-bottom: 22px;
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.2em;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .library-text p {
+            font-size: 1.02rem;
+            color: var(--brand);
+            margin: 0 0 14px;
+            line-height: 1.7;
+        }
+        [data-theme="dark"] .library-text p { color: var(--brand-ink); }
+
+        .library-text p:last-child { margin-bottom: 0; }
+
+        .library-text em {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            color: var(--red);
+            font-size: 1.08em;
+        }
+
+        .library-signoff {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 28px;
+            padding-top: 22px;
+            border-top: 1.5px solid var(--rule);
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .library-stamp {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            padding: 10px 16px;
+            border: 2px solid var(--red);
+            color: var(--red);
+            border-radius: 6px;
+            transform: rotate(-4deg);
+            background: var(--bg-cream);
+        }
+        [data-theme="dark"] .library-stamp { background: transparent; }
+
+        .library-signature {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: var(--brand);
+        }
+        [data-theme="dark"] .library-signature { color: var(--brand-ink); }
+
+        /* ── FOOTER ── */
+        .footer {
+            padding: 60px 0 80px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        [data-theme="dark"] .footer { color: #A06820; }
+
+        .footer-atom {
+            display: inline-block;
+            margin-bottom: 14px;
+            color: var(--red);
+        }
+
+        /* ── MOBILE ── */
+        @media (max-width: 680px) {
+            .container { padding: 0 20px; }
+            .hero { padding: 96px 0 48px; }
+            .hero-orbit { width: 340px; height: 340px; top: 40px; right: -140px; opacity: 0.55; }
+            .section { padding: 44px 0; }
+            .library-card { padding: 28px 24px; }
+            .back { padding: 7px 14px; font-size: 0.72rem; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="../projects/" class="back">← back</a>
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+    <span data-theme-icon>☾</span>
+</button>
+
+<header class="hero">
+    <div class="container">
+        <svg class="hero-orbit" viewBox="0 0 520 520" aria-hidden="true">
+            <g class="spin-1">
+                <ellipse cx="260" cy="260" rx="240" ry="90" />
+                <circle class="dot" cx="500" cy="260" r="8" />
+            </g>
+            <g class="spin-2">
+                <ellipse cx="260" cy="260" rx="180" ry="180" />
+                <circle class="dot-teal" cx="260" cy="80" r="10" />
+            </g>
+            <circle cx="260" cy="260" r="30" />
+            <circle class="dot-accent" cx="260" cy="260" r="10" />
+            <!-- starburst -->
+            <g stroke-linecap="round">
+                <line x1="260" y1="220" x2="260" y2="200" />
+                <line x1="260" y1="300" x2="260" y2="320" />
+                <line x1="220" y1="260" x2="200" y2="260" />
+                <line x1="300" y1="260" x2="320" y2="260" />
+                <line x1="232" y1="232" x2="218" y2="218" />
+                <line x1="288" y1="288" x2="302" y2="302" />
+                <line x1="232" y1="288" x2="218" y2="302" />
+                <line x1="288" y1="232" x2="302" y2="218" />
+            </g>
+        </svg>
+
+        <div class="eyebrow">
+            <span class="eyebrow-star">✦</span>
+            <span>the private drawer · filed under g</span>
+        </div>
+
+        <h1>
+            <span>glupo</span>
+        </h1>
+
+        <p class="hero-tagline">
+            a kitchen-sink glyph app — where toys live before they leave the nest.
+            not for sale, not for download, mostly just <span style="color: var(--red);">for me</span>.
+        </p>
+
+        <div class="hero-meta">
+            <span class="chip solid">★ personal</span>
+            <span class="chip teal">unreleased</span>
+            <span class="chip">nothing phone 3</span>
+            <span class="chip">android · compose</span>
+        </div>
+    </div>
+</header>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">01</span>
+            <span class="section-rule-title">inventory</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>what's inside</h2>
+        <p class="section-lede">
+            glupo is a drawer, not a product. every compartment holds a small glyph toy —
+            some grew up and left home, others are happy to stay.
+        </p>
+
+        <div class="toys">
+
+            <div class="toy">
+                <div class="toy-badge"><span class="toy-badge-num">01</span><span>toy</span></div>
+                <div class="toy-icon" aria-hidden="true">
+                    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="18" cy="18" r="15" />
+                        <circle cx="18" cy="18" r="9" />
+                        <circle cx="18" cy="18" r="2.5" fill="currentColor" stroke="none" />
+                        <circle cx="18" cy="3" r="1.5" fill="currentColor" stroke="none" />
+                    </svg>
+                </div>
+                <h3 class="toy-name">music player</h3>
+                <p class="toy-desc">outer progress ring, inner pseudo-visualizer. long-press to scroll the track name through the matrix.</p>
+                <div class="toy-foot accent">mediasession · 500ms tick</div>
+            </div>
+
+            <div class="toy">
+                <div class="toy-badge"><span class="toy-badge-num">02</span><span>toy</span></div>
+                <div class="toy-icon" aria-hidden="true">
+                    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="14" cy="18" r="6" />
+                        <path d="M22 12a5 5 0 0 1 0 10h-1" />
+                        <path d="M18 10v-4M18 30v-4M6 18h-4M30 18h4M9 9l-2-2M27 27l2 2M9 27l-2 2M27 9l2-2" />
+                    </svg>
+                </div>
+                <h3 class="toy-name">weather</h3>
+                <p class="toy-desc">a single glyph that knows if it's raining. nine hand-drawn conditions. updates on the hour.</p>
+                <div class="toy-foot">openweather · coroutine</div>
+            </div>
+
+            <div class="toy">
+                <div class="toy-badge"><span class="toy-badge-num">03</span><span>toy</span></div>
+                <div class="toy-icon" aria-hidden="true">
+                    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <rect x="5" y="5" width="11" height="11" rx="2" />
+                        <rect x="20" y="5" width="11" height="11" rx="2" />
+                        <rect x="5" y="20" width="11" height="11" rx="2" />
+                        <rect x="20" y="20" width="11" height="11" rx="2" />
+                    </svg>
+                </div>
+                <h3 class="toy-name">quick settings</h3>
+                <p class="toy-desc">tap the glyph button — cycle wifi, bluetooth, flashlight, dnd. a 2x2 tile world on 25 leds.</p>
+                <div class="toy-foot red">tile service · y2k mode</div>
+            </div>
+
+            <div class="toy">
+                <div class="toy-badge"><span class="toy-badge-num">04</span><span>toy</span></div>
+                <div class="toy-icon" aria-hidden="true">
+                    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <ellipse cx="18" cy="12" rx="10" ry="3.5" />
+                        <path d="M10 13c-1 4-4 7-4 9 0 3 5 5 12 5s12-2 12-5c0-2-3-5-4-9" />
+                        <path d="M18 19v4" />
+                        <circle cx="18" cy="29" r="1.5" fill="currentColor" stroke="none" />
+                    </svg>
+                </div>
+                <h3 class="toy-name">ufo abductor</h3>
+                <p class="toy-desc">a mini-game. cows wander the field, the saucer swoops, the beam fires. beep-boop-mooooo.</p>
+                <div class="toy-foot accent">game loop · sfx: beam_fire.wav</div>
+            </div>
+
+            <a href="../thinking-of-you/" class="toy">
+                <div class="toy-badge"><span class="toy-badge-num">05</span><span>alumnus</span></div>
+                <div class="toy-icon" aria-hidden="true">
+                    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 30s-11-7-11-15a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 8-11 15-11 15z" />
+                    </svg>
+                </div>
+                <h3 class="toy-name">thinking of you</h3>
+                <p class="toy-desc">left the nest. now a standalone app. still shares glupo's firebase so pairing works across both.</p>
+                <div class="toy-foot">extracted → open source →</div>
+            </a>
+
+            <div class="toy static">
+                <div class="toy-badge"><span class="toy-badge-num">06</span><span>???</span></div>
+                <div class="toy-icon" aria-hidden="true">
+                    <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <circle cx="18" cy="18" r="12" stroke-dasharray="3 4" />
+                        <text x="18" y="22" text-anchor="middle" font-family="Rubik Mono One, sans-serif" font-size="11" fill="currentColor" stroke="none">?</text>
+                    </svg>
+                </div>
+                <h3 class="toy-name">untitled</h3>
+                <p class="toy-desc">whatever's being tinkered on this week. slots machine? bitmap font editor? who knows.</p>
+                <div class="toy-foot">tbd · may or may not ship</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">02</span>
+            <span class="section-rule-title">catalog entry</span>
+            <span class="section-rule-line"></span>
+        </div>
+
+        <div class="library-card">
+            <div class="library-head">
+                <span>file · glupo-001</span>
+                <span>private collection</span>
+            </div>
+
+            <div class="library-text">
+                <p>
+                    <em>glupo</em> is what this whole thing was before it had a name. a junk drawer
+                    for every glyph idea that didn't warrant its own app — and a few that eventually did.
+                </p>
+                <p>
+                    the bingsu theme system (ten palettes, inspired by korean shaved-ice desserts) lives here.
+                    the glyph matrix helpers live here. every toy is a floor plan i didn't want to throw away.
+                </p>
+                <p>
+                    it isn't listed, isn't signed, isn't supported. if a toy gets good enough, it moves
+                    out and gets its own page. everything else just hangs around keeping the wiring warm.
+                </p>
+            </div>
+
+            <div class="library-signoff">
+                <span class="library-signature">— bleelblep</span>
+                <span class="library-stamp">not for distribution</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-atom" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="14" cy="14" r="2.5" fill="currentColor" />
+                <ellipse cx="14" cy="14" rx="11" ry="4" />
+                <ellipse cx="14" cy="14" rx="11" ry="4" transform="rotate(60 14 14)" />
+                <ellipse cx="14" cy="14" rx="11" ry="4" transform="rotate(120 14 14)" />
+            </svg>
+        </div>
+        <div>glupo · © bleelblep · kept in a drawer on purpose</div>
+    </div>
+</footer>
+
+<script src="../assets/theme.js" defer></script>
+
+</body>
+</html>
