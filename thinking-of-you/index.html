@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thinking of you ♡</title>
+    <meta name="description" content="A small glyph matrix toy that quietly syncs light between two nothing phones.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FDF4E8;
+            --card: #FFFFFF;
+            --text: #4A2C2A;
+            --text-dim: #A06868;
+            --accent: #E85A6B;
+            --border: #E0C8B8;
+            --kaomoji: #F4B6BA;
+
+            --lavender: #C8B8E8;
+            --lavender-deep: #5A3A8A;
+            --lavender-soft: rgba(200, 184, 232, 0.35);
+
+            --shadow-sm: 0 2px 12px rgba(74, 44, 42, 0.06);
+            --shadow-md: 0 6px 24px rgba(74, 44, 42, 0.10);
+            --shadow-lg: 0 12px 40px rgba(74, 44, 42, 0.14);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #B84A4A;
+                --card: #FDF4E8;
+                --text: #6A2A2A;
+                --text-dim: #A06868;
+                --accent: #E85A6B;
+                --border: rgba(253, 244, 232, 0.4);
+                --kaomoji: #F4B6BA;
+                --lavender: #C8B8E8;
+                --lavender-deep: #5A3A8A;
+                --lavender-soft: rgba(200, 184, 232, 0.3);
+                --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.18);
+                --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.24);
+                --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.32);
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { color: #FDF4E8; }
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* BACK LINK */
+        .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            background: var(--card);
+            border-radius: 999px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+
+        .back:hover {
+            color: var(--accent);
+            transform: translateX(-2px);
+        }
+
+        /* HERO */
+        .hero {
+            padding: 100px 0 48px;
+            text-align: center;
+        }
+
+        .hero-pulse {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            background: var(--lavender);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--lavender-deep);
+            animation: glow 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .hero-pulse::before,
+        .hero-pulse::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid var(--lavender);
+            animation: ripple 3s ease-out infinite;
+        }
+
+        .hero-pulse::after { animation-delay: 1.5s; }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(200, 184, 232, 0.6); }
+            50% { box-shadow: 0 0 0 14px rgba(200, 184, 232, 0); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-pulse, .hero-pulse::before, .hero-pulse::after { animation: none; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 7vw, 3.6rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 14px;
+            line-height: 1.05;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .hero h1 { color: #FDF4E8; }
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--lavender-deep);
+            background: var(--lavender-soft);
+            border-radius: 999px;
+            padding: 5px 14px;
+            margin-bottom: 22px;
+            letter-spacing: 0.02em;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 480px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .hero p { color: rgba(253, 244, 232, 0.8); }
+        }
+
+        /* PULL QUOTE */
+        .quote {
+            text-align: center;
+            padding: 48px 0;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--accent);
+            line-height: 1.4;
+            letter-spacing: -0.01em;
+            max-width: 540px;
+            margin: 0 auto;
+        }
+
+        .quote::before,
+        .quote::after {
+            display: block;
+            color: var(--kaomoji);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 8px 0;
+        }
+
+        .quote::before { content: "♡"; }
+        .quote::after { content: "♡"; }
+
+        /* CARD */
+        .card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 0 16px;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .kao {
+            font-size: 0.85rem;
+            color: var(--kaomoji);
+            font-weight: 500;
+        }
+
+        .card p {
+            color: var(--text-dim);
+            margin: 0 0 12px;
+            font-size: 1rem;
+        }
+
+        .card p:last-child { margin-bottom: 0; }
+
+        .card ul, .card ol {
+            margin: 0;
+            padding-left: 22px;
+            color: var(--text-dim);
+        }
+
+        .card li {
+            margin-bottom: 8px;
+            font-size: 0.98rem;
+        }
+
+        .card li::marker { color: var(--lavender-deep); }
+
+        .card strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .card code {
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+            font-size: 0.85em;
+            background: var(--bg);
+            padding: 2px 8px;
+            border-radius: 6px;
+            color: var(--lavender-deep);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .card code {
+                background: rgba(90, 58, 138, 0.2);
+                color: var(--lavender-deep);
+            }
+        }
+
+        /* HOW IT WORKS STEPS */
+        .steps {
+            display: grid;
+            gap: 14px;
+            margin: 8px 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .step:last-child { border-bottom: none; }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--lavender);
+            color: var(--lavender-deep);
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-text {
+            flex: 1;
+            font-size: 0.98rem;
+            color: var(--text-dim);
+            line-height: 1.55;
+        }
+
+        .step-text strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        /* GITHUB BUTTON */
+        .github-wrap {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 36px 32px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .gh-meta {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .gh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--lavender-deep);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            letter-spacing: -0.01em;
+        }
+
+        .gh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(90, 58, 138, 0.35);
+        }
+
+        .gh-hint {
+            margin-top: 14px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        /* NOTE */
+        .note {
+            background: var(--lavender-soft);
+            border: 1.5px solid var(--lavender);
+            border-radius: 20px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+        }
+
+        .note-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--lavender-deep);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .note p {
+            color: var(--lavender-deep);
+            margin: 0 0 8px;
+            font-size: 0.98rem;
+            font-weight: 500;
+        }
+
+        .note p:last-child { margin-bottom: 0; }
+
+        .note strong { font-weight: 700; }
+
+        /* FOOTER */
+        .footer {
+            padding: 48px 0 64px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .footer-kaomoji {
+            color: var(--kaomoji);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 20px; }
+            .hero { padding: 72px 0 32px; }
+            .card, .github-wrap, .note { padding: 24px; }
+            .quote { font-size: 1.15rem; padding: 32px 0; }
+            .back { top: 14px; left: 14px; font-size: 0.8rem; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="../" class="back">← bleelblep</a>
+
+<header class="hero">
+    <div class="container">
+        <div class="hero-pulse">♡</div>
+        <h1>thinking of you</h1>
+        <div class="hero-tag">open source · nothing phone 3</div>
+        <p>two devices. one small pattern. no words.</p>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="quote">
+        there's no message. there's no notification.<br>
+        you just know.
+    </div>
+
+    <section class="card">
+        <h2>what it is <span class="kao">(｡•ᴗ•｡)</span></h2>
+        <p>
+            a quiet little thing that pairs two nothing phone 3s and lets them share
+            a small led pattern in real-time. when one person updates the pattern,
+            the other's glyph matrix reflects the change.
+        </p>
+        <p>
+            that's it. no chat, no presence indicator, no notification layer.
+            just shared light.
+        </p>
+    </section>
+
+    <section class="card">
+        <h2>how it works <span class="kao">⸜(｡˃ ᵕ ˂ )⸝</span></h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                    two devices pair using a <strong>shared code</strong> — this code becomes a firebase database key
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                    both devices listen on the same path: <code>/pairs/{code}/pattern</code>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-text">
+                    when one side writes a pattern, the other <strong>renders it on the glyph matrix</strong> instantly
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-text">
+                    last write wins — no history, no read receipts, no confirmation
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>setup <span class="kao">٩(ˊᗜˋ*)و</span></h2>
+        <p>this isn't on the play store. it's an open-source project you build yourself:</p>
+        <ol>
+            <li>create a firebase project with <strong>realtime database</strong> enabled (free tier is fine)</li>
+            <li>configure database rules to restrict read/write to paired devices</li>
+            <li>add your firebase api key to <code>gradle.properties</code></li>
+            <li>build and sideload the apk via android studio</li>
+            <li>pair with a friend using the same code ♡</li>
+        </ol>
+    </section>
+
+    <section class="card">
+        <h2>what to know <span class="kao">( ˃ ⌑ ˂ )</span></h2>
+        <ul>
+            <li><strong>nothing phone 3 only</strong> for the native glyph matrix experience</li>
+            <li>other devices render patterns as an on-screen overlay (not the intended feel)</li>
+            <li>older nothing phones use different glyph systems — would need custom mapping</li>
+            <li>pattern data is stored as <strong>plaintext</strong> in firebase; anyone with console access can see it</li>
+            <li>no accounts, no hosted backend beyond firebase</li>
+        </ul>
+    </section>
+
+    <div class="note">
+        <div class="note-label">heads up</div>
+        <p>
+            this project is <strong>not maintained</strong>. it's an open-source release — no ongoing
+            bug fixes, no updates, no play store.
+        </p>
+        <p>
+            feel free to fork it, remix it, or just read the code. the point was always that it exists,
+            not that it's polished.
+        </p>
+    </div>
+
+    <section class="github-wrap">
+        <div class="gh-meta">
+            <span>🔓 open source</span>
+            <span>·</span>
+            <span>🤖 android</span>
+            <span>·</span>
+            <span>🌀 glyph matrix</span>
+        </div>
+        <a href="https://github.com/bleelblep/thinking-of-you" target="_blank" rel="noopener" class="gh-btn">
+            <span>view on github</span>
+            <span>→</span>
+        </a>
+        <div class="gh-hint">clone it, build it, share light ♡</div>
+    </section>
+
+    <div class="quote" style="padding-top: 24px;">
+        just light.
+    </div>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-kaomoji">♡</div>
+        <div>thinking of you · made by bleelblep</div>
+    </div>
+</footer>
+
+</body>
+</html>

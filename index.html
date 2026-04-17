@@ -301,6 +301,11 @@
             background: var(--bg);
         }
 
+        .project-tag.open {
+            color: #5A3A8A;
+            background: rgba(200, 184, 232, 0.5);
+        }
+
         .project-desc {
             font-size: 0.98rem;
             color: var(--text-dim);
@@ -483,14 +488,22 @@
                 </div>
             </a>
 
-            <div class="project placeholder">
-                <div class="project-swatch swatch-lavender">?</div>
+            <a href="./thinking-of-you/" class="project">
+                <div class="project-swatch swatch-lavender">♡</div>
                 <div class="project-head">
-                    <h3 class="project-name">next thing</h3>
-                    <span class="project-tag soon">soon</span>
+                    <h3 class="project-name">thinking of you</h3>
+                    <span class="project-tag open">open source</span>
                 </div>
-                <p class="project-desc">something's brewing. check back later ~</p>
-            </div>
+                <p class="project-desc">
+                    a small glyph matrix toy that silently syncs ambient led patterns between two
+                    nothing phone 3s. doesn't solve a problem — just quietly exists.
+                </p>
+                <div class="project-meta">
+                    <span>android · nothing phone 3</span>
+                    <span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
