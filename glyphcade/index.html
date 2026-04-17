@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>glyphcade — arcade in your pocket</title>
+    <meta name="description" content="GlyphCade — a tiny arcade cabinet that runs on the Nothing Phone 3 Glyph Matrix. Six retro games, zero main screen.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/gallery.css">
+    <style>
+        /* ARCADE NEON PALETTE */
+        :root {
+            --bg: #F5EFE2;
+            --card: #FFFFFF;
+            --card-alt: #1A0D2E;
+            --text: #1A0D2E;
+            --text-dim: #6B5A8A;
+            --accent: #FF2E9C;
+            --accent-2: #00B8D9;
+            --accent-3: #F5B700;
+            --accent-4: #7C3AED;
+            --border: rgba(26, 13, 46, 0.14);
+            --grid-line: rgba(124, 58, 237, 0.08);
+
+            --shadow-sm: 0 2px 0 rgba(26, 13, 46, 0.12);
+            --shadow-md: 0 4px 0 rgba(26, 13, 46, 0.14);
+            --shadow-lg: 0 8px 0 rgba(26, 13, 46, 0.16);
+
+            --neon-glow: 0 0 10px var(--accent), 0 0 24px rgba(255, 46, 156, 0.5);
+            --neon-glow-cyan: 0 0 10px var(--accent-2), 0 0 24px rgba(0, 184, 217, 0.45);
+            --neon-glow-yellow: 0 0 10px var(--accent-3), 0 0 24px rgba(245, 183, 0, 0.45);
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0A0614;
+            --card: #1A0D2E;
+            --card-alt: #0F0820;
+            --text: #F0E8FF;
+            --text-dim: #8A7AB0;
+            --accent: #FF2E9C;
+            --accent-2: #00F0FF;
+            --accent-3: #FFD72E;
+            --accent-4: #B47CFF;
+            --border: rgba(240, 232, 255, 0.16);
+            --grid-line: rgba(180, 124, 255, 0.08);
+
+            --shadow-sm: 0 0 0 1.5px rgba(180, 124, 255, 0.25);
+            --shadow-md: 0 0 20px rgba(255, 46, 156, 0.2);
+            --shadow-lg: 0 0 32px rgba(255, 46, 156, 0.28);
+
+            --neon-glow: 0 0 8px var(--accent), 0 0 18px var(--accent), 0 0 36px rgba(255, 46, 156, 0.55);
+            --neon-glow-cyan: 0 0 8px var(--accent-2), 0 0 18px var(--accent-2), 0 0 36px rgba(0, 240, 255, 0.55);
+            --neon-glow-yellow: 0 0 8px var(--accent-3), 0 0 18px var(--accent-3), 0 0 36px rgba(255, 215, 46, 0.5);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'VT323', ui-monospace, 'SF Mono', Consolas, monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.45;
+            font-size: 1.15rem;
+            -webkit-font-smoothing: antialiased;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 32px 32px;
+            background-attachment: fixed;
+        }
+
+        /* Subtle CRT scanlines — fixed overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 99;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 2px,
+                rgba(26, 13, 46, 0.035) 3px,
+                rgba(26, 13, 46, 0.035) 3px
+            );
+            mix-blend-mode: multiply;
+        }
+
+        [data-theme="dark"] body::before {
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 2px,
+                rgba(0, 0, 0, 0.28) 3px,
+                rgba(0, 0, 0, 0.28) 3px
+            );
+            mix-blend-mode: normal;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body::before { display: none; }
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* FLOATING CONTROLS */
+        .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.65rem;
+            color: var(--text);
+            text-decoration: none;
+            padding: 10px 14px;
+            background: var(--card);
+            border: 2px solid var(--text);
+            border-radius: 4px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, color 0.15s;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .back:hover {
+            color: var(--accent);
+            transform: translate(-2px, -2px);
+            box-shadow: 0 4px 0 rgba(26, 13, 46, 0.2);
+        }
+
+        [data-theme="dark"] .back {
+            border-color: var(--accent-4);
+            box-shadow: 0 0 0 1.5px var(--accent-4), 0 0 12px rgba(180, 124, 255, 0.35);
+        }
+
+        [data-theme="dark"] .back:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1.5px var(--accent), 0 0 18px rgba(255, 46, 156, 0.55);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--card);
+            color: var(--text);
+            border: 2px solid var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            font-family: inherit;
+            box-shadow: var(--shadow-sm);
+            transition: color 0.15s, transform 0.12s ease, box-shadow 0.12s ease;
+        }
+
+        .theme-toggle:hover,
+        .theme-toggle:focus-visible {
+            color: var(--accent-2);
+            outline: none;
+            transform: translate(-2px, -2px);
+            box-shadow: 0 4px 0 rgba(26, 13, 46, 0.2);
+        }
+
+        .theme-toggle [data-theme-icon] {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
+
+        [data-theme="dark"] .theme-toggle {
+            border-color: var(--accent-4);
+            box-shadow: 0 0 0 1.5px var(--accent-4), 0 0 12px rgba(180, 124, 255, 0.35);
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            color: var(--accent-2);
+            border-color: var(--accent-2);
+            box-shadow: 0 0 0 1.5px var(--accent-2), 0 0 18px rgba(0, 240, 255, 0.55);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .back, .theme-toggle, .theme-toggle [data-theme-icon] { transition: none; }
+            .back:hover, .theme-toggle:hover { transform: none; }
+            .theme-toggle:hover [data-theme-icon] { transform: none; }
+        }
+
+        /* HERO */
+        .hero {
+            padding: 120px 0 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-coin {
+            display: inline-block;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.68rem;
+            color: var(--accent-3);
+            text-shadow: var(--neon-glow-yellow);
+            letter-spacing: 0.18em;
+            margin-bottom: 28px;
+            animation: blink 1.2s steps(2, start) infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.15; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-coin { animation: none; }
+        }
+
+        .hero h1 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(1.9rem, 7vw, 3.6rem);
+            font-weight: 400;
+            color: var(--accent);
+            line-height: 1.05;
+            letter-spacing: 0.02em;
+            margin: 0 0 22px;
+            text-shadow: var(--neon-glow);
+        }
+
+        .hero-sub {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-2);
+            text-shadow: var(--neon-glow-cyan);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin: 0 0 22px;
+        }
+
+        .hero p {
+            font-size: 1.35rem;
+            color: var(--text);
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .version-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.55rem;
+            color: var(--text);
+            background: var(--accent-3);
+            border: 2px solid var(--text);
+            border-radius: 4px;
+            padding: 7px 11px;
+            margin-top: 22px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            box-shadow: 3px 3px 0 rgba(26, 13, 46, 0.2);
+        }
+
+        [data-theme="dark"] .version-chip {
+            color: #0A0614;
+            border-color: var(--accent-3);
+            box-shadow: 0 0 14px rgba(255, 215, 46, 0.5);
+        }
+
+        /* CARDS */
+        main { padding-bottom: 24px; }
+
+        .card {
+            background: var(--card);
+            border: 2px solid var(--text);
+            border-radius: 6px;
+            padding: 28px 28px 30px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        [data-theme="dark"] .card {
+            border-color: rgba(180, 124, 255, 0.35);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card h2 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.82rem;
+            color: var(--text);
+            margin: 0 0 18px;
+            letter-spacing: 0.02em;
+            line-height: 1.35;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .kao {
+            font-family: 'VT323', monospace;
+            font-size: 1.05rem;
+            color: var(--accent-4);
+            font-weight: 400;
+            letter-spacing: normal;
+        }
+
+        .card p {
+            color: var(--text);
+            margin: 0 0 10px;
+            font-size: 1.18rem;
+            line-height: 1.5;
+        }
+
+        .card p:last-child { margin-bottom: 0; }
+
+        .card ul {
+            margin: 4px 0 0;
+            padding: 0;
+            list-style: none;
+            color: var(--text);
+        }
+
+        .card li {
+            font-size: 1.18rem;
+            padding: 6px 0 6px 24px;
+            position: relative;
+        }
+
+        .card li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            text-shadow: 0 0 8px rgba(255, 46, 156, 0.35);
+        }
+
+        .card strong {
+            color: var(--accent);
+            font-weight: 400;
+        }
+
+        /* MARQUEE / INSERT COIN */
+        .marquee {
+            background: var(--card-alt);
+            border: 2px solid var(--text);
+            border-radius: 6px;
+            padding: 18px 24px;
+            margin-bottom: 22px;
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.72rem;
+            color: var(--accent-3);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 215, 46, 0.55);
+            overflow: hidden;
+            position: relative;
+        }
+
+        [data-theme="light"] .marquee { color: #F5B700; }
+
+        .marquee-track {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scroll 18s linear infinite;
+        }
+
+        .marquee-track span { margin: 0 40px; }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .marquee-track { animation: none; }
+        }
+
+        /* GAMES GRID */
+        .games-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .games-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.82rem;
+            margin: 0;
+            color: var(--text);
+            letter-spacing: 0.02em;
+        }
+
+        .games-tag {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            color: var(--accent-2);
+            text-shadow: var(--neon-glow-cyan);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .game {
+            background: var(--card);
+            border: 2px solid var(--text);
+            border-radius: 6px;
+            padding: 20px 18px 18px;
+            text-align: left;
+            transition: transform 0.14s ease, box-shadow 0.14s ease;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 0 4px 0 rgba(26, 13, 46, 0.2);
+        }
+
+        [data-theme="dark"] .game {
+            border-color: rgba(180, 124, 255, 0.3);
+        }
+
+        [data-theme="dark"] .game:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1.5px var(--accent), 0 0 22px rgba(255, 46, 156, 0.4);
+        }
+
+        .game-icon {
+            display: inline-block;
+            font-size: 1.8rem;
+            line-height: 1;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 6px rgba(255, 46, 156, 0.3));
+        }
+
+        .game-name {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.62rem;
+            color: var(--text);
+            margin: 0 0 8px;
+            letter-spacing: 0.04em;
+            line-height: 1.35;
+        }
+
+        .game-desc {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .game:nth-child(6n+1) .game-name { color: var(--accent); }
+        .game:nth-child(6n+2) .game-name { color: var(--accent-2); }
+        .game:nth-child(6n+3) .game-name { color: var(--accent-3); }
+        .game:nth-child(6n+4) .game-name { color: var(--accent-4); }
+        .game:nth-child(6n+5) .game-name { color: var(--accent); }
+        .game:nth-child(6n+6) .game-name { color: var(--accent-2); }
+
+        [data-theme="dark"] .game:nth-child(6n+1) .game-name { text-shadow: var(--neon-glow); }
+        [data-theme="dark"] .game:nth-child(6n+2) .game-name { text-shadow: var(--neon-glow-cyan); }
+        [data-theme="dark"] .game:nth-child(6n+3) .game-name { text-shadow: var(--neon-glow-yellow); }
+        [data-theme="dark"] .game:nth-child(6n+4) .game-name { text-shadow: 0 0 8px var(--accent-4), 0 0 18px rgba(180, 124, 255, 0.45); }
+        [data-theme="dark"] .game:nth-child(6n+5) .game-name { text-shadow: var(--neon-glow); }
+        [data-theme="dark"] .game:nth-child(6n+6) .game-name { text-shadow: var(--neon-glow-cyan); }
+
+        /* GALLERY CARD */
+        .gallery-section { margin-bottom: 22px; }
+        .gallery-section p { margin-bottom: 14px; }
+
+        /* WARNING */
+        .warn {
+            background: var(--accent-3);
+            border: 2px solid var(--text);
+            border-radius: 6px;
+            padding: 22px 24px;
+            margin-bottom: 22px;
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+        }
+
+        [data-theme="dark"] .warn {
+            color: #0A0614;
+            border-color: var(--accent-3);
+            box-shadow: 0 0 22px rgba(255, 215, 46, 0.3);
+        }
+
+        .warn-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .warn-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.75rem;
+            margin: 0 0 10px;
+            line-height: 1.45;
+        }
+
+        .warn p {
+            font-size: 1.12rem;
+            margin: 0;
+            line-height: 1.45;
+        }
+
+        /* GITHUB BUTTON */
+        .install-wrap {
+            background: var(--card-alt);
+            border: 2px solid var(--text);
+            border-radius: 6px;
+            padding: 32px 28px;
+            margin-bottom: 22px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .install-wrap {
+            border-color: var(--accent-4);
+            box-shadow: 0 0 28px rgba(180, 124, 255, 0.3);
+        }
+
+        .install-wrap::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 46, 156, 0.14), transparent 60%);
+        }
+
+        .install-eyebrow {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.58rem;
+            color: var(--accent-3);
+            text-shadow: 0 0 8px rgba(245, 183, 0, 0.5);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+        .install-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.92rem;
+            color: #F0E8FF;
+            margin: 0 0 18px;
+            position: relative;
+            letter-spacing: 0.02em;
+            line-height: 1.35;
+        }
+
+        .install-wrap p {
+            color: rgba(240, 232, 255, 0.82);
+            font-size: 1.12rem;
+            margin: 0 0 18px;
+            position: relative;
+        }
+
+        .gh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+            background: var(--accent);
+            color: #FFFFFF;
+            padding: 14px 22px;
+            border: 2px solid #F0E8FF;
+            border-radius: 4px;
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            position: relative;
+        }
+
+        .gh-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .install-hint {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.55rem;
+            color: rgba(240, 232, 255, 0.65);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-top: 18px !important;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 40px 0 64px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 1.05rem;
+        }
+
+        .footer-marker {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.58rem;
+            color: var(--accent);
+            text-shadow: var(--neon-glow);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 620px) {
+            .container { padding: 0 18px; }
+            .hero { padding: 84px 0 24px; }
+            .back { top: 14px; left: 14px; font-size: 0.55rem; padding: 8px 11px; }
+            .theme-toggle { top: 14px; right: 14px; width: 36px; height: 36px; }
+            .card, .install-wrap { padding: 22px 20px; }
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+            .game { padding: 16px 14px 14px; }
+            .hero p { font-size: 1.18rem; }
+            body { background-size: 24px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="../" class="back">← BLEELBLEP</a>
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+    <span data-theme-icon>☾</span>
+</button>
+
+<header class="hero">
+    <div class="container">
+        <div class="hero-coin">▸ INSERT COIN</div>
+        <h1>GLYPHCADE</h1>
+        <div class="hero-sub">an arcade you keep in your pocket</div>
+        <p>a tiny arcade cabinet that lives inside your nothing phone's glyph matrix. six retro games, pure led, no main screen needed.</p>
+        <div class="version-chip">v0.1 · coin-powered-particle-physics</div>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="marquee">
+        <div class="marquee-track">
+            <span>★ PLAY LOUD ★ DIE OFTEN ★ INSERT MORE COIN ★ HIGH SCORES FOREVER ★</span>
+            <span>★ PLAY LOUD ★ DIE OFTEN ★ INSERT MORE COIN ★ HIGH SCORES FOREVER ★</span>
+        </div>
+    </div>
+
+    <section class="card">
+        <h2>WHAT IS IT <span class="kao">arcade_cabinet.apk</span></h2>
+        <p>
+            <strong>GlyphCade</strong> turns the nothing phone 3's glyph matrix into a proper little arcade
+            cabinet. it boots with a coin drop, shows a pixel-art selection screen, and then you're playing —
+            all of it rendered on the led grid, not the main display.
+        </p>
+        <p>
+            tilt, tap, and swipe. scores persist. the phone screen stays off while you play.
+            it's an arcade that fits in the palm of your hand and doesn't ask for much.
+        </p>
+    </section>
+
+    <div class="games-head">
+        <h2 class="games-title">SIX GAMES IN THE CABINET</h2>
+        <span class="games-tag">▸ 6 / 6 UNLOCKED</span>
+    </div>
+
+    <div class="games-grid">
+        <div class="game">
+            <span class="game-icon">🧱</span>
+            <h3 class="game-name">BREAKOUT</h3>
+            <p class="game-desc">bounce the ball, chip the wall, don't drop it.</p>
+        </div>
+        <div class="game">
+            <span class="game-icon">🛸</span>
+            <h3 class="game-name">UFO ABDUCTOR</h3>
+            <p class="game-desc">beam up the little guys. bigger haul, bigger score.</p>
+        </div>
+        <div class="game">
+            <span class="game-icon">👾</span>
+            <h3 class="game-name">SPACE INVADERS</h3>
+            <p class="game-desc">descent from above. wiggle left, wiggle right, shoot.</p>
+        </div>
+        <div class="game">
+            <span class="game-icon">🏃</span>
+            <h3 class="game-name">RUNNER</h3>
+            <p class="game-desc">endless hop &amp; dodge. the ground speeds up. you don't.</p>
+        </div>
+        <div class="game">
+            <span class="game-icon">🐍</span>
+            <h3 class="game-name">SNAKE</h3>
+            <p class="game-desc">classic wrap. eat pixel. get long. don't bite self.</p>
+        </div>
+        <div class="game">
+            <span class="game-icon">📦</span>
+            <h3 class="game-name">TOWER STACK</h3>
+            <p class="game-desc">drop the block. match the last one. stack goes up.</p>
+        </div>
+    </div>
+
+    <section class="card gallery-section">
+        <h2>SCREENSHOTS <span class="kao">cab_preview.png</span></h2>
+        <p>a few moments from the machine. swipe through:</p>
+        <div data-gallery="./images/" data-gallery-manifest="./gallery.json" aria-label="glyphcade screenshots"></div>
+    </section>
+
+    <section class="card">
+        <h2>FEATURES <span class="kao">inserts.txt</span></h2>
+        <ul>
+            <li>rendered entirely on the glyph matrix — main screen stays dark while you play</li>
+            <li>tilt + touch controls, per-game sensitivity</li>
+            <li>sound effects + background music, toggleable per game</li>
+            <li>haptic feedback, because arcade cabinets vibrate</li>
+            <li>CRT scanlines, coin drop animation, countdown timer</li>
+            <li>high scores saved between sessions</li>
+            <li>easy-mode toggles for the meaner games</li>
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2>REQUIREMENTS <span class="kao">hardware.cfg</span></h2>
+        <ul>
+            <li><strong>nothing phone 3</strong> — for the glyph matrix (no matrix, no arcade)</li>
+            <li>permission to use the glyph matrix + accelerometer</li>
+            <li>a steady hand for the tilt games</li>
+            <li>some tolerance for experimental software</li>
+        </ul>
+    </section>
+
+    <div class="warn">
+        <div class="warn-label">▲ heads up ▲</div>
+        <h2 class="warn-title">this app is very experimental</h2>
+        <p>
+            things may break. games may crash mid-high-score. the coin drop animation may loop if it feels like it.
+            it's v0.1 — expect weirdness and be gentle with your save file.
+        </p>
+    </div>
+
+    <section class="install-wrap">
+        <div class="install-eyebrow">▸ GET THE CABINET</div>
+        <h2 class="install-title">GRAB IT FROM GITHUB</h2>
+        <p>source is public on github. grab a release build or peek at the code.</p>
+        <a href="https://github.com/bleelblep/GlyphCade" target="_blank" rel="noopener" class="gh-btn">
+            <span>VIEW REPO</span>
+            <span>→</span>
+        </a>
+        <p class="install-hint">▾ 1 PLAYER · NOTHING PHONE 3 ONLY</p>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-marker">★ GAME OVER ★</div>
+        <div>glyphcade · made by bleelblep</div>
+    </div>
+</footer>
+
+<script src="../assets/theme.js" defer></script>
+<script src="../assets/gallery.js" defer></script>
+
+</body>
+</html>
