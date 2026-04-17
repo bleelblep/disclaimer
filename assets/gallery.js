@@ -33,25 +33,35 @@
                 el.innerHTML = '<p class="gallery-empty">nothing here yet ~</p>';
                 return;
             }
-            render(el, items, base);
+            renderCarousel(el, items, base);
         } catch (err) {
             el.innerHTML = '<p class="gallery-empty">couldn\'t load gallery ( ˃ ⌑ ˂ )</p>';
             console.warn('gallery:', err);
         }
     }
 
-    function render(el, items, base) {
-        var grid = document.createElement('div');
-        grid.className = 'gallery-grid';
+    function renderCarousel(el, items, base) {
+        var root = document.createElement('div');
+        root.className = 'gallery-carousel';
+        root.innerHTML =
+            '<div class="carousel-rail" role="region" aria-roledescription="carousel" aria-label="image gallery">' +
+                '<div class="carousel-track" tabindex="0"></div>' +
+            '</div>' +
+            '<div class="carousel-controls">' +
+                '<button type="button" class="carousel-btn carousel-prev" aria-label="Previous image">‹</button>' +
+                '<div class="carousel-dots" role="tablist" aria-label="Gallery pagination"></div>' +
+                '<button type="button" class="carousel-btn carousel-next" aria-label="Next image">›</button>' +
+            '</div>';
+
+        var track = root.querySelector('.carousel-track');
+        var dotsEl = root.querySelector('.carousel-dots');
 
         items.forEach(function (item, i) {
-            var fig = document.createElement('figure');
-            fig.className = 'gallery-item';
-
             var btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'gallery-thumb';
-            btn.setAttribute('aria-label', 'View image ' + (i + 1) + (item.caption ? ': ' + item.caption : ''));
+            btn.className = 'carousel-item';
+            btn.dataset.index = String(i);
+            btn.setAttribute('aria-label', 'Image ' + (i + 1) + ' of ' + items.length + (item.caption ? ': ' + item.caption : ''));
 
             var img = document.createElement('img');
             img.loading = 'lazy';
@@ -59,20 +69,101 @@
             img.src = resolve(base, item.src);
             img.alt = item.alt;
             btn.appendChild(img);
-            fig.appendChild(btn);
 
             if (item.caption) {
-                var cap = document.createElement('figcaption');
+                var cap = document.createElement('span');
+                cap.className = 'carousel-caption';
                 cap.textContent = item.caption;
-                fig.appendChild(cap);
+                btn.appendChild(cap);
             }
+            track.appendChild(btn);
 
-            btn.addEventListener('click', function () { openLightbox(items, i, base); });
-            grid.appendChild(fig);
+            var dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'carousel-dot';
+            dot.setAttribute('role', 'tab');
+            dot.setAttribute('aria-label', 'Go to image ' + (i + 1));
+            dot.dataset.index = String(i);
+            dotsEl.appendChild(dot);
         });
 
         el.innerHTML = '';
-        el.appendChild(grid);
+        el.appendChild(root);
+
+        var itemEls = Array.prototype.slice.call(track.querySelectorAll('.carousel-item'));
+        var dotEls = Array.prototype.slice.call(dotsEl.querySelectorAll('.carousel-dot'));
+        var prev = root.querySelector('.carousel-prev');
+        var next = root.querySelector('.carousel-next');
+
+        var activeIndex = 0;
+        var rafPending = false;
+
+        function setActive(i) {
+            if (i === activeIndex) return;
+            activeIndex = i;
+            itemEls.forEach(function (e, j) { e.classList.toggle('is-active', j === i); });
+            dotEls.forEach(function (e, j) {
+                e.classList.toggle('is-active', j === i);
+                e.setAttribute('aria-selected', j === i ? 'true' : 'false');
+            });
+            prev.disabled = i === 0;
+            next.disabled = i === items.length - 1;
+        }
+
+        function scrollToIndex(i, smooth) {
+            var target = itemEls[i];
+            if (!target) return;
+            target.scrollIntoView({ behavior: smooth === false ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
+        }
+
+        function updateActive() {
+            rafPending = false;
+            var rect = track.getBoundingClientRect();
+            var centerX = rect.left + rect.width / 2;
+            var bestI = 0, bestDist = Infinity;
+            for (var j = 0; j < itemEls.length; j++) {
+                var r = itemEls[j].getBoundingClientRect();
+                var c = r.left + r.width / 2;
+                var d = Math.abs(c - centerX);
+                if (d < bestDist) { bestDist = d; bestI = j; }
+            }
+            setActive(bestI);
+        }
+
+        track.addEventListener('scroll', function () {
+            if (!rafPending) {
+                rafPending = true;
+                requestAnimationFrame(updateActive);
+            }
+        }, { passive: true });
+
+        itemEls.forEach(function (btn, i) {
+            btn.addEventListener('click', function () {
+                if (i === activeIndex) {
+                    openLightbox(items, i, base);
+                } else {
+                    scrollToIndex(i);
+                }
+            });
+        });
+
+        dotEls.forEach(function (dot, i) {
+            dot.addEventListener('click', function () { scrollToIndex(i); });
+        });
+
+        prev.addEventListener('click', function () { scrollToIndex(Math.max(0, activeIndex - 1)); });
+        next.addEventListener('click', function () { scrollToIndex(Math.min(items.length - 1, activeIndex + 1)); });
+
+        root.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') { e.preventDefault(); scrollToIndex(Math.max(0, activeIndex - 1)); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); scrollToIndex(Math.min(items.length - 1, activeIndex + 1)); }
+            else if (e.key === 'Home') { e.preventDefault(); scrollToIndex(0); }
+            else if (e.key === 'End') { e.preventDefault(); scrollToIndex(items.length - 1); }
+        });
+
+        // Initial state — no scroll needed since padding centers the first item by default.
+        setActive(0);
+        requestAnimationFrame(updateActive);
     }
 
     var lb = null;
