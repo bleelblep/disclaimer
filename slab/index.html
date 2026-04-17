@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slab — wip</title>
+    <meta name="description" content="slab — an edge-panel sidebar for android. work in progress.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FDF4E8;
+            --card: #FFFFFF;
+            --text: #4A2C2A;
+            --text-dim: #A06868;
+            --accent: #E85A6B;
+            --border: #E0C8B8;
+            --kaomoji: #F4B6BA;
+
+            --warn-bg: #FFF1E0;
+            --warn-text: #8A5620;
+            --warn-border: #F5D199;
+
+            --shadow-sm: 0 2px 12px rgba(74, 44, 42, 0.06);
+            --shadow-md: 0 6px 24px rgba(74, 44, 42, 0.10);
+            --shadow-lg: 0 12px 40px rgba(74, 44, 42, 0.14);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #B84A4A;
+                --card: #FDF4E8;
+                --text: #6A2A2A;
+                --text-dim: #A06868;
+                --accent: #E85A6B;
+                --border: rgba(253, 244, 232, 0.4);
+                --kaomoji: #F4B6BA;
+                --warn-bg: #FDF4E8;
+                --warn-text: #8A5620;
+                --warn-border: #F5D199;
+                --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.18);
+                --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.24);
+                --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.32);
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { color: #FDF4E8; }
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* BACK LINK */
+        .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 16px;
+            background: var(--card);
+            border-radius: 999px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+
+        .back:hover {
+            color: var(--accent);
+            transform: translateX(-2px);
+        }
+
+        /* HERO */
+        .hero {
+            padding: 100px 0 48px;
+            text-align: center;
+        }
+
+        .hero-kaomoji {
+            font-size: 1.3rem;
+            color: var(--kaomoji);
+            margin-bottom: 16px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-kaomoji { animation: none; }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 9vw, 5rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin: 0 0 8px;
+            line-height: 1;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .hero h1 { color: #FDF4E8; }
+        }
+
+        .hero-version {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #8A5620;
+            background: var(--warn-border);
+            border-radius: 999px;
+            padding: 4px 14px;
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            max-width: 520px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .hero p { color: rgba(253, 244, 232, 0.8); }
+        }
+
+        /* WARNING */
+        .warn {
+            background: var(--warn-bg);
+            border: 1.5px solid var(--warn-border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 36px;
+        }
+
+        .warn-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--warn-text);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .warn-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--warn-text);
+            margin: 0 0 14px;
+            letter-spacing: -0.01em;
+        }
+
+        .warn p {
+            color: var(--warn-text);
+            margin: 0 0 10px;
+            font-size: 0.98rem;
+            font-weight: 500;
+        }
+
+        .warn p:last-child { margin-bottom: 0; }
+
+        .warn strong { font-weight: 700; }
+
+        /* CARD */
+        .card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 0 16px;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .kao {
+            font-size: 0.85rem;
+            color: var(--kaomoji);
+            font-weight: 500;
+        }
+
+        .card p {
+            color: var(--text-dim);
+            margin: 0 0 12px;
+            font-size: 1rem;
+        }
+
+        .card p:last-child { margin-bottom: 0; }
+
+        .card ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-dim);
+        }
+
+        .card li {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .card li::marker { color: var(--accent); }
+
+        .card strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        /* CHECKLIST */
+        .acknowledge {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .check {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .check + .check { border-top: 1px dashed var(--border); }
+
+        .check input {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 7px;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            margin-top: 2px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: transparent;
+            position: relative;
+        }
+
+        .check input:checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .check input:checked::after {
+            content: "✓";
+            position: absolute;
+            inset: 0;
+            color: white;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .check span {
+            font-size: 0.98rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* SCAN */
+        .scan {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: var(--bg);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .scan:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .scan-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--pastel-lavender, #C8B8E8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .scan-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .scan-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 2px;
+        }
+
+        .scan-value {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .scan-arrow {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* DOWNLOAD */
+        .download-wrap {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 36px 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .download-meta {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .download-meta span { display: flex; align-items: center; gap: 6px; }
+
+        .dl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--accent);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: -0.01em;
+        }
+
+        .dl-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(232, 90, 107, 0.4);
+        }
+
+        .dl-btn:disabled {
+            background: var(--border);
+            color: var(--text-dim);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .dl-hint {
+            margin-top: 14px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .dl-hint.ok { color: var(--accent); }
+
+        /* CHANGELOG */
+        .version-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .version-item {
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .version-item:last-child { border-bottom: none; }
+
+        .version-item-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .version-num {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .version-date {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .version-notes {
+            font-size: 0.92rem;
+            color: var(--text-dim);
+            margin: 0;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 48px 0 64px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .footer-kaomoji {
+            color: var(--kaomoji);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+            .container { padding: 0 20px; }
+            .hero { padding: 72px 0 32px; }
+            .card, .acknowledge, .download-wrap { padding: 24px; }
+            .back { top: 14px; left: 14px; font-size: 0.8rem; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="../" class="back">← bleelblep</a>
+
+<header class="hero">
+    <div class="container">
+        <div class="hero-kaomoji">( ˃ ⌑ ˂ )</div>
+        <h1>slab</h1>
+        <div class="hero-version">v0.1.0 · work in progress</div>
+        <p>an edge-panel sidebar for android. toggles, apps, tools — always one swipe away.</p>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="warn">
+        <div class="warn-label">before you download ⚠</div>
+        <h2 class="warn-title">this is very much a WIP</h2>
+        <p>
+            slab is in <strong>early development</strong>. things <strong>will</strong> break,
+            features are missing, and layouts might shift without warning.
+        </p>
+        <p>
+            you're grabbing an unsigned-ish apk from a stranger on the internet.
+            please understand what that means before tapping install ♡
+        </p>
+    </div>
+
+    <section class="card">
+        <h2>what is slab <span class="kao">(｡•ᴗ•｡)</span></h2>
+        <p>
+            a floating sidebar that slides out from the edge of your screen. it holds your
+            favorite apps, quick toggles, and small tools — without cluttering your home screen
+            or eating notification shade real estate.
+        </p>
+        <ul>
+            <li><strong>apps</strong> — pinned shortcuts, launched in floating or fullscreen mode</li>
+            <li><strong>toggles</strong> — wifi, bluetooth, flashlight, rotation, and more</li>
+            <li><strong>tools</strong> — clipboard history, quick notes, small utilities</li>
+            <li><strong>cute theme</strong> — because why not</li>
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2>what it isn't <span class="kao">( ˃ ⌑ ˂ )</span></h2>
+        <ul>
+            <li>finished. some tabs are placeholders.</li>
+            <li>on the play store. this is a direct apk, distributed as-is.</li>
+            <li>guaranteed to work on every rom or android version.</li>
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2>requirements <span class="kao">٩(ˊᗜˋ*)و</span></h2>
+        <ul>
+            <li>android 10 or newer recommended</li>
+            <li>permission to draw over other apps (slab is an overlay)</li>
+            <li>accessibility permission for certain tools (optional)</li>
+            <li>a little patience ~</li>
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2>scan it yourself <span class="kao">(｡•̀ᴗ-)✧</span></h2>
+        <p>if you want peace of mind, here's the scan report:</p>
+        <a href="https://www.virustotal.com/gui/file/8dbf477542aab800dc0d69618b0281f4b115d1c8830fe866690fdc566b01b5b5/detection" class="scan" target="_blank" rel="noopener" id="scan-link">
+            <div class="scan-icon">🛡</div>
+            <div class="scan-text">
+                <div class="scan-label">virustotal scan</div>
+                <div class="scan-value">view report →</div>
+            </div>
+            <div class="scan-arrow">→</div>
+        </a>
+        <p style="margin-top: 14px; font-size: 0.88rem;">
+            tip: you can also drop the apk into virustotal yourself. always a good habit.
+        </p>
+    </section>
+
+    <section class="acknowledge">
+        <h2 style="font-size: 1.3rem; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.01em;">
+            quick checks <span style="font-size: 0.85rem; color: var(--kaomoji); font-weight: 500;">before the button unlocks</span>
+        </h2>
+        <label class="check">
+            <input type="checkbox" class="ack-check">
+            <span>i understand this is a <strong>work in progress</strong> and may have bugs, crashes, or missing features</span>
+        </label>
+        <label class="check">
+            <input type="checkbox" class="ack-check">
+            <span>i'm okay installing an <strong>apk from outside the play store</strong> and know how to enable unknown sources</span>
+        </label>
+        <label class="check">
+            <input type="checkbox" class="ack-check">
+            <span>i won't repost or mirror this build <strong>without asking</strong> — it changes often and old copies cause confusion ♡</span>
+        </label>
+    </section>
+
+    <section class="download-wrap">
+        <div class="download-meta">
+            <span>📦 v0.1.0</span>
+            <span>·</span>
+            <span>🤖 android 10+</span>
+            <span>·</span>
+            <span>📄 apk</span>
+        </div>
+        <a href="#" class="dl-btn" id="dl-btn" aria-disabled="true">
+            <span>download slab</span>
+            <span>↓</span>
+        </a>
+        <div class="dl-hint" id="dl-hint">check the boxes above to unlock ~</div>
+    </section>
+
+    <section class="card">
+        <h2>recent builds <span class="kao">♡</span></h2>
+        <ul class="version-list">
+            <li class="version-item">
+                <div class="version-item-head">
+                    <span class="version-num">v0.1.0</span>
+                    <span class="version-date">—</span>
+                </div>
+                <p class="version-notes">first public wip drop. cute theme, app tab, toggle pills, basic tool row.</p>
+            </li>
+        </ul>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-kaomoji">⸜(｡˃ ᵕ ˂ )⸝</div>
+        <div>slab · made by bleelblep</div>
+    </div>
+</footer>
+
+<script>
+    const checks = document.querySelectorAll('.ack-check');
+    const btn = document.getElementById('dl-btn');
+    const hint = document.getElementById('dl-hint');
+
+    function update() {
+        const all = Array.from(checks).every(c => c.checked);
+        if (all) {
+            btn.removeAttribute('aria-disabled');
+            btn.style.pointerEvents = 'auto';
+            btn.style.opacity = '1';
+            btn.style.background = 'var(--accent)';
+            btn.style.color = 'white';
+            btn.style.cursor = 'pointer';
+            hint.textContent = 'you\'re good to go ♡';
+            hint.classList.add('ok');
+        } else {
+            btn.setAttribute('aria-disabled', 'true');
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.5';
+            btn.style.background = 'var(--border)';
+            btn.style.color = 'var(--text-dim)';
+            btn.style.cursor = 'not-allowed';
+            hint.textContent = 'check the boxes above to unlock ~';
+            hint.classList.remove('ok');
+        }
+    }
+
+    checks.forEach(c => c.addEventListener('change', update));
+    update();
+
+    // Replace '#' with real apk URL when ready
+    btn.addEventListener('click', (e) => {
+        if (btn.getAttribute('aria-disabled') === 'true') {
+            e.preventDefault();
+            return;
+        }
+        if (btn.getAttribute('href') === '#') {
+            e.preventDefault();
+            alert('apk link not set yet ~ update the href in slab/index.html');
+        }
+    });
+</script>
+
+</body>
+</html>
