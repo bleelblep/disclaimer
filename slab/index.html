@@ -3,129 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>slab — wip</title>
+    <title>slab — overlay theme · wip</title>
     <meta name="description" content="slab — an edge-panel sidebar for android. work in progress.">
     <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Departure+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/gallery.css">
     <style>
+        /* ── BAUHAUS · slab project sheet ──
+           paper + ink, primary triad, hairlines instead of shadows.
+           same nine roles as the EdgeDeck theme spec. */
         :root {
-            --bg: #FDF4E8;
-            --card: #FFFFFF;
-            --text: #4A2C2A;
-            --text-dim: #A06868;
-            --accent: #E85A6B;
-            --border: #E0C8B8;
-            --kaomoji: #F4B6BA;
+            --paper: #F2EADF;
+            --card:  #FFFFFF;
+            --deep:  #0E0E10;
+            --ink:   #0E0E10;
+            --ink-muted: #4A4A50;
+            --rule:  #D4CDC1;
 
-            --warn-bg: #FFF1E0;
-            --warn-text: #8A5620;
-            --warn-border: #F5D199;
+            --yellow: #F2C31C;
+            --blue:   #1E4C8A;
+            --red:    #B82A2C;
+            --cream:  #F2EADF;
 
-            --shadow-sm: 0 2px 12px rgba(74, 44, 42, 0.06);
-            --shadow-md: 0 6px 24px rgba(74, 44, 42, 0.10);
-            --shadow-lg: 0 12px 40px rgba(74, 44, 42, 0.14);
+            /* aliases for shared assets (gallery.css, checkbox JS) */
+            --bg: var(--paper);
+            --text: var(--ink);
+            --text-dim: var(--ink-muted);
+            --border: var(--rule);
+            --accent: var(--yellow);
+            --shadow-sm: none;
+            --shadow-md: none;
+            --shadow-lg: none;
+
+            --serif: 'Instrument Serif', 'Times New Roman', serif;
+            --mono:  'Departure Mono', ui-monospace, monospace;
+            --sans:  'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
         }
 
         :root[data-theme="dark"] {
-            --bg: #B84A4A;
-            --card: #FDF4E8;
-            --text: #6A2A2A;
-            --text-dim: #A06868;
-            --accent: #E85A6B;
-            --border: rgba(253, 244, 232, 0.4);
-            --kaomoji: #F4B6BA;
-            --warn-bg: #FDF4E8;
-            --warn-text: #8A5620;
-            --warn-border: #F5D199;
-            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.18);
-            --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.24);
-            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.32);
+            --paper: #1B1B1E;
+            --card:  #2E2E33;
+            --deep:  #0E0E10;
+            --ink:   #F2EADF;
+            --ink-muted: #9FA0A4;
+            --rule:  #3A3A3F;
         }
 
-        * { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         html { scroll-behavior: smooth; }
 
         body {
-            margin: 0;
-            font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.65;
-            font-weight: 500;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 14.5px;
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        [data-theme="dark"] body { color: #FDF4E8; }
+        /* paper grain — multiplies into light paper, sits flat over dark */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.045 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>");
+            mix-blend-mode: multiply;
+            opacity: 0.9;
+        }
+        [data-theme="dark"] body::before { mix-blend-mode: screen; opacity: 0.35; }
 
         .container {
-            max-width: 720px;
+            max-width: 920px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 56px;
+            position: relative;
+            z-index: 2;
         }
 
-        /* FLOATING CONTROLS */
-        .back {
+        /* ── REGISTRATION CROSSES ── */
+        .reg {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 10;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-dim);
+            width: 18px;
+            height: 18px;
+            color: var(--ink);
+            opacity: 0.45;
+            z-index: 3;
+        }
+        .reg svg { width: 100%; height: 100%; display: block; }
+        .reg.tl { top: 20px; left: 20px; }
+        .reg.tr { top: 20px; right: 20px; }
+        .reg.bl { bottom: 20px; left: 20px; }
+        .reg.br { bottom: 20px; right: 20px; }
+
+        /* ── FLOATING CONTROLS ── */
+        .back, .theme-toggle {
+            position: fixed;
+            top: 56px;
+            z-index: 20;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ink);
+            background: transparent;
+            border: 1px solid var(--ink);
+            padding: 8px 14px;
             text-decoration: none;
-            padding: 8px 16px;
-            background: var(--card);
-            border-radius: 999px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s;
-        }
-
-        .back:hover {
-            color: var(--accent);
-            transform: translateX(-2px);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10;
-            appearance: none;
-            -webkit-appearance: none;
-            background: var(--card);
-            color: var(--text);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 999px;
             cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .back { left: 56px; }
+        .theme-toggle {
+            right: 56px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
             display: inline-grid;
             place-items: center;
+            font-family: var(--mono);
             font-size: 0.95rem;
             line-height: 1;
-            padding: 0;
-            font-family: inherit;
-            box-shadow: var(--shadow-sm);
-            transition: color 0.15s, transform 0.15s, box-shadow 0.2s;
         }
-
-        .theme-toggle:hover,
-        .theme-toggle:focus-visible {
-            color: var(--accent);
+        .back:hover, .theme-toggle:hover, .theme-toggle:focus-visible {
+            background: var(--ink);
+            color: var(--paper);
             outline: none;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
         }
-
-        .theme-toggle [data-theme-icon] {
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
-
+        .theme-toggle [data-theme-icon] { display: inline-block; transition: transform 0.3s ease; }
         .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
 
         @media (prefers-reduced-motion: reduce) {
@@ -133,543 +145,659 @@
             .theme-toggle:hover [data-theme-icon] { transform: none; }
         }
 
-        /* HERO */
-        .hero {
-            padding: 100px 0 48px;
-            text-align: center;
-        }
-
-        .hero-kaomoji {
-            font-size: 1.3rem;
-            color: var(--kaomoji);
-            margin-bottom: 16px;
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .hero-kaomoji { animation: none; }
-        }
-
-        .hero h1 {
-            font-size: clamp(3rem, 9vw, 5rem);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            margin: 0 0 8px;
-            line-height: 1;
-        }
-
-        [data-theme="dark"] .hero h1 { color: #FDF4E8; }
-
-        .hero-version {
-            display: inline-block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #8A5620;
-            background: var(--warn-border);
-            border-radius: 999px;
-            padding: 4px 14px;
-            margin-bottom: 20px;
-            letter-spacing: 0.02em;
-        }
-
-        .hero p {
-            font-size: 1.15rem;
-            color: var(--text-dim);
-            max-width: 520px;
-            margin: 0 auto;
-            font-weight: 500;
-        }
-
-        [data-theme="dark"] .hero p { color: rgba(253, 244, 232, 0.8); }
-
-        /* WARNING */
-        .warn {
-            background: var(--warn-bg);
-            border: 1.5px solid var(--warn-border);
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 36px;
-        }
-
-        .warn-label {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--warn-text);
-            letter-spacing: 0.08em;
+        /* ── FOLIO ── */
+        .folio {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            color: var(--ink-muted);
+            white-space: nowrap;
+        }
+        .folio .swatch-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--yellow);
+            vertical-align: middle;
+            margin: 0 6px;
         }
 
-        .warn-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: var(--warn-text);
-            margin: 0 0 14px;
-            letter-spacing: -0.01em;
+        /* ── MASTHEAD ── */
+        .masthead {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: end;
+            gap: 40px;
+            border-bottom: 1px solid var(--ink);
+            padding: 130px 0 28px;
+            margin-bottom: 40px;
         }
 
-        .warn p {
-            color: var(--warn-text);
-            margin: 0 0 10px;
-            font-size: 0.98rem;
-            font-weight: 500;
+        .wordmark {
+            font-family: var(--serif);
+            font-size: clamp(4.5rem, 18vw, 11rem);
+            line-height: 0.82;
+            letter-spacing: -0.035em;
+            font-weight: 400;
+            color: var(--ink);
+            position: relative;
+        }
+        .wordmark em { font-style: italic; color: var(--blue); }
+        .wordmark::after {
+            content: "";
+            display: inline-block;
+            margin-left: 14px;
+            width: clamp(14px, 3vw, 24px);
+            height: clamp(14px, 3vw, 24px);
+            background: var(--yellow);
+            border-radius: 50%;
+            vertical-align: 0.35em;
         }
 
-        .warn p:last-child { margin-bottom: 0; }
-
-        .warn strong { font-weight: 700; }
-
-        /* CARD */
-        .card {
-            background: var(--card);
-            border-radius: 24px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
+        .masthead-meta {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            text-align: right;
+            line-height: 2;
+            color: var(--ink);
         }
-
-        .card h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0 0 16px;
-            letter-spacing: -0.01em;
-            display: flex;
+        .masthead-meta .line { color: var(--ink-muted); }
+        .masthead-meta .hero { font-size: 11px; letter-spacing: 0.22em; }
+        .masthead-meta .primitives {
+            display: inline-flex;
+            gap: 6px;
             align-items: center;
-            gap: 10px;
-            color: var(--text);
+            margin-top: 10px;
         }
 
-        .acknowledge h2 { color: var(--text); }
-
-        .card h2 .kao {
-            font-size: 0.85rem;
-            color: var(--kaomoji);
-            font-weight: 500;
+        /* primitive trio */
+        .prim { width: 14px; height: 14px; display: inline-block; }
+        .prim.c { border-radius: 50%; background: var(--yellow); }
+        .prim.s { background: var(--blue); }
+        .prim.t {
+            width: 0; height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-bottom: 14px solid var(--red);
+            background: transparent;
         }
 
-        .card p {
-            color: var(--text-dim);
-            margin: 0 0 12px;
-            font-size: 1rem;
+        /* ── HERO TAGLINE (under masthead) ── */
+        .hero-tagline {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+            line-height: 1.35;
+            color: var(--ink-muted);
+            max-width: 36ch;
+            margin: 0 0 64px;
         }
 
-        .card p:last-child { margin-bottom: 0; }
-
-        .card ul {
-            margin: 0;
-            padding-left: 20px;
-            color: var(--text-dim);
+        /* ── SECTION FRAME ── */
+        .section {
+            position: relative;
+            padding: 56px 0 56px;
+            border-top: 1px solid var(--rule);
         }
 
-        .card li {
-            margin-bottom: 8px;
-            font-size: 1rem;
+        .section-num {
+            position: absolute;
+            top: -8px;
+            left: 0;
+            background: var(--paper);
+            padding-right: 14px;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+        .section-num b { font-weight: 400; color: var(--ink); }
+
+        .section-title {
+            font-family: var(--serif);
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            font-weight: 400;
+            line-height: 0.98;
+            letter-spacing: -0.015em;
+            color: var(--ink);
+            margin: 0 0 24px;
+        }
+        .section-title em { font-style: italic; color: var(--ink-muted); }
+
+        .section p {
+            font-family: var(--sans);
+            font-size: 14.5px;
+            line-height: 1.7;
+            color: var(--ink);
+            max-width: 56ch;
+            margin: 0 0 14px;
+        }
+        .section p:last-child { margin-bottom: 0; }
+        .section p strong { font-weight: 600; color: var(--ink); }
+
+        .section ul {
+            list-style: none;
+            padding: 0;
+            margin: 18px 0 0;
+            border-top: 1px solid var(--rule);
+        }
+        .section li {
+            padding: 14px 0 14px 28px;
+            border-bottom: 1px solid var(--rule);
+            font-size: 14.5px;
+            line-height: 1.55;
+            position: relative;
+        }
+        .section li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            top: 14px;
+            font-family: var(--mono);
+            color: var(--ink-muted);
+        }
+        .section li strong {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--ink);
+            display: inline-block;
+            margin-right: 10px;
         }
 
-        .card li::marker { color: var(--accent); }
-
-        .card strong {
-            color: var(--text);
-            font-weight: 700;
+        /* ── § 00 NOTICE — danger block ── */
+        .notice {
+            background: var(--red);
+            color: var(--cream);
+            padding: 36px 32px 32px;
+            margin-bottom: 48px;
+            position: relative;
+            border-top: 0;
         }
+        .notice .section-num {
+            background: var(--red);
+            color: rgba(242, 234, 223, 0.7);
+            top: 12px;
+            left: 32px;
+            padding-right: 0;
+        }
+        .notice .section-num b { color: var(--cream); }
+        .notice .section-title {
+            color: var(--cream);
+            margin-top: 28px;
+            margin-bottom: 18px;
+        }
+        .notice p { color: var(--cream); max-width: 52ch; }
+        .notice p strong { color: var(--cream); font-weight: 600; }
 
-        /* GALLERY CARD — the gallery grid uses shared gallery.css styles
-           but we wrap it in the same card look-and-feel */
-        .gallery-section { margin-bottom: 24px; }
+        /* ── § 02 GALLERY — flatten the carousel a touch ── */
+        .gallery-frame { padding-top: 8px; }
 
-        /* CHECKLIST */
-        .acknowledge {
+        /* ── § 05 SCAN ── */
+        .scan {
+            display: grid;
+            grid-template-columns: 44px 1fr auto;
+            align-items: center;
+            gap: 18px;
+            padding: 16px 18px;
             background: var(--card);
-            border-radius: 24px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--ink);
+            text-decoration: none;
+            color: var(--ink);
+            margin-top: 18px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .scan:hover { background: var(--ink); color: var(--paper); }
+        .scan:hover .scan-icon { background: var(--yellow); border-color: var(--yellow); }
+
+        .scan-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--blue);
+            display: grid;
+            place-items: center;
+            color: var(--cream);
+            border: 1px solid var(--blue);
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+        .scan-icon svg { width: 22px; height: 22px; }
+        .scan:hover .scan-icon { color: var(--ink); }
+
+        .scan-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 3px;
+        }
+        .scan:hover .scan-label { color: rgba(242, 234, 223, 0.7); }
+        .scan-value {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--ink);
+        }
+        .scan:hover .scan-value { color: var(--paper); }
+        .scan-arrow {
+            font-family: var(--mono);
+            color: var(--ink-muted);
+            font-size: 1.1rem;
+        }
+        .scan:hover .scan-arrow { color: var(--paper); }
+
+        .scan-tip {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-top: 14px !important;
+            max-width: none !important;
         }
 
+        /* ── § 06 ACKNOWLEDGE ── */
+        .check-list { margin-top: 18px; border-top: 1px solid var(--rule); }
         .check {
-            display: flex;
+            display: grid;
+            grid-template-columns: 24px 1fr;
+            gap: 16px;
             align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--rule);
             cursor: pointer;
             user-select: none;
         }
-
-        .check + .check { border-top: 1px dashed var(--border); }
-
         .check input {
             appearance: none;
             -webkit-appearance: none;
             width: 22px;
             height: 22px;
-            border-radius: 7px;
-            border: 2px solid var(--border);
-            flex-shrink: 0;
-            margin-top: 2px;
-            cursor: pointer;
-            transition: all 0.15s;
+            border: 1.5px solid var(--ink);
             background: transparent;
+            margin-top: 1px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.15s;
+        }
+        .check input:checked { background: var(--ink); }
+        .check input:checked::after {
+            content: "";
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 7px;
+            height: 12px;
+            border: solid var(--paper);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .check span {
+            font-family: var(--sans);
+            font-size: 14.5px;
+            line-height: 1.55;
+            color: var(--ink);
+        }
+        .check span strong {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            background: var(--yellow);
+            color: var(--ink);
+            padding: 1px 5px;
+            margin: 0 1px;
+        }
+
+        /* ── § 07 DOWNLOAD — the one yellow moment ── */
+        .download {
+            background: var(--deep);
+            color: var(--cream);
+            padding: 48px 40px;
+            margin-bottom: 0;
+            text-align: left;
+            border-top: 0;
             position: relative;
         }
-
-        .check input:checked {
-            background: var(--accent);
-            border-color: var(--accent);
+        .download .section-num {
+            background: var(--deep);
+            color: rgba(242, 234, 223, 0.6);
+            top: 12px;
+            left: 40px;
+            padding-right: 0;
         }
-
-        .check input:checked::after {
-            content: "✓";
-            position: absolute;
-            inset: 0;
-            color: white;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        .check span {
-            font-size: 0.98rem;
-            color: var(--text-dim);
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        /* SCAN */
-        .scan {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 16px 20px;
-            background: var(--bg);
-            border-radius: 16px;
-            text-decoration: none;
-            color: var(--text);
-            border: 1.5px solid var(--border);
-            transition: all 0.2s;
-            margin-top: 8px;
-        }
-
-        .scan:hover {
-            border-color: var(--accent);
-            transform: translateY(-1px);
-        }
-
-        .scan-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: var(--pastel-lavender, #C8B8E8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .scan-text {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .scan-label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-bottom: 2px;
-        }
-
-        .scan-value {
-            font-size: 0.98rem;
-            font-weight: 600;
-            color: var(--text);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .scan-arrow {
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        /* DOWNLOAD */
-        .download-wrap {
-            background: var(--card);
-            border-radius: 24px;
-            padding: 36px 32px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-md);
-            text-align: center;
-        }
+        .download .section-num b { color: var(--cream); }
 
         .download-meta {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(242, 234, 223, 0.7);
+            margin: 32px 0 24px;
             display: flex;
-            justify-content: center;
-            gap: 18px;
+            gap: 22px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            font-weight: 600;
         }
-
-        .download-meta span { display: flex; align-items: center; gap: 6px; }
+        .download-meta .dot { color: var(--yellow); }
 
         .dl-btn {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: var(--accent);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 999px;
-            font-family: inherit;
-            font-size: 1.05rem;
-            font-weight: 700;
+            gap: 14px;
+            background: var(--yellow);
+            color: var(--ink);
+            padding: 18px 36px;
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
             text-decoration: none;
-            border: none;
+            border: 1px solid var(--yellow);
             cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: -0.01em;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
         }
-
-        .dl-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(232, 90, 107, 0.4);
+        .dl-btn:hover:not([aria-disabled="true"]) {
+            background: transparent;
+            color: var(--yellow);
         }
-
-        .dl-btn:disabled {
-            background: var(--border);
-            color: var(--text-dim);
+        .dl-btn[aria-disabled="true"] {
+            background: transparent;
+            color: rgba(242, 234, 223, 0.4);
+            border-color: rgba(242, 234, 223, 0.25);
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
+        .dl-btn .arr { font-family: var(--mono); }
 
         .dl-hint {
-            margin-top: 14px;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            font-weight: 500;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(242, 234, 223, 0.6);
+            margin-top: 18px;
         }
+        .dl-hint.ok { color: var(--yellow); }
 
-        .dl-hint.ok { color: var(--accent); }
-
-        /* CHANGELOG */
+        /* ── § 08 BUILDS ── */
         .version-list {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin: 18px 0 0;
+            border-top: 1px solid var(--rule);
         }
-
         .version-item {
-            padding: 14px 0;
-            border-bottom: 1px dashed var(--border);
+            padding: 18px 0;
+            border-bottom: 1px solid var(--rule);
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 24px;
+            align-items: baseline;
+        }
+        .version-num {
+            font-family: var(--serif);
+            font-size: 1.6rem;
+            color: var(--ink);
+            line-height: 1;
+        }
+        .version-notes {
+            font-family: var(--sans);
+            font-size: 14px;
+            color: var(--ink-muted);
+            line-height: 1.55;
+        }
+        .version-date {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            white-space: nowrap;
         }
 
-        .version-item:last-child { border-bottom: none; }
-
-        .version-item-head {
+        /* ── FOOTER ── */
+        footer {
+            margin-top: 64px;
+            padding: 28px 0 56px;
+            border-top: 1px solid var(--ink);
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+        footer .row {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            gap: 12px;
-            margin-bottom: 4px;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        footer .left { display: flex; gap: 18px; align-items: center; }
+        footer .left .dot { color: var(--ink); }
+        footer .primitives {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
         }
 
-        .version-num {
-            font-weight: 700;
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        .version-date {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-
-        .version-notes {
-            font-size: 0.92rem;
-            color: var(--text-dim);
-            margin: 0;
-        }
-
-        /* FOOTER */
-        .footer {
-            padding: 48px 0 64px;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .footer-kaomoji {
-            color: var(--kaomoji);
-            margin-bottom: 8px;
-            font-size: 1rem;
-        }
-
-        /* MOBILE */
-        @media (max-width: 600px) {
-            .container { padding: 0 20px; }
-            .hero { padding: 72px 0 32px; }
-            .card, .acknowledge, .download-wrap { padding: 24px; }
-            .back { top: 14px; left: 14px; font-size: 0.8rem; padding: 6px 12px; }
-            .theme-toggle { top: 14px; right: 14px; width: 32px; height: 32px; }
+        /* ── MOBILE ── */
+        @media (max-width: 720px) {
+            .container { padding: 0 24px; }
+            .back, .theme-toggle { top: 16px; }
+            .back { left: 16px; padding: 6px 10px; font-size: 9px; }
+            .theme-toggle { right: 16px; width: 30px; height: 30px; }
+            .folio { font-size: 9px; top: 22px; }
+            .reg { width: 14px; height: 14px; }
+            .reg.tl, .reg.tr { top: 12px; }
+            .reg.bl, .reg.br { bottom: 12px; }
+            .reg.tl, .reg.bl { left: 12px; }
+            .reg.tr, .reg.br { right: 12px; }
+            .masthead {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 110px 0 22px;
+                margin-bottom: 32px;
+            }
+            .masthead-meta { text-align: left; line-height: 1.9; }
+            .hero-tagline { margin-bottom: 48px; font-size: 1.2rem; }
+            .section { padding: 44px 0; }
+            .notice, .download { padding: 32px 24px 28px; }
+            .notice .section-num, .download .section-num { left: 24px; }
+            .download { padding-bottom: 36px; }
+            .version-item { grid-template-columns: 1fr; gap: 6px; }
+            .version-date { order: -1; }
         }
     </style>
 </head>
 <body>
+
+<div class="reg tl"><svg viewBox="0 0 18 18"><line x1="9" y1="0" x2="9" y2="18" stroke="currentColor"/><line x1="0" y1="9" x2="18" y2="9" stroke="currentColor"/><circle cx="9" cy="9" r="4" fill="none" stroke="currentColor"/></svg></div>
+<div class="reg tr"><svg viewBox="0 0 18 18"><line x1="9" y1="0" x2="9" y2="18" stroke="currentColor"/><line x1="0" y1="9" x2="18" y2="9" stroke="currentColor"/><circle cx="9" cy="9" r="4" fill="none" stroke="currentColor"/></svg></div>
+<div class="reg bl"><svg viewBox="0 0 18 18"><line x1="9" y1="0" x2="9" y2="18" stroke="currentColor"/><line x1="0" y1="9" x2="18" y2="9" stroke="currentColor"/><circle cx="9" cy="9" r="4" fill="none" stroke="currentColor"/></svg></div>
+<div class="reg br"><svg viewBox="0 0 18 18"><line x1="9" y1="0" x2="9" y2="18" stroke="currentColor"/><line x1="0" y1="9" x2="18" y2="9" stroke="currentColor"/><circle cx="9" cy="9" r="4" fill="none" stroke="currentColor"/></svg></div>
 
 <a href="../" class="back">← bleelblep</a>
 <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
     <span data-theme-icon>☾</span>
 </button>
 
-<header class="hero">
-    <div class="container">
-        <div class="hero-kaomoji">( ˃ ⌑ ˂ )</div>
-        <h1>slab</h1>
-        <div class="hero-version">v0.1.0 · work in progress</div>
-        <p>an edge-panel sidebar for android. toggles, apps, tools — always one swipe away.</p>
-    </div>
-</header>
+<div class="folio">slab · project sheet <span class="swatch-dot"></span> issue 01 / wip</div>
 
-<main class="container">
+<div class="container">
 
-    <div class="warn">
-        <div class="warn-label">before you download ⚠</div>
-        <h2 class="warn-title">this is very much a WIP</h2>
+    <header class="masthead">
+        <h1 class="wordmark">sl<em>a</em>b</h1>
+        <div class="masthead-meta">
+            <div class="hero">Overlay · v0.1.0</div>
+            <div class="line">WIP · 2026.04.18</div>
+            <div class="line">Android 10+ · APK</div>
+            <div class="primitives">
+                <span class="prim c" title="circle"></span>
+                <span class="prim s" title="square"></span>
+                <span class="prim t" title="triangle"></span>
+            </div>
+        </div>
+    </header>
+
+    <p class="hero-tagline">
+        An edge-panel sidebar for Android. Toggles, apps, tools — always one swipe away.
+    </p>
+
+    <section class="section notice">
+        <div class="section-num"><b>§ 00</b> · Notice</div>
+        <h2 class="section-title">Work in <em>progress.</em></h2>
         <p>
-            slab is in <strong>early development</strong>. things <strong>will</strong> break,
-            features are missing, and layouts might shift without warning.
+            Slab is in <strong>early development</strong>. Things <strong>will</strong> break,
+            features are missing, and layouts may shift without warning.
         </p>
         <p>
-            you're grabbing an unsigned-ish apk from a stranger on the internet.
-            please understand what that means before tapping install ♡
+            You're grabbing an unsigned APK from a stranger on the internet — please understand
+            what that means before tapping install.
         </p>
-    </div>
+    </section>
 
-    <section class="card">
-        <h2>what is slab <span class="kao">(｡•ᴗ•｡)</span></h2>
+    <section class="section">
+        <div class="section-num"><b>§ 01</b> · What is slab</div>
+        <h2 class="section-title">A floating <em>edge.</em></h2>
         <p>
-            a floating sidebar that slides out from the edge of your screen. it holds your
-            favorite apps, quick toggles, and small tools — without cluttering your home screen
-            or eating notification shade real estate.
+            A sidebar that slides out from the edge of the screen. It holds favourite apps,
+            quick toggles, and small tools — without cluttering the home screen or eating
+            notification-shade real estate.
         </p>
         <ul>
-            <li><strong>apps</strong> — pinned shortcuts, launched in floating or fullscreen mode</li>
-            <li><strong>toggles</strong> — wifi, bluetooth, flashlight, rotation, and more</li>
-            <li><strong>tools</strong> — clipboard history, quick notes, small utilities</li>
-            <li><strong>cute theme</strong> — because why not</li>
+            <li><strong>Apps</strong> Pinned shortcuts, launched in floating or fullscreen mode.</li>
+            <li><strong>Toggles</strong> Wi-Fi, Bluetooth, flashlight, rotation, more.</li>
+            <li><strong>Tools</strong> Clipboard history, quick notes, small utilities.</li>
+            <li><strong>Theme</strong> Bauhaus — paper and ink, three colours, no shadows.</li>
         </ul>
     </section>
 
-    <section class="card gallery-section">
-        <h2>a peek <span class="kao">(｡•̀ᴗ-)✧</span></h2>
-        <p>a few screens from the current build:</p>
+    <section class="section gallery-frame">
+        <div class="section-num"><b>§ 02</b> · A peek</div>
+        <h2 class="section-title">From the <em>build.</em></h2>
+        <p>A few screens from the current state of things.</p>
         <div data-gallery="./images/" data-gallery-manifest="./gallery.json" aria-label="slab screenshots"></div>
     </section>
 
-    <section class="card">
-        <h2>what it isn't <span class="kao">( ˃ ⌑ ˂ )</span></h2>
+    <section class="section">
+        <div class="section-num"><b>§ 03</b> · What it isn't</div>
+        <h2 class="section-title">Boundaries.</h2>
         <ul>
-            <li>finished. some tabs are placeholders.</li>
-            <li>on the play store. this is a direct apk, distributed as-is.</li>
-            <li>guaranteed to work on every rom or android version.</li>
+            <li><strong>Finished</strong> Several tabs are placeholders.</li>
+            <li><strong>On the Play Store</strong> Direct APK only, distributed as-is.</li>
+            <li><strong>Universal</strong> Not guaranteed to work on every ROM or Android version.</li>
         </ul>
     </section>
 
-    <section class="card">
-        <h2>requirements <span class="kao">٩(ˊᗜˋ*)و</span></h2>
+    <section class="section">
+        <div class="section-num"><b>§ 04</b> · Requirements</div>
+        <h2 class="section-title">Needs.</h2>
         <ul>
-            <li>android 10 or newer recommended</li>
-            <li>permission to draw over other apps (slab is an overlay)</li>
-            <li>accessibility permission for certain tools (optional)</li>
-            <li>a little patience ~</li>
+            <li><strong>OS</strong> Android 10 or newer recommended.</li>
+            <li><strong>Overlay</strong> Permission to draw over other apps.</li>
+            <li><strong>Accessibility</strong> Required for certain tools (optional).</li>
+            <li><strong>Patience</strong> A small amount.</li>
         </ul>
     </section>
 
-    <section class="card">
-        <h2>scan it yourself <span class="kao">(｡•̀ᴗ-)✧</span></h2>
-        <p>if you want peace of mind, here's the scan report:</p>
+    <section class="section">
+        <div class="section-num"><b>§ 05</b> · Scan</div>
+        <h2 class="section-title">Verify.</h2>
+        <p>For peace of mind — the third-party scan report for the current build.</p>
         <a href="https://www.virustotal.com/gui/file/8dbf477542aab800dc0d69618b0281f4b115d1c8830fe866690fdc566b01b5b5/detection" class="scan" target="_blank" rel="noopener" id="scan-link">
-            <div class="scan-icon">🛡</div>
-            <div class="scan-text">
-                <div class="scan-label">virustotal scan</div>
-                <div class="scan-value">view report →</div>
+            <div class="scan-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="scan-label">VirusTotal</div>
+                <div class="scan-value">View report →</div>
             </div>
             <div class="scan-arrow">→</div>
         </a>
-        <p style="margin-top: 14px; font-size: 0.88rem;">
-            tip: you can also drop the apk into virustotal yourself. always a good habit.
-        </p>
+        <p class="scan-tip">Tip · drop the APK into VirusTotal yourself · always a good habit.</p>
     </section>
 
-    <section class="acknowledge">
-        <h2 style="font-size: 1.3rem; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.01em;">
-            quick checks <span style="font-size: 0.85rem; color: var(--kaomoji); font-weight: 500;">before the button unlocks</span>
-        </h2>
-        <label class="check">
-            <input type="checkbox" class="ack-check">
-            <span>i understand this is a <strong>work in progress</strong> and may have bugs, crashes, or missing features</span>
-        </label>
-        <label class="check">
-            <input type="checkbox" class="ack-check">
-            <span>i'm okay installing an <strong>apk from outside the play store</strong> and know how to enable unknown sources</span>
-        </label>
-        <label class="check">
-            <input type="checkbox" class="ack-check">
-            <span>i won't repost or mirror this build <strong>without asking</strong> — it changes often and old copies cause confusion ♡</span>
-        </label>
+    <section class="section">
+        <div class="section-num"><b>§ 06</b> · Acknowledge</div>
+        <h2 class="section-title">Quick <em>checks.</em></h2>
+        <p>Three boxes. The download unlocks when all are ticked.</p>
+        <div class="check-list">
+            <label class="check">
+                <input type="checkbox" class="ack-check">
+                <span>I understand this is a <strong>work in progress</strong> and may have bugs, crashes, or missing features.</span>
+            </label>
+            <label class="check">
+                <input type="checkbox" class="ack-check">
+                <span>I'm okay installing an <strong>APK</strong> from outside the Play Store and know how to enable unknown sources.</span>
+            </label>
+            <label class="check">
+                <input type="checkbox" class="ack-check">
+                <span>I won't <strong>repost</strong> or mirror this build without asking — it changes often and old copies cause confusion.</span>
+            </label>
+        </div>
     </section>
 
-    <section class="download-wrap">
+    <section class="section download">
+        <div class="section-num"><b>§ 07</b> · Download</div>
+        <h2 class="section-title" style="color: var(--cream); margin-top: 28px;">Take it <em style="color: var(--yellow);">home.</em></h2>
         <div class="download-meta">
-            <span>📦 v0.1.0</span>
-            <span>·</span>
-            <span>🤖 android 10+</span>
-            <span>·</span>
-            <span>📄 apk</span>
+            <span><span class="dot">●</span> v0.1.0</span>
+            <span>Android 10+</span>
+            <span>APK · ~ TBD</span>
         </div>
         <a href="#" class="dl-btn" id="dl-btn" aria-disabled="true">
-            <span>download slab</span>
-            <span>↓</span>
+            <span>Download slab</span>
+            <span class="arr">↓</span>
         </a>
-        <div class="dl-hint" id="dl-hint">check the boxes above to unlock ~</div>
+        <div class="dl-hint" id="dl-hint">Tick the boxes above to unlock.</div>
     </section>
 
-    <section class="card">
-        <h2>recent builds <span class="kao">♡</span></h2>
+    <section class="section">
+        <div class="section-num"><b>§ 08</b> · Builds</div>
+        <h2 class="section-title">Recent.</h2>
         <ul class="version-list">
             <li class="version-item">
-                <div class="version-item-head">
-                    <span class="version-num">v0.1.0</span>
-                    <span class="version-date">—</span>
-                </div>
-                <p class="version-notes">first public wip drop. cute theme, app tab, toggle pills, basic tool row.</p>
+                <span class="version-num">v0.1.0</span>
+                <p class="version-notes">First public WIP drop. Bauhaus theme, app tab, toggle pills, basic tool row.</p>
+                <span class="version-date">— · TBD</span>
             </li>
         </ul>
     </section>
 
-</main>
+    <footer>
+        <div class="row">
+            <div class="left">
+                <span class="dot">slab</span>
+                <span>/ Overlay / Bauhaus</span>
+                <span>/ v0.1.0 · 2026.04.18</span>
+            </div>
+            <div class="primitives">
+                <span class="prim c"></span>
+                <span class="prim s"></span>
+                <span class="prim t"></span>
+            </div>
+            <div>made by bleelblep</div>
+        </div>
+    </footer>
 
-<footer class="footer">
-    <div class="container">
-        <div class="footer-kaomoji">⸜(｡˃ ᵕ ˂ )⸝</div>
-        <div>slab · made by bleelblep</div>
-    </div>
-</footer>
+</div>
 
 <script>
     const checks = document.querySelectorAll('.ack-check');
@@ -680,21 +808,11 @@
         const all = Array.from(checks).every(c => c.checked);
         if (all) {
             btn.removeAttribute('aria-disabled');
-            btn.style.pointerEvents = 'auto';
-            btn.style.opacity = '1';
-            btn.style.background = 'var(--accent)';
-            btn.style.color = 'white';
-            btn.style.cursor = 'pointer';
-            hint.textContent = 'you\'re good to go ♡';
+            hint.textContent = "Cleared · download unlocked.";
             hint.classList.add('ok');
         } else {
             btn.setAttribute('aria-disabled', 'true');
-            btn.style.pointerEvents = 'none';
-            btn.style.opacity = '0.5';
-            btn.style.background = 'var(--border)';
-            btn.style.color = 'var(--text-dim)';
-            btn.style.cursor = 'not-allowed';
-            hint.textContent = 'check the boxes above to unlock ~';
+            hint.textContent = "Tick the boxes above to unlock.";
             hint.classList.remove('ok');
         }
     }
@@ -702,7 +820,6 @@
     checks.forEach(c => c.addEventListener('change', update));
     update();
 
-    // Replace '#' with real apk URL when ready
     btn.addEventListener('click', (e) => {
         if (btn.getAttribute('aria-disabled') === 'true') {
             e.preventDefault();
