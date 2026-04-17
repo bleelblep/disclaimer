@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixlings — Quiet Life in Your Glyph</title>
+    <meta name="description" content="Ambient creatures that live in your Nothing Phone's Glyph Matrix.">
     <style>
         /* TERRARIUM COLORS */
         :root {
@@ -36,10 +37,7 @@
             }
         }
 
-        /* BASE */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -47,6 +45,28 @@
             background: var(--background);
             color: var(--text);
             line-height: 1.75;
+        }
+
+        /* BACK LINK */
+        .back {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 10;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 8px 14px;
+            background: var(--surface);
+            border-radius: 999px;
+            transition: all 0.2s;
+            letter-spacing: 0.03em;
+        }
+
+        .back:hover {
+            color: var(--primary);
+            transform: translateX(-2px);
         }
 
         /* AMBIENT LEAVES */
@@ -60,21 +80,14 @@
         }
 
         @keyframes leafDrift {
-            from {
-                transform: translateY(-8vh) rotate(0deg);
-            }
-            to {
-                transform: translateY(108vh) rotate(360deg);
-            }
+            from { transform: translateY(-8vh) rotate(0deg); }
+            to { transform: translateY(108vh) rotate(360deg); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .leaf {
-                animation: none;
-            }
+            .leaf { animation: none; }
         }
 
-        /* LAYOUT */
         .page {
             position: relative;
             z-index: 1;
@@ -83,7 +96,6 @@
             padding: 80px 28px 120px;
         }
 
-        /* HERO */
         .hero {
             text-align: center;
             margin-bottom: 80px;
@@ -97,18 +109,12 @@
         }
 
         @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-12px);
-            }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .hero-icon {
-                animation: none;
-            }
+            .hero-icon { animation: none; }
         }
 
         .hero h1 {
@@ -134,7 +140,6 @@
             line-height: 1.8;
         }
 
-        /* LINK GRID */
         .link-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -179,10 +184,7 @@
             line-height: 1.6;
         }
 
-        /* SECTION */
-        .section {
-            margin-bottom: 60px;
-        }
+        .section { margin-bottom: 60px; }
 
         .section-header {
             text-align: center;
@@ -206,7 +208,6 @@
             margin: 0;
         }
 
-        /* FOOTER */
         .footer {
             text-align: center;
             padding-top: 40px;
@@ -215,9 +216,7 @@
             font-size: 0.9rem;
         }
 
-        .footer p {
-            margin: 8px 0;
-        }
+        .footer p { margin: 8px 0; }
 
         .footer a {
             color: var(--secondary);
@@ -226,25 +225,19 @@
             transition: border-color 0.2s;
         }
 
-        .footer a:hover {
-            border-bottom-color: var(--secondary);
-        }
+        .footer a:hover { border-bottom-color: var(--secondary); }
 
-        /* MOBILE */
         @media (max-width: 600px) {
-            .page {
-                padding: 60px 20px 100px;
-            }
-            .link-grid {
-                grid-template-columns: 1fr;
-            }
-            .link-card {
-                padding: 24px 20px;
-            }
+            .page { padding: 60px 20px 100px; }
+            .link-grid { grid-template-columns: 1fr; }
+            .link-card { padding: 24px 20px; }
+            .back { top: 16px; left: 16px; }
         }
     </style>
 </head>
 <body>
+
+<a href="../" class="back">← bleelblep</a>
 
 <!-- Ambient leaves -->
 <div class="leaf" style="left:8%;animation-duration:20s;animation-delay:-3s">🍃</div>
@@ -272,7 +265,7 @@
         </div>
 
         <div class="link-grid">
-            <a href="changelog.html" class="link-card">
+            <a href="./changelog.html" class="link-card">
                 <span class="link-card-icon">📜</span>
                 <h3 class="link-card-title">Changelog</h3>
                 <p class="link-card-description">
@@ -280,7 +273,7 @@
                 </p>
             </a>
 
-            <a href="privacy_policy.html" class="link-card">
+            <a href="./privacy_policy.html" class="link-card">
                 <span class="link-card-icon">🔒</span>
                 <h3 class="link-card-title">Privacy Policy</h3>
                 <p class="link-card-description">
@@ -297,7 +290,7 @@
         </div>
 
         <div class="link-grid">
-            <a href="custom-pixlings-guide.html" class="link-card">
+            <a href="./custom-pixlings-guide.html" class="link-card">
                 <span class="link-card-icon">🎨</span>
                 <h3 class="link-card-title">Custom Pixlings Guide</h3>
                 <p class="link-card-description">
@@ -305,7 +298,7 @@
                 </p>
             </a>
 
-            <a href="custom-packs-guide.html" class="link-card">
+            <a href="./custom-packs-guide.html" class="link-card">
                 <span class="link-card-icon">📦</span>
                 <h3 class="link-card-title">Custom Packs Guide</h3>
                 <p class="link-card-description">
@@ -313,7 +306,7 @@
                 </p>
             </a>
 
-            <a href="community.html" class="link-card">
+            <a href="./community.html" class="link-card">
                 <span class="link-card-icon">🌍</span>
                 <h3 class="link-card-title">Community Packs</h3>
                 <p class="link-card-description">
@@ -330,7 +323,6 @@
 </div>
 
 <script>
-// Add more leaves dynamically
 for (let i = 0; i < 12; i++) {
     const leaf = document.createElement('div');
     leaf.className = 'leaf';
