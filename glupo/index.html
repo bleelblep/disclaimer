@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/gallery.css">
     <style>
         /* ── GLUPO: mid-century retro futurism ──
            amber sunsets, dark brown wood-paneled walls,
@@ -29,6 +30,13 @@
 
             --ink-on-amber: #3A1A08;
             --ink-on-cream: #2A1205;
+
+            /* aliases for shared assets (gallery.css) */
+            --card: var(--bg-cream);
+            --text: var(--ink-on-amber);
+            --text-dim: var(--muted);
+            --shadow-sm: 4px 4px 0 var(--rule-strong);
+            --shadow-lg: 8px 8px 0 var(--rule-strong);
         }
 
         :root[data-theme="dark"] {
@@ -47,6 +55,13 @@
 
             --ink-on-amber: #F0C870;
             --ink-on-cream: #F0C870;
+
+            /* aliases for shared assets (gallery.css) */
+            --card: var(--bg-cream);
+            --text: var(--ink-on-amber);
+            --text-dim: var(--muted);
+            --shadow-sm: 4px 4px 0 var(--rule-strong);
+            --shadow-lg: 8px 8px 0 var(--rule-strong);
         }
 
         * { box-sizing: border-box; }
@@ -703,6 +718,21 @@
     <div class="container">
         <div class="section-rule">
             <span class="section-rule-num">02</span>
+            <span class="section-rule-title">peek inside</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>snapshots</h2>
+        <p class="section-lede">
+            a few polaroids from the drawer — grainy, unlabeled, mostly just for the feel of it.
+        </p>
+        <div data-gallery="./images/" data-gallery-manifest="./gallery.json" aria-label="glupo screenshots"></div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">03</span>
             <span class="section-rule-title">catalog entry</span>
             <span class="section-rule-line"></span>
         </div>
@@ -751,6 +781,7 @@
 </footer>
 
 <script src="../assets/theme.js" defer></script>
+<script src="../assets/gallery.js" defer></script>
 
 </body>
 </html>

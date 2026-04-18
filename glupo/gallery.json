@@ -1,0 +1,29 @@
+{
+  "generated": "2026-04-18T00:00:00.000Z",
+  "items": [
+    {
+      "src": "1.png",
+      "caption": "music visualizer — visualizer style, animation pattern, the works"
+    },
+    {
+      "src": "2.png",
+      "caption": "weather — pick a provider, refresh rate, icon style"
+    },
+    {
+      "src": "3.png",
+      "caption": "quick settings — one glyph button, four toggles to choose from"
+    },
+    {
+      "src": "4.png",
+      "caption": "ufo abductor — high score, max level, beep-boop-moo"
+    },
+    {
+      "src": "5.png",
+      "caption": "toys drawer — slot machine, applause detector, walking-home animation"
+    },
+    {
+      "src": "6.png",
+      "caption": "about — the feature list and the permissions it asks for"
+    }
+  ]
+}
