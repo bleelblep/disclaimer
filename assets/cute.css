@@ -1,0 +1,208 @@
+/* bleelblep · cute features · drop-in stylesheet
+ * Add <link rel="stylesheet" href="/assets/cute.css"> to every page that already loads theme.js.
+ * All rules gate off body[data-feat-*], so nothing shows until cute.js activates features. */
+
+/* ---------- ambient bg dots ---------- */
+.cute-ambient {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    overflow: hidden; opacity: 0; transition: opacity .5s ease;
+}
+body[data-feat-ambient="on"] .cute-ambient { opacity: 1; }
+.cute-ambient .dot {
+    position: absolute; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent-2, #F4A8D0); opacity: .35;
+    animation: cute-drift linear infinite;
+}
+@keyframes cute-drift {
+    from { transform: translateY(-10vh) translateX(0) scale(.6); opacity: 0; }
+    10%, 90% { opacity: .5; }
+    to { transform: translateY(110vh) translateX(30px) scale(1); opacity: 0; }
+}
+
+/* ---------- kaomoji wiggle on hover ---------- */
+body[data-feat-kaomoji-wiggle="on"] .hero-kaomoji:hover,
+body[data-feat-kaomoji-wiggle="on"] [data-cute-kaomoji]:hover {
+    animation: cute-wiggle .6s ease;
+}
+@keyframes cute-wiggle {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-12deg) translateY(-4px); }
+    75% { transform: rotate(12deg) translateY(-4px); }
+}
+
+/* ---------- "right now" status strip ---------- */
+.cute-status {
+    display: none;
+    margin: 24px auto 0; max-width: 520px;
+    background: var(--card, #fff);
+    border: 1.5px solid var(--border, #E0C8B8);
+    border-radius: 999px; padding: 8px 16px;
+    font-size: .82rem;
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    color: var(--text-dim, #A06868);
+    align-items: center; gap: 10px;
+    box-shadow: 0 2px 12px rgba(74,44,42,.06);
+    justify-content: center;
+}
+body[data-feat-status="on"] .cute-status { display: inline-flex; }
+.cute-status .blink {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #4FBA6F;
+    animation: cute-pulse 2s ease-in-out infinite;
+}
+.cute-status b {
+    color: var(--text, #4A2C2A); font-weight: 600;
+    font-family: 'Baloo 2', sans-serif;
+    transition: opacity .25s;
+}
+@keyframes cute-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(.7); opacity: .6; }
+}
+
+/* ---------- heart / click trail ---------- */
+.cute-heart-trail {
+    position: fixed; pointer-events: none; z-index: 9999;
+    color: var(--accent, #E85A6B); font-size: 14px;
+    animation: cute-heartpop .8s ease-out forwards;
+    user-select: none;
+}
+@keyframes cute-heartpop {
+    from { transform: translate(-50%, -50%) scale(.4); opacity: 1; }
+    to   { transform: translate(-50%, -120%) scale(1.4); opacity: 0; }
+}
+
+/* ---------- footer kaomoji fade ---------- */
+body[data-feat-footer-kao-cycle="on"] [data-cute-footer-kao] {
+    transition: opacity .25s;
+}
+
+/* ---------- tweaks panel ---------- */
+.cute-fab {
+    position: fixed; right: 20px; bottom: 20px; z-index: 99;
+    background: var(--accent, #E85A6B); color: #fff;
+    border: none; border-radius: 999px;
+    padding: 11px 16px 11px 14px;
+    font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: .88rem;
+    box-shadow: 0 6px 24px rgba(74,44,42,.18);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .2s, box-shadow .2s;
+}
+.cute-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(74,44,42,.22); }
+.cute-fab .sp {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #fff; animation: cute-pulse 2s ease-in-out infinite;
+}
+.cute-panel.open ~ .cute-fab { display: none; }
+
+.cute-panel {
+    position: fixed; right: 20px; bottom: 20px; z-index: 100;
+    width: 320px; max-height: calc(100vh - 40px);
+    background: var(--card, #fff); color: var(--text, #4A2C2A);
+    border: 1.5px solid var(--border, #E0C8B8);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(74,44,42,.22);
+    font-family: 'Baloo 2', sans-serif;
+    overflow: hidden;
+    display: none; flex-direction: column;
+}
+.cute-panel.open { display: flex; }
+.cute-panel-head {
+    padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1.5px solid var(--border, #E0C8B8);
+    background: var(--bg-2, #F8EADA);
+}
+.cute-panel-title {
+    font-weight: 700; font-size: .95rem;
+    display: flex; align-items: center; gap: 8px;
+}
+.cute-panel-title .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent, #E85A6B);
+    animation: cute-pulse 2s ease-in-out infinite;
+}
+.cute-panel-close {
+    background: transparent; border: none;
+    color: var(--text-dim, #A06868);
+    cursor: pointer; font-size: 1.2rem; line-height: 1;
+    padding: 4px 6px; border-radius: 8px; font-family: inherit;
+}
+.cute-panel-close:hover { color: var(--accent, #E85A6B); }
+.cute-panel-body {
+    padding: 14px 14px 18px; overflow-y: auto;
+    scrollbar-width: thin;
+}
+.cute-panel-sub {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-dim, #A06868); font-weight: 700;
+    margin: 10px 4px 8px;
+}
+.cute-panel-sub:first-child { margin-top: 0; }
+.cute-feat {
+    display: grid; grid-template-columns: 1fr auto; gap: 4px 12px;
+    padding: 10px 12px; border-radius: 14px;
+    border: 1.5px solid var(--border, #E0C8B8);
+    margin-bottom: 8px;
+    transition: border-color .15s, background .15s;
+    cursor: pointer;
+}
+.cute-feat:hover { border-color: var(--accent, #E85A6B); }
+.cute-feat[data-on="true"] {
+    border-color: var(--accent, #E85A6B);
+    background: rgba(232,90,107,.05);
+}
+.cute-feat-name { font-weight: 700; font-size: .92rem; }
+.cute-feat-desc {
+    grid-column: 1 / -1; font-size: .78rem;
+    color: var(--text-dim, #A06868); line-height: 1.5;
+}
+.cute-feat-desc .k {
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    font-size: .72rem; color: var(--text, #4A2C2A);
+    background: var(--bg-2, #F8EADA);
+    padding: 1px 6px; border-radius: 4px;
+}
+.cute-toggle {
+    appearance: none; -webkit-appearance: none;
+    width: 36px; height: 20px; border-radius: 999px;
+    background: var(--border, #E0C8B8);
+    position: relative; cursor: pointer;
+    transition: background .2s; border: none;
+    flex: none; align-self: center;
+}
+.cute-toggle::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    transition: left .2s;
+}
+.cute-toggle:checked { background: var(--accent, #E85A6B); }
+.cute-toggle:checked::after { left: 18px; }
+
+.cute-panel-footer {
+    padding: 10px 14px; border-top: 1.5px solid var(--border, #E0C8B8);
+    display: flex; gap: 8px; justify-content: space-between; align-items: center;
+    font-size: .75rem; color: var(--text-dim, #A06868);
+    background: var(--bg-2, #F8EADA);
+}
+.cute-panel-footer button {
+    appearance: none; background: transparent;
+    border: 1.5px solid var(--border, #E0C8B8);
+    color: var(--text, #4A2C2A);
+    padding: 5px 10px; border-radius: 999px;
+    font-family: inherit; font-weight: 600; font-size: .75rem;
+    cursor: pointer; transition: color .15s, border-color .15s;
+}
+.cute-panel-footer button:hover {
+    color: var(--accent, #E85A6B); border-color: var(--accent, #E85A6B);
+}
+
+@media (max-width: 680px) {
+    .cute-panel { right: 10px; left: 10px; bottom: 10px; width: auto; }
+    .cute-fab { right: 10px; bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cute-ambient .dot, .cute-heart-trail, .cute-fab .sp,
+    .cute-status .blink, .cute-panel-title .dot { animation: none; }
+}
