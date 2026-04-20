@@ -325,11 +325,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 8px;
+            padding: 16px;
             width: 100%;
             max-width: 340px;
             aspect-ratio: 1 / 1;
             position: relative;
+            background: #000;
+            border-radius: 50%;
+            box-shadow:
+                inset 0 0 40px rgba(0, 0, 0, 0.9),
+                0 6px 24px rgba(0, 0, 0, 0.35);
         }
         .preview-stage canvas {
             display: block;
@@ -610,12 +615,10 @@
         drawFrame(true);
     }
 
-    function themeAccent() {
-        return getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#2C504A';
-    }
-    function themeDim() {
-        return getComputedStyle(document.documentElement).getPropertyValue('--rule').trim() || 'rgba(0,0,0,0.15)';
-    }
+    // Lit pixels are white (real Glyph Matrix is white LEDs on black PCB).
+    // Dim backdrop is a dark grey so unlit cells are visible but quiet.
+    const LIT_RGB = [255, 255, 255];
+    const DIM_COLOR = 'rgba(255, 255, 255, 0.08)';
 
     function currentFrame() {
         if (!sequence || !sequence.length) return null;
@@ -625,10 +628,9 @@
 
     function drawFrame(forceBlank) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const dim = themeDim();
 
         // unlit matrix backdrop
-        ctx.fillStyle = dim;
+        ctx.fillStyle = DIM_COLOR;
         for (let i = 0; i < TOTAL_PIXELS; i++) {
             ctx.beginPath();
             ctx.arc(positions[i * 2], positions[i * 2 + 1], dimRadius, 0, Math.PI * 2);
@@ -640,13 +642,7 @@
         if (!frame) return;
         const p = frame.p;
 
-        const accent = themeAccent();
-        const m = accent.match(/^#([0-9a-f]{6})$/i);
-        let r = 44, g = 80, b = 74;
-        if (m) {
-            const v = parseInt(m[1], 16);
-            r = (v >> 16) & 255; g = (v >> 8) & 255; b = v & 255;
-        }
+        const [r, g, b] = LIT_RGB;
         for (let i = 0; i < p.length && i < TOTAL_PIXELS; i++) {
             const bright = p[i];
             if (!bright) continue;
