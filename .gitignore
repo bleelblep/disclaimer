@@ -1,0 +1,31 @@
+# Archives
+*.zip
+*.rar
+*.7z
+
+# Claude Code local settings
+.claude/
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editor/temp
+*.swp
+*.tmp
+*.bak
+*.log
+
+# Env / secrets
+.env
+.env.*
+
+# Local backup copies
+*- Copy.html
+*- Copy (*).html
+*- copy.html
+
+# Local-only docs
+/CONTRIBUTING.md
+/password-journal.html
