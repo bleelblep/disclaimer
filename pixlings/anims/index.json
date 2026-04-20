@@ -1,0 +1,389 @@
+{
+  "version": 1,
+  "characters": [
+    {
+      "id": "Bunny",
+      "name": "Bunny",
+      "animations": [
+        {
+          "file": "Bunny_Bell.json",
+          "label": "Bell"
+        },
+        {
+          "file": "Bunny_Charging.json",
+          "label": "Charging"
+        },
+        {
+          "file": "Bunny_Enter_Bell.json",
+          "label": "Enter Bell"
+        },
+        {
+          "file": "Bunny_Enter_Charging.json",
+          "label": "Enter Charging"
+        },
+        {
+          "file": "Bunny_Exit_Bell.json",
+          "label": "Exit Bell"
+        },
+        {
+          "file": "Bunny_Exit_Charging.json",
+          "label": "Exit Charging"
+        },
+        {
+          "file": "Bunny_Idle_Angry.json",
+          "label": "Idle Angry"
+        },
+        {
+          "file": "Bunny_Idle_Blink.json",
+          "label": "Idle Blink"
+        },
+        {
+          "file": "Bunny_Idle_Blink_V2.json",
+          "label": "Idle Blink V2"
+        },
+        {
+          "file": "Bunny_Loop_Bell.json",
+          "label": "Loop Bell"
+        },
+        {
+          "file": "Bunny_Loop_Charging.json",
+          "label": "Loop Charging"
+        },
+        {
+          "file": "Bunny_Low_Battery.json",
+          "label": "Low Battery"
+        },
+        {
+          "file": "Bunny_Motion.json",
+          "label": "Motion"
+        },
+        {
+          "file": "Bunny_Music.json",
+          "label": "Music"
+        }
+      ]
+    },
+    {
+      "id": "Cactus",
+      "name": "Cactus",
+      "animations": [
+        {
+          "file": "Cactus_Charging.json",
+          "label": "Charging"
+        },
+        {
+          "file": "Cactus_Exit_Bell.json",
+          "label": "Exit Bell"
+        },
+        {
+          "file": "Cactus_Full_Battery.json",
+          "label": "Full Battery"
+        },
+        {
+          "file": "Cactus_Idle_Breathing.json",
+          "label": "Idle Breathing"
+        },
+        {
+          "file": "Cactus_Loop_Bell.json",
+          "label": "Loop Bell"
+        },
+        {
+          "file": "Cactus_Low_Battery.json",
+          "label": "Low Battery"
+        },
+        {
+          "file": "Cactus_Low_Battery_2.json",
+          "label": "Low Battery 2"
+        },
+        {
+          "file": "Cactus_Motion.json",
+          "label": "Motion"
+        },
+        {
+          "file": "Cactus_Music.json",
+          "label": "Music"
+        },
+        {
+          "file": "Cactus_Static.json",
+          "label": "Static"
+        }
+      ]
+    },
+    {
+      "id": "Jellyfish",
+      "name": "Jellyfish",
+      "animations": [
+        {
+          "file": "Jellyfish_Bell.json",
+          "label": "Bell"
+        },
+        {
+          "file": "Jellyfish_Charging.json",
+          "label": "Charging"
+        },
+        {
+          "file": "Jellyfish_Idle_fast.json",
+          "label": "Idle fast"
+        },
+        {
+          "file": "Jellyfish_Low_Battery.json",
+          "label": "Low Battery"
+        },
+        {
+          "file": "Jellyfish_Motion.json",
+          "label": "Motion"
+        },
+        {
+          "file": "Jellyfish_Music.json",
+          "label": "Music"
+        },
+        {
+          "file": "Jellyfish_Music_2.json",
+          "label": "Music 2"
+        }
+      ]
+    },
+    {
+      "id": "Plant",
+      "name": "Plant",
+      "animations": [
+        {
+          "file": "Plant_Bell.json",
+          "label": "Bell"
+        },
+        {
+          "file": "Plant_Charging.json",
+          "label": "Charging"
+        },
+        {
+          "file": "Plant_Enter_Bell.json",
+          "label": "Enter Bell"
+        },
+        {
+          "file": "Plant_Exit_Bell.json",
+          "label": "Exit Bell"
+        },
+        {
+          "file": "Plant_Exit_Bell_V2.json",
+          "label": "Exit Bell V2"
+        },
+        {
+          "file": "Plant_Idle.json",
+          "label": "Idle"
+        },
+        {
+          "file": "Plant_Idle_2.json",
+          "label": "Idle 2"
+        },
+        {
+          "file": "Plant_Loop_Bell.json",
+          "label": "Loop Bell"
+        },
+        {
+          "file": "Plant_Low_Battery.json",
+          "label": "Low Battery"
+        },
+        {
+          "file": "Plant_Motion.json",
+          "label": "Motion"
+        },
+        {
+          "file": "Plant_Music.json",
+          "label": "Music"
+        }
+      ]
+    },
+    {
+      "id": "TeddyBear",
+      "name": "TeddyBear",
+      "animations": [
+        {
+          "file": "TeddyBear_Bell.json",
+          "label": "Bell"
+        },
+        {
+          "file": "TeddyBear_Charging.json",
+          "label": "Charging"
+        },
+        {
+          "file": "TeddyBear_Enter_Bell.json",
+          "label": "Enter Bell"
+        },
+        {
+          "file": "TeddyBear_Enter_Charging.json",
+          "label": "Enter Charging"
+        },
+        {
+          "file": "TeddyBear_Exit_Bell.json",
+          "label": "Exit Bell"
+        },
+        {
+          "file": "TeddyBear_Exit_Charging.json",
+          "label": "Exit Charging"
+        },
+        {
+          "file": "TeddyBear_HeartEyes_V3.json",
+          "label": "HeartEyes V3"
+        },
+        {
+          "file": "TeddyBear_Idle_Blink.json",
+          "label": "Idle Blink"
+        },
+        {
+          "file": "TeddyBear_Idle_Enter.json",
+          "label": "Idle Enter"
+        },
+        {
+          "file": "TeddyBear_Idle_Loop.json",
+          "label": "Idle Loop"
+        },
+        {
+          "file": "TeddyBear_Idle_QuestionMark.json",
+          "label": "Idle QuestionMark"
+        },
+        {
+          "file": "TeddyBear_Idle_Wave.json",
+          "label": "Idle Wave"
+        },
+        {
+          "file": "TeddyBear_Loop_Bell.json",
+          "label": "Loop Bell"
+        },
+        {
+          "file": "TeddyBear_Loop_Charging.json",
+          "label": "Loop Charging"
+        },
+        {
+          "file": "TeddyBear_Low_Battery.json",
+          "label": "Low Battery"
+        },
+        {
+          "file": "TeddyBear_Motion.json",
+          "label": "Motion"
+        },
+        {
+          "file": "TeddyBear_Music.json",
+          "label": "Music"
+        }
+      ]
+    },
+    {
+      "id": "Unicorn",
+      "name": "Unicorn",
+      "animations": [
+        {
+          "file": "Unicorn_Charging.json",
+          "label": "Charging"
+        },
+        {
+          "file": "Unicorn_Enter_Bell.json",
+          "label": "Enter Bell"
+        },
+        {
+          "file": "Unicorn_Exit_Bell.json",
+          "label": "Exit Bell"
+        },
+        {
+          "file": "Unicorn_Idle_Enter.json",
+          "label": "Idle Enter"
+        },
+        {
+          "file": "Unicorn_Idle_Loop.json",
+          "label": "Idle Loop"
+        },
+        {
+          "file": "Unicorn_Loop_Bell.json",
+          "label": "Loop Bell"
+        },
+        {
+          "file": "Unicorn_Loop_Bell_Sparkle.json",
+          "label": "Loop Bell Sparkle"
+        },
+        {
+          "file": "Unicorn_Low_Battery.json",
+          "label": "Low Battery"
+        },
+        {
+          "file": "Unicorn_Motion.json",
+          "label": "Motion"
+        },
+        {
+          "file": "Unicorn_Music.json",
+          "label": "Music"
+        }
+      ]
+    },
+    {
+      "id": "ghost",
+      "name": "ghost",
+      "animations": [
+        {
+          "file": "ghost_charging.json",
+          "label": "charging"
+        },
+        {
+          "file": "ghost_idle.json",
+          "label": "idle"
+        },
+        {
+          "file": "ghost_idle_flap.json",
+          "label": "idle flap"
+        },
+        {
+          "file": "ghost_low_battery.json",
+          "label": "low battery"
+        },
+        {
+          "file": "ghost_motion.json",
+          "label": "motion"
+        },
+        {
+          "file": "ghost_music.json",
+          "label": "music"
+        },
+        {
+          "file": "ghost_notification.json",
+          "label": "notification"
+        },
+        {
+          "file": "ghost_notification2.json",
+          "label": "notification2"
+        }
+      ]
+    },
+    {
+      "id": "moth",
+      "name": "moth",
+      "animations": [
+        {
+          "file": "moth_bell.json",
+          "label": "bell"
+        },
+        {
+          "file": "moth_charging.json",
+          "label": "charging"
+        },
+        {
+          "file": "moth_flap.json",
+          "label": "flap"
+        },
+        {
+          "file": "moth_idle.json",
+          "label": "idle"
+        },
+        {
+          "file": "moth_low_battery.json",
+          "label": "low battery"
+        },
+        {
+          "file": "moth_motion.json",
+          "label": "motion"
+        },
+        {
+          "file": "moth_music.json",
+          "label": "music"
+        }
+      ]
+    }
+  ]
+}

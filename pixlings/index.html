@@ -271,12 +271,116 @@
 
         .footer a:hover { border-bottom-color: var(--secondary); }
 
+        /* ============ CHARACTER PREVIEW ============ */
+        .preview {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 32px 28px 28px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .preview-stage {
+            background: var(--surface-alt);
+            border-radius: 18px;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            min-height: 280px;
+        }
+        .preview-stage canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+        }
+        .preview-stage .empty {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+        .char-row, .anim-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .char-row { margin-bottom: 12px; }
+        .char-chip, .anim-chip {
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--background);
+            color: var(--text);
+            border: 1.5px solid var(--rule);
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .char-chip:hover, .anim-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .char-chip.active {
+            background: var(--primary);
+            color: var(--background);
+            border-color: var(--primary);
+        }
+        .anim-chip {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            background: transparent;
+        }
+        .anim-chip.active {
+            background: var(--secondary);
+            color: var(--background);
+            border-color: var(--secondary);
+        }
+        .preview-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--rule);
+            font-family: 'Courier New', monospace;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .preview-controls { display: flex; gap: 6px; align-items: center; }
+        .preview-controls button {
+            appearance: none;
+            -webkit-appearance: none;
+            background: transparent;
+            border: 1.5px solid var(--rule);
+            color: var(--text-muted);
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-family: inherit;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .preview-controls button:hover,
+        .preview-controls button.active {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
         @media (max-width: 600px) {
             .page { padding: 60px 20px 100px; }
             .link-grid { grid-template-columns: 1fr; }
             .link-card { padding: 24px 20px; }
             .back { top: 16px; left: 16px; }
             .theme-toggle { top: 16px; right: 16px; width: 32px; height: 32px; }
+            .preview { padding: 24px 18px 20px; }
+            .preview-stage { padding: 16px; min-height: 240px; }
         }
     </style>
 </head>
@@ -305,6 +409,31 @@
             and exists alongside you — ambient, expressive, and alive.
         </p>
     </header>
+
+    <section class="section">
+        <div class="section-header">
+            <div class="section-eyebrow">Meet them</div>
+            <h2 class="section-title">The Pixlings</h2>
+        </div>
+
+        <div class="preview" id="pixling-preview">
+            <div class="char-row" id="char-row" role="tablist" aria-label="Choose a Pixling"></div>
+            <div class="preview-stage">
+                <canvas id="glyph-canvas" width="500" height="500" aria-label="Glyph Matrix animation preview"></canvas>
+                <span class="empty" id="preview-empty">loading…</span>
+            </div>
+            <div class="anim-row" id="anim-row" role="tablist" aria-label="Choose an animation"></div>
+            <div class="preview-meta">
+                <span id="meta-label">—</span>
+                <span class="preview-controls">
+                    <button type="button" id="btn-play" aria-label="Play / pause">⏸</button>
+                    <button type="button" data-speed="0.5">0.5×</button>
+                    <button type="button" data-speed="1" class="active">1×</button>
+                    <button type="button" data-speed="2">2×</button>
+                </span>
+            </div>
+        </div>
+    </section>
 
     <section class="section">
         <div class="section-header">
@@ -369,6 +498,206 @@
         <p>Questions? <a href="mailto:support@bleelblep.addy.io">support@bleelblep.addy.io</a></p>
     </footer>
 </div>
+
+<script>
+// ── GLYPH MATRIX PLAYER ──────────────────────────────────────────
+(function () {
+    const ROW_LENGTHS = [7,11,15,17,19,21,21,23,23,25,25,25,25,25,25,25,23,23,21,21,19,17,15,11,7];
+    const MAX_ROW = 25;
+    const TOTAL_PIXELS = ROW_LENGTHS.reduce((a, b) => a + b, 0); // 489
+
+    const canvas = document.getElementById('glyph-canvas');
+    const ctx = canvas.getContext('2d');
+    const charRow = document.getElementById('char-row');
+    const animRow = document.getElementById('anim-row');
+    const emptyEl = document.getElementById('preview-empty');
+    const metaEl = document.getElementById('meta-label');
+    const btnPlay = document.getElementById('btn-play');
+    const speedBtns = document.querySelectorAll('[data-speed]');
+
+    const dpr = window.devicePixelRatio || 1;
+    const positions = new Float32Array(TOTAL_PIXELS * 2);
+    let cellSize = 0, dotRadius = 0, dimRadius = 0;
+    const animCache = new Map();
+    let currentFrames = null;
+    let frameIdx = 0;
+    let frameStart = 0;
+    let playing = true;
+    let speed = 1;
+    let rafId = 0;
+
+    function resizeCanvas() {
+        const cssSize = Math.min(canvas.parentElement.clientWidth - 32, 380);
+        canvas.style.width = cssSize + 'px';
+        canvas.style.height = cssSize + 'px';
+        canvas.width = Math.floor(cssSize * dpr);
+        canvas.height = Math.floor(cssSize * dpr);
+        cellSize = canvas.width / MAX_ROW;
+        dotRadius = (cellSize / 2) * 0.78;
+        dimRadius = (cellSize / 2) * 0.22;
+        const cx = canvas.width / 2;
+        let i = 0;
+        for (let row = 0; row < ROW_LENGTHS.length; row++) {
+            const len = ROW_LENGTHS[row];
+            const rowWidth = len * cellSize;
+            const sx = cx - rowWidth / 2 + cellSize / 2;
+            const y = row * cellSize + cellSize / 2;
+            for (let c = 0; c < len; c++) {
+                positions[i++] = sx + c * cellSize;
+                positions[i++] = y;
+            }
+        }
+        drawFrame(true);
+    }
+
+    function themeAccent() {
+        const v = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+        return v || '#2C504A';
+    }
+    function themeDim() {
+        const v = getComputedStyle(document.documentElement).getPropertyValue('--rule').trim();
+        return v || 'rgba(0,0,0,0.15)';
+    }
+
+    function drawFrame(forceBlank) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const accent = themeAccent();
+        const dim = themeDim();
+
+        // unlit grid backdrop
+        ctx.fillStyle = dim;
+        for (let i = 0; i < TOTAL_PIXELS; i++) {
+            const px = positions[i * 2];
+            const py = positions[i * 2 + 1];
+            ctx.beginPath();
+            ctx.arc(px, py, dimRadius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        if (forceBlank || !currentFrames) return;
+        const frame = currentFrames[frameIdx];
+        if (!frame) return;
+        const p = frame.p;
+
+        // lit pixels — parse accent into rgb for alpha blending
+        const m = accent.match(/^#([0-9a-f]{6})$/i);
+        let r = 44, g = 80, b = 74;
+        if (m) {
+            const v = parseInt(m[1], 16);
+            r = (v >> 16) & 255; g = (v >> 8) & 255; b = v & 255;
+        }
+        for (let i = 0; i < p.length && i < TOTAL_PIXELS; i++) {
+            const brightness = p[i];
+            if (!brightness) continue;
+            const a = brightness / 255;
+            ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+            const px = positions[i * 2];
+            const py = positions[i * 2 + 1];
+            ctx.beginPath();
+            ctx.arc(px, py, dotRadius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function tick(ts) {
+        rafId = requestAnimationFrame(tick);
+        if (!playing || !currentFrames || currentFrames.length === 0) return;
+        if (!frameStart) frameStart = ts;
+        const frame = currentFrames[frameIdx];
+        const delay = Math.max(1, (frame.d || 100)) / speed;
+        if (ts - frameStart >= delay) {
+            frameIdx = (frameIdx + 1) % currentFrames.length;
+            frameStart = ts;
+            drawFrame();
+        }
+    }
+
+    async function loadAnim(file) {
+        if (animCache.has(file)) return animCache.get(file);
+        const res = await fetch(`./anims/${file}`);
+        if (!res.ok) throw new Error('fetch failed');
+        const data = await res.json();
+        animCache.set(file, data.frames);
+        return data.frames;
+    }
+
+    async function playAnim(char, anim) {
+        emptyEl.textContent = 'loading…';
+        emptyEl.style.display = 'block';
+        try {
+            const frames = await loadAnim(anim.file);
+            currentFrames = frames;
+            frameIdx = 0;
+            frameStart = 0;
+            emptyEl.style.display = 'none';
+            metaEl.textContent = `${char.name.toLowerCase()} · ${anim.label.toLowerCase()} · ${frames.length}f`;
+            drawFrame();
+        } catch (e) {
+            emptyEl.textContent = 'failed to load';
+        }
+    }
+
+    function renderAnims(char) {
+        animRow.innerHTML = '';
+        char.animations.forEach((a, i) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'anim-chip' + (i === 0 ? ' active' : '');
+            b.textContent = a.label.toLowerCase();
+            b.addEventListener('click', () => {
+                animRow.querySelectorAll('.anim-chip').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                playAnim(char, a);
+            });
+            animRow.appendChild(b);
+        });
+        if (char.animations[0]) playAnim(char, char.animations[0]);
+    }
+
+    function renderChars(manifest) {
+        charRow.innerHTML = '';
+        manifest.characters.forEach((c, i) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'char-chip' + (i === 0 ? ' active' : '');
+            b.textContent = c.name.toLowerCase();
+            b.addEventListener('click', () => {
+                charRow.querySelectorAll('.char-chip').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                renderAnims(c);
+            });
+            charRow.appendChild(b);
+        });
+        if (manifest.characters[0]) renderAnims(manifest.characters[0]);
+    }
+
+    btnPlay.addEventListener('click', () => {
+        playing = !playing;
+        btnPlay.textContent = playing ? '⏸' : '▶';
+        if (playing) frameStart = 0;
+    });
+    speedBtns.forEach(b => {
+        b.addEventListener('click', () => {
+            speed = parseFloat(b.dataset.speed);
+            speedBtns.forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+        });
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+    // redraw on theme flip so colors follow
+    const observer = new MutationObserver(() => drawFrame());
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    resizeCanvas();
+    rafId = requestAnimationFrame(tick);
+
+    fetch('./anims/index.json')
+        .then(r => r.json())
+        .then(renderChars)
+        .catch(() => { emptyEl.textContent = 'manifest missing'; });
+})();
+</script>
 
 <script>
 for (let i = 0; i < 12; i++) {
