@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>about · bleelblep</title>
-    <meta name="description" content="bleelblep — one person making small, careful software for nothing phones. the long version.">
+    <title>projects · bleelblep ♡</title>
+    <meta name="description" content="Every small, cute thing bleelblep has made — shipped, in progress, or hibernating.">
     <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,46 +60,25 @@
         }
         [data-theme="dark"] body { color: #FDF4E8; }
 
-        .container {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 0 28px;
-        }
+        .container { max-width: 880px; margin: 0 auto; padding: 0 28px; }
 
-        /* NAV — same pattern as projects/ */
         .nav {
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            position: sticky; top: 0; z-index: 10;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             background: color-mix(in srgb, var(--bg) 88%, transparent);
         }
-        .nav-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 0;
-            gap: 16px;
-        }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; gap: 16px; }
         .brand {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-            text-decoration: none;
-            letter-spacing: -0.01em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 1rem; font-weight: 700; color: var(--text);
+            text-decoration: none; letter-spacing: -0.01em;
+            display: flex; align-items: center; gap: 10px;
         }
         [data-theme="dark"] .brand { color: #FDF4E8; }
 
         .brand-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: inline-block;
+            width: 10px; height: 10px; background: var(--accent);
+            border-radius: 50%; display: inline-block;
             animation: pulse 2.4s ease-in-out infinite;
         }
         @keyframes pulse {
@@ -111,230 +90,139 @@
         .nav-right { display: flex; align-items: center; gap: 18px; }
         .nav-links { display: flex; gap: 24px; }
         .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: color 0.15s;
+            color: var(--text-dim); text-decoration: none;
+            font-size: 0.95rem; font-weight: 600; transition: color 0.15s;
         }
-        .nav-links a:hover { color: var(--accent); }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent); }
         [data-theme="dark"] .nav-links a { color: rgba(253, 244, 232, 0.75); }
         [data-theme="dark"] .nav-links a:hover { color: #FDF4E8; }
 
         .theme-toggle {
-            appearance: none;
-            -webkit-appearance: none;
-            background: var(--card);
-            color: var(--text);
+            appearance: none; -webkit-appearance: none;
+            background: var(--card); color: var(--text);
             border: 1.5px solid var(--border);
-            width: 34px;
-            height: 34px;
-            border-radius: 999px;
-            cursor: pointer;
-            display: inline-grid;
-            place-items: center;
-            font-size: 0.95rem;
-            line-height: 1;
-            padding: 0;
+            width: 34px; height: 34px; border-radius: 999px;
+            cursor: pointer; display: inline-grid; place-items: center;
+            font-size: 0.95rem; line-height: 1; padding: 0;
             font-family: inherit;
             transition: color 0.15s, border-color 0.15s, transform 0.15s;
         }
         .theme-toggle:hover, .theme-toggle:focus-visible {
-            color: var(--accent);
-            border-color: var(--accent);
-            outline: none;
-            transform: translateY(-1px);
+            color: var(--accent); border-color: var(--accent);
+            outline: none; transform: translateY(-1px);
         }
-        .theme-toggle [data-theme-icon] {
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
+        .theme-toggle [data-theme-icon] { display: inline-block; transition: transform 0.3s ease; }
         .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
         @media (prefers-reduced-motion: reduce) {
             .theme-toggle, .theme-toggle [data-theme-icon] { transition: none; }
             .theme-toggle:hover [data-theme-icon] { transform: none; }
         }
 
-        /* PAGE HEAD */
         .page-head { padding: 72px 0 32px; }
-
         .eyebrow {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-dim);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 12px;
+            font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+            letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 12px;
         }
         [data-theme="dark"] .eyebrow { color: rgba(253, 244, 232, 0.75); }
 
         .page-head h1 {
-            font-size: clamp(2.4rem, 6vw, 3.6rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin: 0 0 14px;
-            line-height: 1.05;
+            font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 700;
+            letter-spacing: -0.02em; margin: 0 0 14px; line-height: 1.05;
         }
         .page-head h1 em { font-style: normal; color: var(--accent); }
         [data-theme="dark"] .page-head h1 { color: #FDF4E8; }
 
-        .page-head p {
-            font-size: 1.05rem;
-            color: var(--text-dim);
-            max-width: 580px;
-            margin: 0;
-        }
+        .page-head p { font-size: 1.05rem; color: var(--text-dim); max-width: 580px; margin: 0; }
         [data-theme="dark"] .page-head p { color: rgba(253, 244, 232, 0.8); }
 
-        /* SECTIONS */
-        .section { padding: 32px 0 32px; }
+        .section { padding: 32px 0 64px; }
         .section-head {
-            margin-bottom: 18px;
-            display: flex;
-            align-items: baseline;
-            gap: 14px;
-            justify-content: space-between;
+            margin-bottom: 24px; display: flex;
+            align-items: baseline; gap: 14px;
+            justify-content: space-between; flex-wrap: wrap;
         }
         .section-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: -0.01em;
+            font-size: 1.4rem; font-weight: 700; margin: 0; letter-spacing: -0.01em;
         }
         [data-theme="dark"] .section-title { color: #FDF4E8; }
-        .section-kaomoji {
-            font-size: 0.95rem;
-            color: var(--kaomoji);
-            font-weight: 500;
-        }
 
-        /* CARD — borrowed from home's about-card */
-        .card {
-            background: var(--card);
-            border-radius: 24px;
-            padding: 36px;
-            box-shadow: var(--shadow-sm);
-        }
+        .section-aside { display: flex; align-items: baseline; gap: 14px; font-size: 0.9rem; color: var(--text-dim); }
+        .section-kaomoji { color: var(--kaomoji); }
 
-        .card p {
-            color: var(--text-dim);
-            margin: 0 0 14px;
-            font-size: 1rem;
-            line-height: 1.65;
-        }
-        .card p:last-child { margin-bottom: 0; }
-        .card strong {
-            color: var(--text);
-            font-weight: 700;
-        }
+        .drawer-intro { font-size: 0.98rem; color: var(--text-dim); margin: 0 0 20px; max-width: 580px; }
 
-        /* THEME LIST — colophon row pattern */
-        .themes {
+        .projects {
             display: grid;
-            gap: 0;
-            margin: 8px 0 22px;
-            border-top: 1.5px solid var(--border);
-        }
-        .theme-row {
-            display: grid;
-            grid-template-columns: 36px 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 16px;
-            align-items: center;
-            padding: 14px 0;
-            border-bottom: 1.5px dashed var(--border);
         }
-        .theme-row:last-child { border-bottom: 1.5px solid var(--border); }
 
-        .theme-swatch {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            justify-self: center;
-        }
-        .sw-pink     { background: var(--pastel-pink); }
-        .sw-peach    { background: var(--pastel-peach); }
-        .sw-lavender { background: var(--pastel-lavender); }
-        .sw-warm     { background: var(--pastel-warm); }
-        .sw-amber    { background: var(--pastel-amber); }
-        .sw-sage     { background: var(--pastel-sage); }
-        .sw-paper    {
-            background: #F2EADF;
-            border: 1.5px solid #0E0E10;
+        .project {
             position: relative;
+            background: var(--card); border-radius: 24px;
+            padding: 28px; text-decoration: none;
+            color: var(--text); box-shadow: var(--shadow-sm);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+            display: flex; flex-direction: column; gap: 12px;
+            min-height: 200px; overflow: hidden;
         }
-        .sw-paper::after {
-            content: "";
-            position: absolute;
-            top: 4px; right: 4px;
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #F2C31C;
-        }
-        .sw-neon {
-            background: #0a0a0a;
-            border: 1.5px solid #ff00aa;
-            box-shadow: inset 0 0 0 2px rgba(255, 0, 170, 0.2);
-        }
+        .project:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .project.featured { grid-column: 1 / -1; }
 
-        .theme-row .name {
-            color: var(--text);
-            font-weight: 700;
-            font-size: 0.98rem;
-            margin-right: 6px;
+        .project-swatch {
+            width: 52px; height: 52px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 700; margin-bottom: 4px;
         }
-        [data-theme="dark"] .theme-row .name { color: var(--text); }
-        .theme-row .desc {
-            color: var(--text-dim);
-            font-size: 0.92rem;
-        }
+        .swatch-pink    { background: var(--pastel-pink); color: #8A2A3A; }
+        .swatch-peach   { background: var(--pastel-peach); color: #8A5620; }
+        .swatch-lavender{ background: var(--pastel-lavender); color: #5A3A8A; }
+        .swatch-warm    { background: var(--pastel-warm); color: #8A3070; }
+        .swatch-amber   { background: var(--pastel-amber); color: #3A1A08; }
+        .swatch-sage    { background: var(--pastel-sage); color: #3A4A20; }
 
-        /* CONTACT — emphasis/no-list */
-        .nope-list, .yep-list {
-            list-style: none;
-            padding: 0;
-            margin: 8px 0 18px;
-            display: grid;
-            gap: 6px;
-        }
-        .nope-list li, .yep-list li {
-            color: var(--text-dim);
-            font-size: 0.96rem;
-            padding-left: 22px;
-            position: relative;
-            line-height: 1.55;
-        }
-        .nope-list li::before {
-            content: "✕";
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-            font-weight: 700;
-        }
-        .yep-list li::before {
-            content: "♡";
-            position: absolute;
-            left: 0;
-            color: var(--kaomoji);
-            font-weight: 700;
-        }
-        .nope-list li strong, .yep-list li strong {
-            color: var(--text);
-            font-weight: 700;
-        }
+        .project-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .project-name { font-size: 1.3rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
 
-        /* FOOTER */
+        .project-tag {
+            font-size: 0.75rem; font-weight: 600; color: var(--accent);
+            background: rgba(232, 90, 107, 0.12); border-radius: 999px;
+            padding: 4px 12px; letter-spacing: 0.02em; white-space: nowrap;
+        }
+        .project-tag.wip     { color: #8A5620; background: rgba(245, 209, 153, 0.5); }
+        .project-tag.beta    { color: #8A3070; background: rgba(244, 168, 208, 0.4); }
+        .project-tag.soon    { color: var(--text-dim); background: var(--bg); }
+        .project-tag.open    { color: #5A3A8A; background: rgba(200, 184, 232, 0.5); }
+        .project-tag.stable  { color: #3A4A20; background: rgba(184, 200, 168, 0.5); }
+        .project-tag.private { color: var(--text-dim); background: rgba(160, 104, 104, 0.12); }
+
+        .project-desc { font-size: 0.98rem; color: var(--text-dim); margin: 0; flex: 1; line-height: 1.6; }
+        .project-meta { font-size: 0.85rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; font-weight: 600; flex-wrap: wrap; }
+
+        .arrow { display: inline-block; transition: transform 0.2s; color: var(--accent); }
+        .project:hover .arrow { transform: translateX(4px); }
+
+        .project.drawer {
+            background: transparent;
+            border: 1.5px dashed var(--border);
+            box-shadow: none;
+            opacity: 0.6;
+            transition: opacity 0.25s, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s;
+        }
+        .project.drawer:hover {
+            opacity: 1;
+            box-shadow: none;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .project.drawer .project-swatch { opacity: 0.75; }
+        .project.drawer:hover .project-swatch { opacity: 1; }
+
         .footer {
-            padding: 40px 0 64px;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            font-weight: 500;
+            padding: 56px 0 72px; text-align: center;
+            color: var(--text-dim); font-size: 0.9rem; font-weight: 500;
         }
-        .footer-kaomoji {
-            color: var(--kaomoji);
-            margin-bottom: 8px;
-            font-size: 1.05rem;
-        }
+        .footer-kaomoji { color: var(--kaomoji); margin-bottom: 10px; font-size: 1.1rem; }
 
         @media (max-width: 680px) {
             .container { padding: 0 20px; }
@@ -342,8 +230,8 @@
             .nav-links a { font-size: 0.9rem; }
             .nav-right { gap: 14px; }
             .page-head { padding: 48px 0 24px; }
-            .card { padding: 26px; }
-            .theme-row { grid-template-columns: 30px 1fr; gap: 12px; }
+            .section { padding: 24px 0 40px; }
+            .project.featured { grid-column: auto; }
         }
     </style>
 </head>
@@ -354,7 +242,8 @@
         <a href="../" class="brand"><span class="brand-dot"></span>bleelblep</a>
         <div class="nav-right">
             <div class="nav-links">
-                <a href="../projects/">projects</a>
+                <a href="../projects/" class="active">projects</a>
+                <a href="../about/">about</a>
                 <a href="../">home</a>
             </div>
             <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
@@ -366,150 +255,217 @@
 
 <header class="page-head">
     <div class="container">
-        <div class="eyebrow">(｡•ᴗ•｡) the long version</div>
-        <h1>about <em>this</em></h1>
-        <p>three things you might want to know about bleelblep — what these are, how the site is made, and the polite "please don't" ♡</p>
+        <div class="eyebrow">projects</div>
+        <h1>everything <em>ever</em></h1>
+        <p>android apps, glyph matrix toys, and a few web things — grouped by what they're doing right now: being built, out in the world, or quietly waiting on me.</p>
     </div>
 </header>
 
-<main class="container">
-
-    <section class="section">
+<section class="section">
+    <div class="container">
         <div class="section-head">
-            <h2 class="section-title">why these exist</h2>
-            <span class="section-kaomoji">⸜(｡˃ ᵕ ˂ )⸝</span>
-        </div>
-        <div class="card">
-            <p>
-                <strong>bleelblep</strong> is one person making small, careful software —
-                mostly for nothing phones, always for itself first.
-            </p>
-            <p>
-                the apps started as things bleelblep wanted on their own phone. some are
-                useful — toggles, sidebars, charge animations. some are deliberately not —
-                a glyph that quietly mirrors another phone, a tiny ufo abductor, an ambient
-                creature that lives in the glyph matrix. <strong>not every app needs a reason
-                to exist;</strong> some are here just to make a phone a little weirder.
-            </p>
-            <p>
-                releasing things is the afterthought — building them was the point. if any
-                of them are useful to anyone else, that's a quiet bonus, not the goal.
-            </p>
-            <p>
-                small things, made carefully, for an audience of one. that's the whole brief.
-            </p>
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="section-head">
-            <h2 class="section-title">how the site is made</h2>
-            <span class="section-kaomoji">( ˃ ⌑ ˂ )</span>
-        </div>
-        <div class="card">
-            <p>
-                the same rule the apps follow holds for the site itself: <strong>every project
-                gets its own visual identity</strong>. the page should feel like the app it
-                represents — not like a template the app was poured into.
-            </p>
-
-            <div class="themes" aria-label="project themes">
-                <div class="theme-row">
-                    <span class="theme-swatch sw-pink" aria-hidden="true"></span>
-                    <div>
-                        <span class="name">bleelblep</span>
-                        <span class="desc">cute · Baloo 2 · peach &amp; pink · the shopfront</span>
-                    </div>
-                </div>
-                <div class="theme-row">
-                    <span class="theme-swatch sw-sage" aria-hidden="true"></span>
-                    <div>
-                        <span class="name">pixlings</span>
-                        <span class="desc">terrarium · Georgia serif · sage &amp; moss · quiet</span>
-                    </div>
-                </div>
-                <div class="theme-row">
-                    <span class="theme-swatch sw-paper" aria-hidden="true"></span>
-                    <div>
-                        <span class="name">slab</span>
-                        <span class="desc">Bauhaus · Instrument Serif + Departure Mono · paper &amp; ink + primary triad</span>
-                    </div>
-                </div>
-                <div class="theme-row">
-                    <span class="theme-swatch sw-lavender" aria-hidden="true"></span>
-                    <div>
-                        <span class="name">thinking of you</span>
-                        <span class="desc">cute (kept on purpose — it's a toy)</span>
-                    </div>
-                </div>
-                <div class="theme-row">
-                    <span class="theme-swatch sw-warm" aria-hidden="true"></span>
-                    <div>
-                        <span class="name">glyph sharge</span>
-                        <span class="desc">clean utility · soft material</span>
-                    </div>
-                </div>
-                <div class="theme-row">
-                    <span class="theme-swatch sw-neon" aria-hidden="true"></span>
-                    <div>
-                        <span class="name">glyphcade</span>
-                        <span class="desc">arcade neon · VT323 · CRT scanlines · grid bg</span>
-                    </div>
-                </div>
-                <div class="theme-row">
-                    <span class="theme-swatch sw-amber" aria-hidden="true"></span>
-                    <div>
-                        <span class="name">glupo</span>
-                        <span class="desc">mid-century retro futurism · Rubik Mono One · amber &amp; brown</span>
-                    </div>
-                </div>
+            <h2 class="section-title">in active development</h2>
+            <div class="section-aside">
+                <span class="section-kaomoji">⸜(｡˃ ᵕ ˂ )⸝</span>
+                <span>2 apps · being built now</span>
             </div>
+        </div>
+
+        <div class="projects">
+            <a href="../pixlings/" class="project">
+                <div class="project-swatch swatch-peach" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#8A5620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 14a7 7 0 0 1 14 0v7l-2-2-2 2-3-2-3 2-2-2-2 2v-7z" />
+                        <circle cx="11.5" cy="13" r="1.2" fill="#8A5620" stroke="none" />
+                        <circle cx="16.5" cy="13" r="1.2" fill="#8A5620" stroke="none" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">pixlings</h3>
+                    <span class="project-tag beta">closed beta</span>
+                </div>
+                <p class="project-desc">
+                    a quiet presence lives within your nothing phone's glyph matrix. ambient creatures
+                    that move, react, and exist alongside you.
+                </p>
+                <div class="project-meta">
+                    <span>android · glyph matrix</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
+
+            <a href="../slab/" class="project">
+                <div class="project-swatch swatch-pink" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#8A2A3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="6" width="20" height="16" rx="2" />
+                        <line x1="10" y1="6" x2="10" y2="22" />
+                        <circle cx="7" cy="11" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="7" cy="14" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="7" cy="17" r="0.9" fill="#8A2A3A" stroke="none" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">slab</h3>
+                    <span class="project-tag wip">wip</span>
+                </div>
+                <p class="project-desc">
+                    an edge-panel sidebar for android. toggles, apps, tools — always one swipe away.
+                </p>
+                <div class="project-meta">
+                    <span>android · beta apk</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
 
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="section">
+<section class="section">
+    <div class="container">
         <div class="section-head">
-            <h2 class="section-title">please don't ♡</h2>
-            <span class="section-kaomoji">٩(ˊᗜˋ*)و</span>
+            <h2 class="section-title">stable</h2>
+            <div class="section-aside">
+                <span class="section-kaomoji">(｡•ᴗ•｡)</span>
+                <span>3 apps · done, out in the world</span>
+            </div>
         </div>
-        <div class="card">
-            <p>bleelblep doesn't take a lot of inbound. specifically:</p>
-            <ul class="nope-list">
-                <li><strong>no collaborations,</strong> freelance work, or paid features</li>
-                <li><strong>no marketing partnerships,</strong> sponsorships, or "we'd love to interview you"</li>
-                <li><strong>no feature requests</strong> for closed-source apps — these are personal scratches, not a product</li>
-                <li><strong>no asking for the closed beta</strong> (pixlings) — invites only, please don't</li>
-                <li><strong>no asking about the private drawer</strong> (glupo) — it's private on purpose</li>
-            </ul>
 
-            <p>things that <em>are</em> public though:</p>
-            <ul class="yep-list">
-                <li><strong>thinking of you</strong> is open source — bug reports and prs welcome where it lives</li>
-                <li>anything tagged <strong>open source</strong> on the projects page lives in its own repo too</li>
-                <li>shipped apps with a repo take bug reports there — the rest don't, and that's fine</li>
-            </ul>
+        <div class="projects">
+            <a href="../thinking-of-you/" class="project">
+                <div class="project-swatch swatch-lavender" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#5A3A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 23s-9-5.5-9-12a4.5 4.5 0 0 1 9-2 4.5 4.5 0 0 1 9 2c0 6.5-9 12-9 12z" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">thinking of you</h3>
+                    <span class="project-tag open">open source</span>
+                </div>
+                <p class="project-desc">
+                    two nothing phones quietly sharing one small pattern of light. no words, no messages — just presence.
+                </p>
+                <div class="project-meta">
+                    <span>android · nothing phone 3</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
 
-            <p>
-                if none of the above describes what you wanted to say —
-                <strong>thank you for the kind thought,</strong> and please don't worry about it ♡
-            </p>
+            <a href="../glyph-sharge/" class="project">
+                <div class="project-swatch swatch-warm" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#8A3070" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="7" y="4" width="14" height="20" rx="2" />
+                        <path d="M11 9h6" />
+                        <path d="M11 13h6" />
+                        <path d="M11 17h4" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">glyph sharge</h3>
+                    <span class="project-tag stable">stable</span>
+                </div>
+                <p class="project-desc">
+                    battery peeks, usb theft guards, unlock animations, quiet hours. little utilities for your nothing phone's glyphs.
+                </p>
+                <div class="project-meta">
+                    <span>android · glyph matrix</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
+
+            <a href="../glyphcade/" class="project featured">
+                <div class="project-swatch swatch-peach" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#8A5620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="7" width="20" height="14" rx="2" />
+                        <path d="M9 14h2" />
+                        <path d="M10 13v2" />
+                        <circle cx="18" cy="13" r="0.9" fill="#8A5620" stroke="none" />
+                        <circle cx="20" cy="15" r="0.9" fill="#8A5620" stroke="none" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">glyphcade</h3>
+                    <span class="project-tag stable">stable</span>
+                </div>
+                <p class="project-desc">
+                    a tiny arcade cabinet that runs on the nothing phone 3 glyph matrix. six retro games, zero main screen.
+                </p>
+                <div class="project-meta">
+                    <span>android · glyph matrix</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
+
         </div>
-    </section>
+    </div>
+</section>
 
-</main>
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2 class="section-title">just for me</h2>
+            <div class="section-aside">
+                <span class="section-kaomoji">(｡ŏ﹏ŏ)</span>
+                <span>2 projects · private</span>
+            </div>
+        </div>
+        <p class="drawer-intro">private apps i made for myself. peek if you want.</p>
+
+        <div class="projects">
+            <a href="../glupo/" class="project drawer">
+                <div class="project-swatch swatch-sage" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#3A4A20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="8" width="18" height="14" rx="2" />
+                        <path d="M5 12h18" />
+                        <circle cx="8.5" cy="10" r="0.8" fill="#3A4A20" stroke="none" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">glupo</h3>
+                    <span class="project-tag private">private drawer</span>
+                </div>
+                <p class="project-desc">
+                    a personal sandbox app for the nothing phone 3 glyph matrix. where toys live before they leave the nest.
+                </p>
+                <div class="project-meta">
+                    <span>android · sandbox</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
+
+            <a href="../bingsu/" class="project drawer">
+                <div class="project-swatch swatch-amber" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#3A1A08" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 8h20" />
+                        <path d="M5 12h18" />
+                        <path d="M7 16h14" />
+                        <path d="M9 20h10" />
+                        <circle cx="22" cy="8" r="1.4" fill="#3A1A08" stroke="none" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">bingsu</h3>
+                    <span class="project-tag soon">soon</span>
+                </div>
+                <p class="project-desc">
+                    an rss reader that reads for you. quiet on-device summaries, gentle digests, no algorithm tugging at your sleeve.
+                </p>
+                <div class="project-meta">
+                    <span>android · on-device ai</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
 
 <footer class="footer">
     <div class="container">
-        <div class="footer-kaomoji">⸜(｡˃ ᵕ ˂ )⸝</div>
+        <div class="footer-kaomoji">٩(ˊᗜˋ*)و</div>
         <div>made with care · © bleelblep</div>
     </div>
 </footer>
 
-<link rel="stylesheet" href="../assets/famicom.css">
 <script src="../assets/theme.js" defer></script>
-<script src="../assets/cute.js" defer></script>
-<script src="../assets/konami.js" defer></script>
-
 </body>
 </html>
