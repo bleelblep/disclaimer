@@ -272,41 +272,84 @@
         .footer a:hover { border-bottom-color: var(--secondary); }
 
         /* ============ CHARACTER PREVIEW ============ */
-        .preview {
+        .preview-toggle {
+            display: block;
+            margin: 0 auto 0;
+            appearance: none;
+            -webkit-appearance: none;
             background: var(--surface);
-            border-radius: 24px;
-            padding: 32px 28px 28px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            color: var(--primary);
+            border: 1.5px solid var(--rule);
+            border-radius: 999px;
+            padding: 10px 22px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .preview-toggle:hover {
+            background: var(--primary);
+            color: var(--background);
+            border-color: var(--primary);
+        }
+        .preview-toggle .chev {
+            display: inline-block;
+            margin-left: 6px;
+            transition: transform 0.25s ease;
+        }
+        .preview.open ~ .preview-toggle .chev,
+        .preview-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+        .preview {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            margin-top: 0;
+        }
+        .preview.open {
+            max-height: 900px;
+            opacity: 1;
+            margin-top: 24px;
+        }
+        .preview-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding-top: 8px;
         }
         .preview-stage {
-            background: var(--surface-alt);
-            border-radius: 18px;
-            padding: 24px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+            padding: 8px;
+            width: 100%;
+            max-width: 340px;
+            aspect-ratio: 1 / 1;
             position: relative;
-            min-height: 280px;
         }
         .preview-stage canvas {
             display: block;
-            max-width: 100%;
-            height: auto;
+            width: 100%;
+            height: 100%;
             image-rendering: pixelated;
         }
         .preview-stage .empty {
             color: var(--text-muted);
             font-style: italic;
             font-size: 0.95rem;
+            position: absolute;
         }
         .char-row, .anim-row {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             justify-content: center;
+            width: 100%;
         }
-        .char-row { margin-bottom: 12px; }
         .char-chip, .anim-chip {
             appearance: none;
             -webkit-appearance: none;
@@ -344,8 +387,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 16px;
-            padding-top: 16px;
+            width: 100%;
+            padding-top: 12px;
             border-top: 1px solid var(--rule);
             font-family: 'Courier New', monospace;
             font-size: 0.72rem;
@@ -416,21 +459,29 @@
             <h2 class="section-title">The Pixlings</h2>
         </div>
 
-        <div class="preview" id="pixling-preview">
-            <div class="char-row" id="char-row" role="tablist" aria-label="Choose a Pixling"></div>
-            <div class="preview-stage">
-                <canvas id="glyph-canvas" width="500" height="500" aria-label="Glyph Matrix animation preview"></canvas>
-                <span class="empty" id="preview-empty">loading…</span>
-            </div>
-            <div class="anim-row" id="anim-row" role="tablist" aria-label="Choose an animation"></div>
-            <div class="preview-meta">
-                <span id="meta-label">—</span>
-                <span class="preview-controls">
-                    <button type="button" id="btn-play" aria-label="Play / pause">⏸</button>
-                    <button type="button" data-speed="0.5">0.5×</button>
-                    <button type="button" data-speed="1" class="active">1×</button>
-                    <button type="button" data-speed="2">2×</button>
-                </span>
+        <div style="text-align: center;">
+            <button type="button" class="preview-toggle" id="preview-toggle" aria-expanded="false" aria-controls="pixling-preview">
+                meet them <span class="chev">▾</span>
+            </button>
+        </div>
+
+        <div class="preview" id="pixling-preview" aria-hidden="true">
+            <div class="preview-inner">
+                <div class="char-row" id="char-row" role="tablist" aria-label="Choose a Pixling"></div>
+                <div class="preview-stage">
+                    <canvas id="glyph-canvas" width="500" height="500" aria-label="Glyph Matrix animation preview"></canvas>
+                    <span class="empty" id="preview-empty">loading…</span>
+                </div>
+                <div class="anim-row" id="anim-row" role="tablist" aria-label="Choose an animation"></div>
+                <div class="preview-meta">
+                    <span id="meta-label">—</span>
+                    <span class="preview-controls">
+                        <button type="button" id="btn-play" aria-label="Play / pause">⏸</button>
+                        <button type="button" data-speed="0.5">0.5×</button>
+                        <button type="button" data-speed="1" class="active">1×</button>
+                        <button type="button" data-speed="2">2×</button>
+                    </span>
+                </div>
             </div>
         </div>
     </section>
@@ -506,6 +557,8 @@
     const MAX_ROW = 25;
     const TOTAL_PIXELS = ROW_LENGTHS.reduce((a, b) => a + b, 0); // 489
 
+    const toggle = document.getElementById('preview-toggle');
+    const preview = document.getElementById('pixling-preview');
     const canvas = document.getElementById('glyph-canvas');
     const ctx = canvas.getContext('2d');
     const charRow = document.getElementById('char-row');
@@ -518,16 +571,23 @@
     const dpr = window.devicePixelRatio || 1;
     const positions = new Float32Array(TOTAL_PIXELS * 2);
     let cellSize = 0, dotRadius = 0, dimRadius = 0;
-    const animCache = new Map();
-    let currentFrames = null;
-    let frameIdx = 0;
+    const fileCache = new Map(); // filename → frames
+    // Compound sequence: array of {phase, frames}; we step frame-by-frame, advancing phase when done
+    let sequence = null;          // [{phase:'enter', frames:[...]}, ...]
+    let seqIdx = 0;               // which phase we're in
+    let frameIdx = 0;             // frame within current phase
     let frameStart = 0;
     let playing = true;
     let speed = 1;
     let rafId = 0;
+    let manifest = null;
+    let opened = false;
+    let currentMeta = '—';
 
     function resizeCanvas() {
-        const cssSize = Math.min(canvas.parentElement.clientWidth - 32, 380);
+        const container = canvas.parentElement;
+        const cssSize = Math.min(container.clientWidth, 340);
+        if (!cssSize) return;
         canvas.style.width = cssSize + 'px';
         canvas.style.height = cssSize + 'px';
         canvas.width = Math.floor(cssSize * dpr);
@@ -551,35 +611,36 @@
     }
 
     function themeAccent() {
-        const v = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-        return v || '#2C504A';
+        return getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#2C504A';
     }
     function themeDim() {
-        const v = getComputedStyle(document.documentElement).getPropertyValue('--rule').trim();
-        return v || 'rgba(0,0,0,0.15)';
+        return getComputedStyle(document.documentElement).getPropertyValue('--rule').trim() || 'rgba(0,0,0,0.15)';
+    }
+
+    function currentFrame() {
+        if (!sequence || !sequence.length) return null;
+        const phase = sequence[seqIdx];
+        return phase && phase.frames ? phase.frames[frameIdx] : null;
     }
 
     function drawFrame(forceBlank) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const accent = themeAccent();
         const dim = themeDim();
 
-        // unlit grid backdrop
+        // unlit matrix backdrop
         ctx.fillStyle = dim;
         for (let i = 0; i < TOTAL_PIXELS; i++) {
-            const px = positions[i * 2];
-            const py = positions[i * 2 + 1];
             ctx.beginPath();
-            ctx.arc(px, py, dimRadius, 0, Math.PI * 2);
+            ctx.arc(positions[i * 2], positions[i * 2 + 1], dimRadius, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        if (forceBlank || !currentFrames) return;
-        const frame = currentFrames[frameIdx];
+        if (forceBlank) return;
+        const frame = currentFrame();
         if (!frame) return;
         const p = frame.p;
 
-        // lit pixels — parse accent into rgb for alpha blending
+        const accent = themeAccent();
         const m = accent.match(/^#([0-9a-f]{6})$/i);
         let r = 44, g = 80, b = 74;
         if (m) {
@@ -587,50 +648,83 @@
             r = (v >> 16) & 255; g = (v >> 8) & 255; b = v & 255;
         }
         for (let i = 0; i < p.length && i < TOTAL_PIXELS; i++) {
-            const brightness = p[i];
-            if (!brightness) continue;
-            const a = brightness / 255;
-            ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
-            const px = positions[i * 2];
-            const py = positions[i * 2 + 1];
+            const bright = p[i];
+            if (!bright) continue;
+            ctx.fillStyle = `rgba(${r},${g},${b},${bright / 255})`;
             ctx.beginPath();
-            ctx.arc(px, py, dotRadius, 0, Math.PI * 2);
+            ctx.arc(positions[i * 2], positions[i * 2 + 1], dotRadius, 0, Math.PI * 2);
             ctx.fill();
+        }
+    }
+
+    function advanceFrame() {
+        if (!sequence || !sequence.length) return;
+        const phase = sequence[seqIdx];
+        frameIdx++;
+        if (frameIdx >= phase.frames.length) {
+            frameIdx = 0;
+            seqIdx++;
+            if (seqIdx >= sequence.length) seqIdx = 0; // loop the whole compound
         }
     }
 
     function tick(ts) {
         rafId = requestAnimationFrame(tick);
-        if (!playing || !currentFrames || currentFrames.length === 0) return;
+        if (!playing) return;
+        const frame = currentFrame();
+        if (!frame) return;
         if (!frameStart) frameStart = ts;
-        const frame = currentFrames[frameIdx];
         const delay = Math.max(1, (frame.d || 100)) / speed;
         if (ts - frameStart >= delay) {
-            frameIdx = (frameIdx + 1) % currentFrames.length;
+            advanceFrame();
             frameStart = ts;
             drawFrame();
         }
     }
 
-    async function loadAnim(file) {
-        if (animCache.has(file)) return animCache.get(file);
+    async function loadFile(file) {
+        if (fileCache.has(file)) return fileCache.get(file);
         const res = await fetch(`./anims/${file}`);
-        if (!res.ok) throw new Error('fetch failed');
+        if (!res.ok) throw new Error('fetch failed: ' + file);
         const data = await res.json();
-        animCache.set(file, data.frames);
+        fileCache.set(file, data.frames);
         return data.frames;
+    }
+
+    async function buildSequence(anim) {
+        // Compound order: enter → loop → exit → (repeat). If any piece missing, skip.
+        // If only 'main' exists, single-phase loop.
+        const parts = [];
+        if (anim.type === 'compound') {
+            if (anim.files.enter) parts.push({ phase: 'enter', file: anim.files.enter });
+            if (anim.files.loop) parts.push({ phase: 'loop', file: anim.files.loop });
+            if (anim.files.exit) parts.push({ phase: 'exit', file: anim.files.exit });
+            if (!parts.length && anim.files.main) parts.push({ phase: 'main', file: anim.files.main });
+        } else if (anim.files.main) {
+            parts.push({ phase: 'main', file: anim.files.main });
+        }
+        const resolved = await Promise.all(parts.map(async p => ({
+            phase: p.phase,
+            frames: await loadFile(p.file)
+        })));
+        return resolved.filter(p => p.frames && p.frames.length);
     }
 
     async function playAnim(char, anim) {
         emptyEl.textContent = 'loading…';
         emptyEl.style.display = 'block';
         try {
-            const frames = await loadAnim(anim.file);
-            currentFrames = frames;
+            const seq = await buildSequence(anim);
+            if (!seq.length) throw new Error('no frames');
+            sequence = seq;
+            seqIdx = 0;
             frameIdx = 0;
             frameStart = 0;
             emptyEl.style.display = 'none';
-            metaEl.textContent = `${char.name.toLowerCase()} · ${anim.label.toLowerCase()} · ${frames.length}f`;
+            const totalFrames = seq.reduce((a, p) => a + p.frames.length, 0);
+            const phaseCount = seq.length > 1 ? ` · ${seq.map(p => p.phase[0]).join('→')}` : '';
+            currentMeta = `${char.name.toLowerCase()} · ${anim.label} · ${totalFrames}f${phaseCount}`;
+            metaEl.textContent = currentMeta;
             drawFrame();
         } catch (e) {
             emptyEl.textContent = 'failed to load';
@@ -640,36 +734,68 @@
     function renderAnims(char) {
         animRow.innerHTML = '';
         char.animations.forEach((a, i) => {
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'anim-chip' + (i === 0 ? ' active' : '');
-            b.textContent = a.label.toLowerCase();
-            b.addEventListener('click', () => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'anim-chip' + (i === 0 ? ' active' : '');
+            btn.textContent = a.label;
+            btn.addEventListener('click', () => {
                 animRow.querySelectorAll('.anim-chip').forEach(x => x.classList.remove('active'));
-                b.classList.add('active');
+                btn.classList.add('active');
                 playAnim(char, a);
             });
-            animRow.appendChild(b);
+            animRow.appendChild(btn);
         });
         if (char.animations[0]) playAnim(char, char.animations[0]);
     }
 
-    function renderChars(manifest) {
+    function renderChars(mf) {
+        manifest = mf;
         charRow.innerHTML = '';
-        manifest.characters.forEach((c, i) => {
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'char-chip' + (i === 0 ? ' active' : '');
-            b.textContent = c.name.toLowerCase();
-            b.addEventListener('click', () => {
+        mf.characters.forEach((c, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'char-chip' + (i === 0 ? ' active' : '');
+            btn.textContent = c.name.toLowerCase();
+            btn.addEventListener('click', () => {
                 charRow.querySelectorAll('.char-chip').forEach(x => x.classList.remove('active'));
-                b.classList.add('active');
+                btn.classList.add('active');
                 renderAnims(c);
             });
-            charRow.appendChild(b);
+            charRow.appendChild(btn);
         });
-        if (manifest.characters[0]) renderAnims(manifest.characters[0]);
+        if (mf.characters[0]) renderAnims(mf.characters[0]);
     }
+
+    function openPreview() {
+        if (opened) return;
+        opened = true;
+        preview.classList.add('open');
+        preview.setAttribute('aria-hidden', 'false');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.childNodes[0].textContent = 'hide ';
+        // lazy init on first open
+        requestAnimationFrame(() => {
+            resizeCanvas();
+            if (!manifest) {
+                fetch('./anims/index.json')
+                    .then(r => r.json())
+                    .then(renderChars)
+                    .catch(() => { emptyEl.textContent = 'manifest missing'; });
+            }
+        });
+        if (!rafId) rafId = requestAnimationFrame(tick);
+    }
+    function closePreview() {
+        opened = false;
+        preview.classList.remove('open');
+        preview.setAttribute('aria-hidden', 'true');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.childNodes[0].textContent = 'meet them ';
+    }
+
+    toggle.addEventListener('click', () => {
+        if (opened) closePreview(); else openPreview();
+    });
 
     btnPlay.addEventListener('click', () => {
         playing = !playing;
@@ -684,18 +810,9 @@
         });
     });
 
-    window.addEventListener('resize', resizeCanvas);
-    // redraw on theme flip so colors follow
+    window.addEventListener('resize', () => { if (opened) resizeCanvas(); });
     const observer = new MutationObserver(() => drawFrame());
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-    resizeCanvas();
-    rafId = requestAnimationFrame(tick);
-
-    fetch('./anims/index.json')
-        .then(r => r.json())
-        .then(renderChars)
-        .catch(() => { emptyEl.textContent = 'manifest missing'; });
 })();
 </script>
 
