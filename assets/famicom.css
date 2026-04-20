@@ -1,0 +1,407 @@
+/* ============================================================
+   FAMICOM MODE — activated via konami code (see konami.js)
+   Japanese Famicom 1986 palette. All styles scoped to body.famicom.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body.famicom {
+    /* NES (US) palette — grey console, cream cards, red accents */
+    --fc-bg: #8C8C8C;         /* console dark grey */
+    --fc-surface: #C0C0C0;    /* lighter grey face */
+    --fc-cream: #E8E2D4;      /* cartridge label cream */
+    --fc-red: #D13030;        /* NES logo red */
+    --fc-red-dark: #8A1010;
+    --fc-ink: #0D0D0D;
+    --fc-blue: #5C94FC;
+    --fc-green: #00A800;
+    --fc-gold: #FCC048;
+    --fc-shadow: 4px 4px 0 #0D0D0D;
+
+    /* swap tokens on common vars so page styles inherit */
+    --bg: var(--fc-bg) !important;
+    --background: var(--fc-bg) !important;
+    --surface: var(--fc-cream) !important;
+    --surface-alt: #E8DBC3 !important;
+    --card: var(--fc-cream) !important;
+    --paper: var(--fc-cream) !important;
+    --paper-deep: #E8DBC3 !important;
+    --text: var(--fc-ink) !important;
+    --ink: var(--fc-ink) !important;
+    --text-dim: #5C3B3B !important;
+    --text-muted: #5C3B3B !important;
+    --muted: #5C3B3B !important;
+    --primary: var(--fc-red) !important;
+    --accent: var(--fc-red) !important;
+    --secondary: var(--fc-red-dark) !important;
+    --pink: var(--fc-red) !important;
+    --pink-deep: var(--fc-red-dark) !important;
+    --cyan: var(--fc-blue) !important;
+    --cyan-deep: #2B5CBB !important;
+    --red: var(--fc-red) !important;
+    --border: var(--fc-ink) !important;
+    --rule: var(--fc-ink) !important;
+
+    background: var(--fc-bg) !important;
+    color: var(--fc-ink) !important;
+    font-family: 'Press Start 2P', ui-monospace, Menlo, monospace !important;
+    font-size: 11px !important;
+    line-height: 1.8 !important;
+    letter-spacing: 0 !important;
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><rect x='0' y='0' width='2' height='2' fill='black'/><rect x='0' y='2' width='2' height='2' fill='white'/><rect x='2' y='2' width='2' height='2' fill='black'/><rect x='0' y='4' width='2' height='2' fill='white'/><rect x='2' y='4' width='2' height='2' fill='white'/><rect x='4' y='4' width='2' height='2' fill='black'/><rect x='0' y='6' width='2' height='2' fill='white'/><rect x='2' y='6' width='2' height='2' fill='white'/><rect x='4' y='6' width='2' height='2' fill='white'/><rect x='6' y='6' width='2' height='2' fill='black'/><rect x='0' y='8' width='2' height='2' fill='white'/><rect x='2' y='8' width='2' height='2' fill='white'/><rect x='4' y='8' width='2' height='2' fill='white'/><rect x='6' y='8' width='2' height='2' fill='white'/><rect x='8' y='8' width='2' height='2' fill='black'/><rect x='0' y='10' width='2' height='2' fill='white'/><rect x='2' y='10' width='2' height='2' fill='white'/><rect x='4' y='10' width='2' height='2' fill='white'/><rect x='6' y='10' width='2' height='2' fill='black'/><rect x='0' y='12' width='2' height='2' fill='white'/><rect x='2' y='12' width='2' height='2' fill='black'/><rect x='4' y='12' width='2' height='2' fill='white'/><rect x='6' y='12' width='2' height='2' fill='black'/><rect x='0' y='14' width='2' height='2' fill='black'/><rect x='2' y='14' width='2' height='2' fill='black'/><rect x='6' y='14' width='2' height='2' fill='black'/></svg>") 0 0, auto !important;
+}
+
+:root[data-theme="dark"] body.famicom {
+    --bg: #0D1A33 !important;
+    --background: #0D1A33 !important;
+    --text: var(--fc-cream) !important;
+    --ink: var(--fc-cream) !important;
+    background: #0D1A33 !important;
+}
+
+/* Page flow is transparent so the grey console shows through.
+   Text on grey uses cream so it reads clearly. */
+body.famicom .hero p,
+body.famicom .hero-subtitle,
+body.famicom .hero-description,
+body.famicom .hero-kaomoji,
+body.famicom .section-eyebrow,
+body.famicom .section-kaomoji,
+body.famicom .see-all,
+body.famicom footer,
+body.famicom footer *,
+body.famicom .footer-kaomoji,
+body.famicom .eyebrow,
+body.famicom .page-head p,
+body.famicom .page-head .eyebrow {
+    color: var(--fc-cream) !important;
+}
+
+/* Big titles on the grey background — cream with clean shadow */
+body.famicom .hero h1,
+body.famicom .section-head .section-title,
+body.famicom .page-head h1 {
+    color: var(--fc-cream) !important;
+    text-shadow: 2px 2px 0 var(--fc-ink) !important;
+}
+
+/* keep headings red-on-cream ONLY when inside a card */
+body.famicom .link-card h1, body.famicom .link-card h2, body.famicom .link-card h3,
+body.famicom .project h3, body.famicom .project p, body.famicom .project span,
+body.famicom .card h1, body.famicom .card h2, body.famicom .card h3,
+body.famicom .about-card, body.famicom .about-card *,
+body.famicom .feat *, body.famicom .preview *,
+body.famicom nav, body.famicom nav * {
+    color: var(--fc-ink) !important;
+}
+body.famicom .link-card .link-card-title,
+body.famicom .project .project-name,
+body.famicom .about-card h1, body.famicom .about-card h2, body.famicom .about-card h3 {
+    color: var(--fc-red) !important;
+}
+
+
+body.famicom .section,
+body.famicom header.hero,
+body.famicom header:not(nav),
+body.famicom footer,
+body.famicom .hero,
+body.famicom .container,
+body.famicom .page,
+body.famicom .masthead {
+    background: transparent !important;
+    background-image: none !important;
+    background-color: transparent !important;
+}
+
+/* Tile-cards: cream with black border + offset shadow */
+body.famicom .link-card,
+body.famicom .project,
+body.famicom .card,
+body.famicom .feat,
+body.famicom .scan,
+body.famicom .check,
+body.famicom .preview,
+body.famicom .preview-stage,
+body.famicom .about-card {
+    background: var(--fc-cream) !important;
+    background-image: none !important;
+    background-color: var(--fc-cream) !important;
+}
+
+/* nav bar stays cream strip on top */
+body.famicom nav {
+    background: var(--fc-cream) !important;
+    border-bottom: 3px solid var(--fc-ink) !important;
+}
+
+/* cute.js features are paused via attribute-strip in konami.js,
+   but belt-and-braces hide any stragglers */
+body.famicom .cute-ambient,
+body.famicom .cute-heart,
+body.famicom .cute-fab,
+body.famicom .cute-panel,
+body.famicom .cute-status,
+body.famicom .leaf {
+    display: none !important;
+}
+
+/* pause any animations still running on elements */
+body.famicom .hero-kaomoji,
+body.famicom .footer-kaomoji,
+body.famicom .hero-icon {
+    animation: none !important;
+}
+
+/* NES-style badges for project-tag pills */
+body.famicom .project-tag,
+body.famicom .section-kaomoji,
+body.famicom .project-swatch {
+    background: var(--fc-red) !important;
+    color: var(--fc-cream) !important;
+    border: 2px solid var(--fc-ink) !important;
+    box-shadow: 2px 2px 0 var(--fc-ink) !important;
+}
+body.famicom .project-swatch svg { stroke: var(--fc-cream) !important; }
+body.famicom .project-swatch circle { fill: var(--fc-cream) !important; }
+
+/* swatches / pastel accents become flat red tiles */
+body.famicom .swatch-pink,
+body.famicom .swatch-peach,
+body.famicom .swatch-lavender,
+body.famicom .swatch-warm {
+    background: var(--fc-red) !important;
+    color: var(--fc-cream) !important;
+}
+
+/* NES console background — grey plastic with subtle texture band */
+body.famicom {
+    background-color: var(--fc-bg) !important;
+    background-image: linear-gradient(
+        to bottom,
+        var(--fc-bg) 0%,
+        var(--fc-bg) 62%,
+        #7A7A7A 62%,
+        #7A7A7A 64%,
+        var(--fc-bg) 64%,
+        var(--fc-bg) 100%
+    ) !important;
+}
+
+/* kill radii + pseudo patterns from each theme */
+body.famicom *,
+body.famicom *::before,
+body.famicom *::after {
+    border-radius: 0 !important;
+    font-family: 'Press Start 2P', ui-monospace, monospace !important;
+    letter-spacing: 0 !important;
+    text-rendering: geometricPrecision !important;
+}
+
+/* wipe heavy backdrop patterns (slab pattern, leaves etc. still fine) */
+body.famicom::before,
+body.famicom::after {
+    background-image: none !important;
+    opacity: 0 !important;
+}
+
+/* images pixelated */
+body.famicom img,
+body.famicom canvas,
+body.famicom svg {
+    image-rendering: pixelated !important;
+    image-rendering: crisp-edges !important;
+}
+
+/* HEADINGS — red with chromatic fringe */
+body.famicom h1,
+body.famicom h2,
+body.famicom h3,
+body.famicom .wordmark,
+body.famicom .section-title,
+body.famicom .project-name {
+    color: var(--fc-red) !important;
+    font-family: 'Press Start 2P', monospace !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    text-shadow: none !important;
+    line-height: 1.4 !important;
+}
+body.famicom h1 { font-size: 22px !important; }
+body.famicom h2 { font-size: 16px !important; }
+body.famicom h3 { font-size: 12px !important; }
+body.famicom .wordmark { font-size: 32px !important; line-height: 1.2 !important; }
+body.famicom .wordmark em { font-size: 22px !important; transform: none !important; display: inline-block !important; color: var(--fc-blue) !important; }
+body.famicom .wordmark::after { display: none !important; }
+
+body.famicom p,
+body.famicom li,
+body.famicom span,
+body.famicom div {
+    font-size: 10px !important;
+    line-height: 1.8 !important;
+}
+
+/* LINKS */
+body.famicom a {
+    color: var(--fc-red) !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+}
+body.famicom a:hover { color: var(--fc-blue) !important; }
+
+/* BUTTONS + CARDS — chunky 3px border + hard offset shadow */
+body.famicom button,
+body.famicom .project,
+body.famicom .link-card,
+body.famicom .feat,
+body.famicom .scan,
+body.famicom .check,
+body.famicom .section.notice,
+body.famicom .section.gallery-frame,
+body.famicom .section.download,
+body.famicom .dl-btn,
+body.famicom .back,
+body.famicom .theme-toggle,
+body.famicom .lock-out,
+body.famicom .preview {
+    background: var(--fc-cream) !important;
+    color: var(--fc-ink) !important;
+    border: 3px solid var(--fc-ink) !important;
+    box-shadow: var(--fc-shadow) !important;
+    transition: none !important;
+    filter: none !important;
+    transform: none !important;
+}
+
+body.famicom button:hover,
+body.famicom .project:hover,
+body.famicom .link-card:hover,
+body.famicom .scan:hover,
+body.famicom .check:hover,
+body.famicom .dl-btn:hover,
+body.famicom .back:hover,
+body.famicom .theme-toggle:hover {
+    background: var(--fc-gold) !important;
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 5px 5px 0 var(--fc-ink) !important;
+}
+body.famicom button:active,
+body.famicom .project:active,
+body.famicom .link-card:active,
+body.famicom .dl-btn:active,
+body.famicom .back:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 2px 2px 0 var(--fc-ink) !important;
+}
+
+/* primary action buttons stay red */
+body.famicom .dl-btn,
+body.famicom .scan-arrow,
+body.famicom .lock-btn {
+    background: var(--fc-red) !important;
+    color: var(--fc-cream) !important;
+}
+body.famicom .dl-btn:hover,
+body.famicom .lock-btn:hover {
+    background: var(--fc-red-dark) !important;
+    color: var(--fc-cream) !important;
+}
+
+/* strip theme-toggle + back shape */
+body.famicom .theme-toggle,
+body.famicom .back,
+body.famicom .lock-out {
+    padding: 8px 14px !important;
+    font-size: 9px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+}
+
+/* SCAN LINES — full viewport overlay */
+body.famicom::after {
+    content: "" !important;
+    position: fixed !important;
+    inset: 0 !important;
+    pointer-events: none !important;
+    z-index: 9998 !important;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.08) 0 2px,
+        transparent 2px 4px
+    ) !important;
+    opacity: 0.9 !important;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.08) 0 2px,
+        transparent 2px 4px
+    ) !important;
+    mix-blend-mode: multiply !important;
+}
+
+/* CRT vignette */
+body.famicom > *:not(.famicom-ui) {
+    /* leave content unaffected; vignette is a separate fixed layer */
+}
+
+/* kill emoji-heavy ambient animations that look off in 8-bit */
+body.famicom .leaf,
+body.famicom .hero-icon,
+body.famicom .link-card-icon {
+    animation: none !important;
+}
+body.famicom .leaf { opacity: 0 !important; }
+
+/* FAMICOM UI CHROME — injected by konami.js */
+.famicom-flash {
+    position: fixed;
+    inset: 0;
+    background: #CE1126;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+}
+.famicom-flash.on {
+    animation: fc-flash 340ms ease-out forwards;
+}
+@keyframes fc-flash {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.famicom-ribbon {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 9999;
+    background: #0D0D0D;
+    color: #F2E9D8;
+    border: 3px solid #F2E9D8;
+    padding: 6px 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 4px 4px 0 #CE1126;
+    user-select: none;
+}
+.famicom-ribbon b { color: #FCC048; font-weight: 400; }
+
+.famicom-sound {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 9999;
+    background: #F2E9D8;
+    color: #0D0D0D;
+    border: 3px solid #0D0D0D;
+    padding: 6px 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #0D0D0D;
+    user-select: none;
+}
+.famicom-sound:hover { background: #FCC048; }
+.famicom-sound:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #0D0D0D; }
