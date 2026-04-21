@@ -29,3 +29,8 @@ desktop.ini
 # Local-only docs
 /CONTRIBUTING.md
 /password-journal.html
+/bingsu-spec.html
+
+# Local-only projects
+/soksok/
+/bingsu/
