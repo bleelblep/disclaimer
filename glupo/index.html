@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>glupo — the private drawer</title>
-    <meta name="description" content="Glupo — a personal sandbox app for the Nothing Phone 3 glyph matrix. Where toys live before they leave the nest.">
+    <title>glypnik — the private drawer</title>
+    <meta name="description" content="Glypnik — a personal sandbox app for the Nothing Phone 3 glyph matrix. Where toys live before they leave the nest.">
     <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/gallery.css">
     <style>
-        /* ── GLUPO: mid-century retro futurism ──
+        /* ── GLYPNIK: mid-century retro futurism ──
            amber sunsets, dark brown wood-paneled walls,
            starbursts on atomic-age diner menus. */
         :root {
@@ -526,6 +526,102 @@
         }
         [data-theme="dark"] .library-signature { color: var(--brand-ink); }
 
+        /* ── CALLSIGNS ── */
+        .callsigns {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            counter-reset: none;
+        }
+
+        .callsign {
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 18px;
+            padding: 26px 28px;
+            box-shadow: 6px 6px 0 var(--rule-strong);
+            color: var(--ink-on-cream);
+            position: relative;
+        }
+        [data-theme="dark"] .callsign { border-color: var(--brand-ink); }
+
+        .callsign.current {
+            border-color: var(--red);
+            box-shadow: 6px 6px 0 var(--red);
+        }
+
+        .callsign-head {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1.5px dashed var(--rule);
+        }
+
+        .callsign-num {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.78rem;
+            color: var(--muted);
+            letter-spacing: 0.2em;
+        }
+
+        .callsign-name {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 1.55rem;
+            color: var(--brand);
+            text-transform: lowercase;
+            letter-spacing: -0.01em;
+            line-height: 1;
+        }
+        [data-theme="dark"] .callsign-name { color: var(--brand-ink); }
+
+        .callsign.retired .callsign-name {
+            text-decoration: line-through;
+            text-decoration-color: var(--rule-strong);
+            text-decoration-thickness: 2px;
+            text-decoration-skip-ink: none;
+        }
+
+        .callsign-stamp {
+            margin-left: auto;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 4px 10px 3px;
+            border: 1.5px solid var(--muted);
+            color: var(--muted);
+            border-radius: 4px;
+        }
+
+        .callsign-stamp.current-stamp {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .callsign-body p {
+            font-size: 0.99rem;
+            color: var(--brand);
+            margin: 0 0 12px;
+            line-height: 1.7;
+        }
+        [data-theme="dark"] .callsign-body p { color: var(--brand-ink); }
+
+        .callsign-body p:last-child { margin-bottom: 0; }
+
+        .callsign-body em {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            color: var(--red);
+            font-size: 1.06em;
+        }
+
         /* ── FOOTER ── */
         .footer {
             padding: 60px 0 80px;
@@ -541,6 +637,25 @@
         .footer-atom {
             display: inline-block;
             margin-bottom: 14px;
+            color: var(--red);
+        }
+
+        .footer-def {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 0.98rem;
+            color: var(--brand);
+            text-transform: none;
+            letter-spacing: 0;
+            line-height: 1.65;
+            margin: 0 auto 22px;
+            max-width: 460px;
+            font-weight: 400;
+        }
+        [data-theme="dark"] .footer-def { color: var(--brand-ink); }
+
+        .footer-def em {
+            font-style: italic;
             color: var(--red);
         }
 
@@ -594,7 +709,7 @@
         </div>
 
         <h1>
-            <span>glupo</span>
+            <span>glypnik</span>
         </h1>
 
         <p class="hero-tagline">
@@ -620,7 +735,7 @@
         </div>
         <h2>what's inside</h2>
         <p class="section-lede">
-            glupo is a drawer, not a product. every compartment holds a small glyph toy —
+            glypnik is a drawer, not a product. every compartment holds a small glyph toy —
             some grew up and left home, others are happy to stay.
         </p>
 
@@ -693,7 +808,7 @@
                     </svg>
                 </div>
                 <h3 class="toy-name">thinking of you</h3>
-                <p class="toy-desc">left the nest. now a standalone app. still shares glupo's firebase so pairing works across both.</p>
+                <p class="toy-desc">left the nest. now a standalone app. still shares glypnik's firebase so pairing works across both.</p>
                 <div class="toy-foot">extracted → open source →</div>
             </a>
 
@@ -725,7 +840,7 @@
         <p class="section-lede">
             a few polaroids from the drawer — grainy, unlabeled, mostly just for the feel of it.
         </p>
-        <div data-gallery="./images/" data-gallery-manifest="./gallery.json" aria-label="glupo screenshots"></div>
+        <div data-gallery="./images/" data-gallery-manifest="./gallery.json" aria-label="glypnik screenshots"></div>
     </div>
 </section>
 
@@ -733,24 +848,89 @@
     <div class="container">
         <div class="section-rule">
             <span class="section-rule-num">03</span>
+            <span class="section-rule-title">prior callsigns</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>what it was called before</h2>
+        <p class="section-lede">
+            three names, same drawer. each one a costume change — mascot first, then palette,
+            then the palette won.
+        </p>
+
+        <ol class="callsigns">
+            <li class="callsign retired">
+                <div class="callsign-head">
+                    <span class="callsign-num">01</span>
+                    <span class="callsign-name">glyphbuddy</span>
+                    <span class="callsign-stamp">retired</span>
+                </div>
+                <div class="callsign-body">
+                    <p>
+                        <em>glyphbuddy</em>, first. a catch-all utility — every glyph idea piled
+                        into one app before i knew which ones were keepers. it got crowded fast.
+                    </p>
+                </div>
+            </li>
+
+            <li class="callsign retired">
+                <div class="callsign-head">
+                    <span class="callsign-num">02</span>
+                    <span class="callsign-name">glupo</span>
+                    <span class="callsign-stamp">retired</span>
+                </div>
+                <div class="callsign-body">
+                    <p>
+                        then <em>glupo</em>. i built the ufo abductor, fell for the cows and the beam,
+                        and leaned the whole app into alien kitsch. around the same time the 1950s
+                        palette landed — amber, chartreuse, coral, aqua — cream grounds, brown line-work,
+                        a whole mid-century mood.
+                    </p>
+                    <p>
+                        after a while the aesthetic had outgrown the mascot. saucers were saying one
+                        thing; the palette and the type were saying another. so i gutted the ui and
+                        rebuilt around what the colors had been gesturing at all along — atomic age,
+                        orbital rings, starbursts, populuxe.
+                    </p>
+                </div>
+            </li>
+
+            <li class="callsign current">
+                <div class="callsign-head">
+                    <span class="callsign-num">03</span>
+                    <span class="callsign-name">glypnik</span>
+                    <span class="callsign-stamp current-stamp">current</span>
+                </div>
+                <div class="callsign-body">
+                    <p>
+                        <em>glypnik</em>. glyph + -nik, the slavic suffix for "one who is of" — the
+                        h quietly dropped somewhere over the baltic. sputnik (1957) was "fellow
+                        traveler" — спутник, one who travels the path alongside. this one travels
+                        the glyph.
+                    </p>
+                </div>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">04</span>
             <span class="section-rule-title">catalog entry</span>
             <span class="section-rule-line"></span>
         </div>
 
         <div class="library-card">
             <div class="library-head">
-                <span>file · glupo-001</span>
+                <span>file · glypnik-4.03</span>
                 <span>private collection</span>
             </div>
 
             <div class="library-text">
                 <p>
-                    <em>glupo</em> is what this whole thing was before it had a name. a junk drawer
-                    for every glyph idea that didn't warrant its own app — and a few that eventually did.
-                </p>
-                <p>
-                    the bingsu theme system (ten palettes, inspired by korean shaved-ice desserts) lives here.
-                    the glyph matrix helpers live here. every toy is a floor plan i didn't want to throw away.
+                    <em>glypnik</em> is the drawer's current callsign — a junk drawer for every
+                    glyph idea that didn't warrant its own app, and a few that eventually did.
                 </p>
                 <p>
                     it isn't listed, isn't signed, isn't supported. if a toy gets good enough, it moves
@@ -776,7 +956,11 @@
                 <ellipse cx="14" cy="14" rx="11" ry="4" transform="rotate(120 14 14)" />
             </svg>
         </div>
-        <div>glupo · © bleelblep · kept in a drawer on purpose</div>
+        <p class="footer-def">
+            <em>glypnik</em>, n. — one who is of the glyph.<br>
+            cf. <em>sputnik</em> (1957), "fellow traveler."
+        </p>
+        <div>glypnik · © bleelblep · kept in a drawer on purpose</div>
     </div>
 </footer>
 
