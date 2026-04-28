@@ -1,4 +1,4 @@
-// ── KONAMI CODE → FAMICOM MODE ───────────────────────────────
+// ── KONAMI CODE → NES MODE ───────────────────────────────────
 // Sequence: ↑ ↑ ↓ ↓ ← → ← → B A  (Gradius, NES, 1986)
 // Persists across same-tab navigation via sessionStorage.
 // Activates on landing / projects / about only, but state carries
@@ -8,24 +8,34 @@
     const CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
                   'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
                   'b', 'a'];
-    const STORAGE_KEY = 'famicom';
-    const SOUND_KEY = 'famicom_sound';
-    const CUTE_STASH_KEY = 'famicom_cute_stash';
+    const STORAGE_KEY = 'nes';
+    const SOUND_KEY = 'nes_sound';
+    const PALETTE_KEY = 'nes_palette';
+    const CUTE_STASH_KEY = 'nes_cute_stash';
 
     let buffer = [];
     let audioCtx = null;
-    let soundOn = sessionStorage.getItem(SOUND_KEY) === '1';
+    // sound on by default — only off if the user explicitly toggled it off this session
+    let soundOn = sessionStorage.getItem(SOUND_KEY) !== '0';
+    // palette: 'nes' (US grey + red, default) or 'famicom' (JP cream + burgundy)
+    let palette = sessionStorage.getItem(PALETTE_KEY) === 'famicom' ? 'famicom' : 'nes';
+
+    function ribbonLabel() {
+        return palette === 'famicom'
+            ? '<b>♦</b> FAMICOM MODE · ESC TO EXIT'
+            : '<b>♦</b> NES MODE · ESC TO EXIT';
+    }
 
     function ensureChrome() {
-        if (document.querySelector('.famicom-ribbon')) return;
+        if (document.querySelector('.nes-ribbon')) return;
         const ribbon = document.createElement('div');
-        ribbon.className = 'famicom-ribbon';
-        ribbon.innerHTML = '<b>♦</b> FAMICOM MODE · ESC TO EXIT';
+        ribbon.className = 'nes-ribbon';
+        ribbon.innerHTML = ribbonLabel();
         document.body.appendChild(ribbon);
 
         const sound = document.createElement('button');
         sound.type = 'button';
-        sound.className = 'famicom-sound';
+        sound.className = 'nes-sound';
         sound.setAttribute('aria-label', 'Toggle sound');
         sound.textContent = soundOn ? '♪' : '×';
         sound.addEventListener('click', () => {
@@ -35,16 +45,31 @@
             if (soundOn) playChime();
         });
         document.body.appendChild(sound);
+
+        const paletteBtn = document.createElement('button');
+        paletteBtn.type = 'button';
+        paletteBtn.className = 'nes-palette';
+        paletteBtn.setAttribute('aria-label', 'Toggle palette');
+        paletteBtn.textContent = palette === 'famicom' ? 'JP' : 'US';
+        paletteBtn.addEventListener('click', () => {
+            palette = palette === 'famicom' ? 'nes' : 'famicom';
+            sessionStorage.setItem(PALETTE_KEY, palette);
+            document.body.classList.toggle('famicom', palette === 'famicom');
+            paletteBtn.textContent = palette === 'famicom' ? 'JP' : 'US';
+            ribbon.innerHTML = ribbonLabel();
+            playChime();
+        });
+        document.body.appendChild(paletteBtn);
     }
 
     function removeChrome() {
-        document.querySelectorAll('.famicom-ribbon, .famicom-sound, .famicom-flash')
+        document.querySelectorAll('.nes-ribbon, .nes-sound, .nes-palette, .nes-flash')
             .forEach(el => el.remove());
     }
 
     function flash() {
         const f = document.createElement('div');
-        f.className = 'famicom-flash';
+        f.className = 'nes-flash';
         document.body.appendChild(f);
         requestAnimationFrame(() => f.classList.add('on'));
         setTimeout(() => f.remove(), 360);
@@ -80,7 +105,7 @@
 
     // ── cute.js feature pausing ──────────────────────────────────
     // cute.js reads `data-feat-*` attributes on <body> to gate its
-    // dots / hearts / wiggles. Strip them in Famicom mode, restore
+    // dots / hearts / wiggles. Strip them in NES mode, restore
     // on exit. Also clean up any live elements it spawned.
     function stashAndStripCute() {
         const body = document.body;
@@ -109,7 +134,8 @@
     }
 
     function activate(withFx) {
-        document.body.classList.add('famicom');
+        document.body.classList.add('nes');
+        if (palette === 'famicom') document.body.classList.add('famicom');
         sessionStorage.setItem(STORAGE_KEY, '1');
         stashAndStripCute();
         ensureChrome();
@@ -120,6 +146,7 @@
     }
 
     function deactivate() {
+        document.body.classList.remove('nes');
         document.body.classList.remove('famicom');
         sessionStorage.removeItem(STORAGE_KEY);
         restoreCute();
@@ -134,7 +161,7 @@
 
     document.addEventListener('keydown', (e) => {
         // exit
-        if (e.key === 'Escape' && document.body.classList.contains('famicom')) {
+        if (e.key === 'Escape' && document.body.classList.contains('nes')) {
             deactivate();
             return;
         }
@@ -147,7 +174,7 @@
         if (buffer.length > CODE.length) buffer.shift();
         if (buffer.length === CODE.length && buffer.every((k, i) => k === CODE[i])) {
             buffer = [];
-            if (document.body.classList.contains('famicom')) return;
+            if (document.body.classList.contains('nes')) return;
             activate(true);
         }
     });

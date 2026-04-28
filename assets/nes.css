@@ -1,11 +1,11 @@
 /* ============================================================
-   FAMICOM MODE — activated via konami code (see konami.js)
-   Japanese Famicom 1986 palette. All styles scoped to body.famicom.
+   NES MODE — activated via konami code (see konami.js)
+   NES (US) 1986 palette. All styles scoped to body.nes.
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-body.famicom {
+body.nes {
     /* NES (US) palette — grey console, cream cards, red accents */
     --fc-bg: #8C8C8C;         /* console dark grey */
     --fc-surface: #C0C0C0;    /* lighter grey face */
@@ -51,7 +51,7 @@ body.famicom {
     cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><rect x='0' y='0' width='2' height='2' fill='black'/><rect x='0' y='2' width='2' height='2' fill='white'/><rect x='2' y='2' width='2' height='2' fill='black'/><rect x='0' y='4' width='2' height='2' fill='white'/><rect x='2' y='4' width='2' height='2' fill='white'/><rect x='4' y='4' width='2' height='2' fill='black'/><rect x='0' y='6' width='2' height='2' fill='white'/><rect x='2' y='6' width='2' height='2' fill='white'/><rect x='4' y='6' width='2' height='2' fill='white'/><rect x='6' y='6' width='2' height='2' fill='black'/><rect x='0' y='8' width='2' height='2' fill='white'/><rect x='2' y='8' width='2' height='2' fill='white'/><rect x='4' y='8' width='2' height='2' fill='white'/><rect x='6' y='8' width='2' height='2' fill='white'/><rect x='8' y='8' width='2' height='2' fill='black'/><rect x='0' y='10' width='2' height='2' fill='white'/><rect x='2' y='10' width='2' height='2' fill='white'/><rect x='4' y='10' width='2' height='2' fill='white'/><rect x='6' y='10' width='2' height='2' fill='black'/><rect x='0' y='12' width='2' height='2' fill='white'/><rect x='2' y='12' width='2' height='2' fill='black'/><rect x='4' y='12' width='2' height='2' fill='white'/><rect x='6' y='12' width='2' height='2' fill='black'/><rect x='0' y='14' width='2' height='2' fill='black'/><rect x='2' y='14' width='2' height='2' fill='black'/><rect x='6' y='14' width='2' height='2' fill='black'/></svg>") 0 0, auto !important;
 }
 
-:root[data-theme="dark"] body.famicom {
+:root[data-theme="dark"] body.nes {
     --bg: #0D1A33 !important;
     --background: #0D1A33 !important;
     --text: var(--fc-cream) !important;
@@ -59,123 +59,183 @@ body.famicom {
     background: #0D1A33 !important;
 }
 
+/* ============================================================
+   FAMICOM (JP) palette override — toggled via the JP/US chrome
+   button. Uses cream body, burgundy accents, gold trim. Only
+   the colour tokens shift; layout/structure stays identical.
+   ============================================================ */
+body.nes.famicom {
+    --fc-bg: #E8DEB5;         /* warm cream console body */
+    --fc-surface: #D9CCA0;
+    --fc-cream: #F5EAC8;      /* lighter cartridge cream */
+    --fc-red: #7C1A1A;        /* Famicom burgundy */
+    --fc-red-dark: #4A0808;
+    --fc-gold: #E8B340;       /* warmer gold trim */
+}
+body.nes.famicom {
+    background-color: var(--fc-bg) !important;
+    background-image: linear-gradient(
+        to bottom,
+        var(--fc-bg) 0%,
+        var(--fc-bg) 62%,
+        #D4C28F 62%,
+        #D4C28F 64%,
+        var(--fc-bg) 64%,
+        var(--fc-bg) 100%
+    ) !important;
+}
+:root[data-theme="dark"] body.nes.famicom {
+    --bg: #1A0F0D !important;
+    --background: #1A0F0D !important;
+    --text: var(--fc-cream) !important;
+    --ink: var(--fc-cream) !important;
+    background: #1A0F0D !important;
+}
+
+/* Famicom LIGHT — bg is cream, so text on bg must be dark instead of cream.
+   The base body.nes rule paints these elements with var(--fc-cream); here we
+   retarget them to ink/burgundy for legible contrast against the cream bg. */
+:root[data-theme="light"] body.nes.famicom .hero p,
+:root[data-theme="light"] body.nes.famicom .hero-subtitle,
+:root[data-theme="light"] body.nes.famicom .hero-description,
+:root[data-theme="light"] body.nes.famicom .hero-kaomoji,
+:root[data-theme="light"] body.nes.famicom .section-eyebrow,
+:root[data-theme="light"] body.nes.famicom .section-kaomoji,
+:root[data-theme="light"] body.nes.famicom .see-all,
+:root[data-theme="light"] body.nes.famicom footer,
+:root[data-theme="light"] body.nes.famicom footer *,
+:root[data-theme="light"] body.nes.famicom .footer-kaomoji,
+:root[data-theme="light"] body.nes.famicom .eyebrow,
+:root[data-theme="light"] body.nes.famicom .page-head p,
+:root[data-theme="light"] body.nes.famicom .page-head .eyebrow {
+    color: var(--fc-ink) !important;
+}
+
+:root[data-theme="light"] body.nes.famicom .hero h1,
+:root[data-theme="light"] body.nes.famicom .section-head .section-title,
+:root[data-theme="light"] body.nes.famicom .page-head h1 {
+    color: var(--fc-red) !important;
+    text-shadow: 2px 2px 0 var(--fc-gold) !important;
+}
+
 /* Page flow is transparent so the grey console shows through.
    Text on grey uses cream so it reads clearly. */
-body.famicom .hero p,
-body.famicom .hero-subtitle,
-body.famicom .hero-description,
-body.famicom .hero-kaomoji,
-body.famicom .section-eyebrow,
-body.famicom .section-kaomoji,
-body.famicom .see-all,
-body.famicom footer,
-body.famicom footer *,
-body.famicom .footer-kaomoji,
-body.famicom .eyebrow,
-body.famicom .page-head p,
-body.famicom .page-head .eyebrow {
+body.nes .hero p,
+body.nes .hero-subtitle,
+body.nes .hero-description,
+body.nes .hero-kaomoji,
+body.nes .section-eyebrow,
+body.nes .section-kaomoji,
+body.nes .see-all,
+body.nes footer,
+body.nes footer *,
+body.nes .footer-kaomoji,
+body.nes .eyebrow,
+body.nes .page-head p,
+body.nes .page-head .eyebrow {
     color: var(--fc-cream) !important;
 }
 
 /* Big titles on the grey background — cream with clean shadow */
-body.famicom .hero h1,
-body.famicom .section-head .section-title,
-body.famicom .page-head h1 {
+body.nes .hero h1,
+body.nes .section-head .section-title,
+body.nes .page-head h1 {
     color: var(--fc-cream) !important;
     text-shadow: 2px 2px 0 var(--fc-ink) !important;
 }
 
 /* keep headings red-on-cream ONLY when inside a card */
-body.famicom .link-card h1, body.famicom .link-card h2, body.famicom .link-card h3,
-body.famicom .project h3, body.famicom .project p, body.famicom .project span,
-body.famicom .card h1, body.famicom .card h2, body.famicom .card h3,
-body.famicom .about-card, body.famicom .about-card *,
-body.famicom .feat *, body.famicom .preview *,
-body.famicom nav, body.famicom nav * {
+body.nes .link-card h1, body.nes .link-card h2, body.nes .link-card h3,
+body.nes .project h3, body.nes .project p, body.nes .project span,
+body.nes .card, body.nes .card *,
+body.nes .about-card, body.nes .about-card *,
+body.nes .feat *, body.nes .preview *,
+body.nes nav, body.nes nav * {
     color: var(--fc-ink) !important;
 }
-body.famicom .link-card .link-card-title,
-body.famicom .project .project-name,
-body.famicom .about-card h1, body.famicom .about-card h2, body.famicom .about-card h3 {
+body.nes .link-card .link-card-title,
+body.nes .project .project-name,
+body.nes .card h1, body.nes .card h2, body.nes .card h3,
+body.nes .about-card h1, body.nes .about-card h2, body.nes .about-card h3 {
     color: var(--fc-red) !important;
 }
 
 
-body.famicom .section,
-body.famicom header.hero,
-body.famicom header:not(nav),
-body.famicom footer,
-body.famicom .hero,
-body.famicom .container,
-body.famicom .page,
-body.famicom .masthead {
+body.nes .section,
+body.nes header.hero,
+body.nes header:not(nav),
+body.nes footer,
+body.nes .hero,
+body.nes .container,
+body.nes .page,
+body.nes .masthead {
     background: transparent !important;
     background-image: none !important;
     background-color: transparent !important;
 }
 
 /* Tile-cards: cream with black border + offset shadow */
-body.famicom .link-card,
-body.famicom .project,
-body.famicom .card,
-body.famicom .feat,
-body.famicom .scan,
-body.famicom .check,
-body.famicom .preview,
-body.famicom .preview-stage,
-body.famicom .about-card {
+body.nes .link-card,
+body.nes .project,
+body.nes .card,
+body.nes .feat,
+body.nes .scan,
+body.nes .check,
+body.nes .preview,
+body.nes .preview-stage,
+body.nes .about-card {
     background: var(--fc-cream) !important;
     background-image: none !important;
     background-color: var(--fc-cream) !important;
 }
 
 /* nav bar stays cream strip on top */
-body.famicom nav {
+body.nes nav {
     background: var(--fc-cream) !important;
     border-bottom: 3px solid var(--fc-ink) !important;
 }
 
 /* cute.js features are paused via attribute-strip in konami.js,
    but belt-and-braces hide any stragglers */
-body.famicom .cute-ambient,
-body.famicom .cute-heart,
-body.famicom .cute-fab,
-body.famicom .cute-panel,
-body.famicom .cute-status,
-body.famicom .leaf {
+body.nes .cute-ambient,
+body.nes .cute-heart,
+body.nes .cute-fab,
+body.nes .cute-panel,
+body.nes .cute-status,
+body.nes .leaf {
     display: none !important;
 }
 
 /* pause any animations still running on elements */
-body.famicom .hero-kaomoji,
-body.famicom .footer-kaomoji,
-body.famicom .hero-icon {
+body.nes .hero-kaomoji,
+body.nes .footer-kaomoji,
+body.nes .hero-icon {
     animation: none !important;
 }
 
 /* NES-style badges for project-tag pills */
-body.famicom .project-tag,
-body.famicom .section-kaomoji,
-body.famicom .project-swatch {
+body.nes .project-tag,
+body.nes .section-kaomoji,
+body.nes .project-swatch {
     background: var(--fc-red) !important;
     color: var(--fc-cream) !important;
     border: 2px solid var(--fc-ink) !important;
     box-shadow: 2px 2px 0 var(--fc-ink) !important;
 }
-body.famicom .project-swatch svg { stroke: var(--fc-cream) !important; }
-body.famicom .project-swatch circle { fill: var(--fc-cream) !important; }
+body.nes .project-swatch svg { stroke: var(--fc-cream) !important; }
+body.nes .project-swatch circle { fill: var(--fc-cream) !important; }
 
 /* swatches / pastel accents become flat red tiles */
-body.famicom .swatch-pink,
-body.famicom .swatch-peach,
-body.famicom .swatch-lavender,
-body.famicom .swatch-warm {
+body.nes .swatch-pink,
+body.nes .swatch-peach,
+body.nes .swatch-lavender,
+body.nes .swatch-warm {
     background: var(--fc-red) !important;
     color: var(--fc-cream) !important;
 }
 
 /* NES console background — grey plastic with subtle texture band */
-body.famicom {
+body.nes {
     background-color: var(--fc-bg) !important;
     background-image: linear-gradient(
         to bottom,
@@ -189,9 +249,9 @@ body.famicom {
 }
 
 /* kill radii + pseudo patterns from each theme */
-body.famicom *,
-body.famicom *::before,
-body.famicom *::after {
+body.nes *,
+body.nes *::before,
+body.nes *::after {
     border-radius: 0 !important;
     font-family: 'Press Start 2P', ui-monospace, monospace !important;
     letter-spacing: 0 !important;
@@ -199,27 +259,27 @@ body.famicom *::after {
 }
 
 /* wipe heavy backdrop patterns (slab pattern, leaves etc. still fine) */
-body.famicom::before,
-body.famicom::after {
+body.nes::before,
+body.nes::after {
     background-image: none !important;
     opacity: 0 !important;
 }
 
 /* images pixelated */
-body.famicom img,
-body.famicom canvas,
-body.famicom svg {
+body.nes img,
+body.nes canvas,
+body.nes svg {
     image-rendering: pixelated !important;
     image-rendering: crisp-edges !important;
 }
 
 /* HEADINGS — red with chromatic fringe */
-body.famicom h1,
-body.famicom h2,
-body.famicom h3,
-body.famicom .wordmark,
-body.famicom .section-title,
-body.famicom .project-name {
+body.nes h1,
+body.nes h2,
+body.nes h3,
+body.nes .wordmark,
+body.nes .section-title,
+body.nes .project-name {
     color: var(--fc-red) !important;
     font-family: 'Press Start 2P', monospace !important;
     font-weight: 400 !important;
@@ -227,44 +287,44 @@ body.famicom .project-name {
     text-shadow: none !important;
     line-height: 1.4 !important;
 }
-body.famicom h1 { font-size: 22px !important; }
-body.famicom h2 { font-size: 16px !important; }
-body.famicom h3 { font-size: 12px !important; }
-body.famicom .wordmark { font-size: 32px !important; line-height: 1.2 !important; }
-body.famicom .wordmark em { font-size: 22px !important; transform: none !important; display: inline-block !important; color: var(--fc-blue) !important; }
-body.famicom .wordmark::after { display: none !important; }
+body.nes h1 { font-size: 22px !important; }
+body.nes h2 { font-size: 16px !important; }
+body.nes h3 { font-size: 12px !important; }
+body.nes .wordmark { font-size: 32px !important; line-height: 1.2 !important; }
+body.nes .wordmark em { font-size: 22px !important; transform: none !important; display: inline-block !important; color: var(--fc-blue) !important; }
+body.nes .wordmark::after { display: none !important; }
 
-body.famicom p,
-body.famicom li,
-body.famicom span,
-body.famicom div {
+body.nes p,
+body.nes li,
+body.nes span,
+body.nes div {
     font-size: 10px !important;
     line-height: 1.8 !important;
 }
 
 /* LINKS */
-body.famicom a {
+body.nes a {
     color: var(--fc-red) !important;
     text-decoration: underline !important;
     text-underline-offset: 3px !important;
 }
-body.famicom a:hover { color: var(--fc-blue) !important; }
+body.nes a:hover { color: var(--fc-blue) !important; }
 
 /* BUTTONS + CARDS — chunky 3px border + hard offset shadow */
-body.famicom button,
-body.famicom .project,
-body.famicom .link-card,
-body.famicom .feat,
-body.famicom .scan,
-body.famicom .check,
-body.famicom .section.notice,
-body.famicom .section.gallery-frame,
-body.famicom .section.download,
-body.famicom .dl-btn,
-body.famicom .back,
-body.famicom .theme-toggle,
-body.famicom .lock-out,
-body.famicom .preview {
+body.nes button,
+body.nes .project,
+body.nes .link-card,
+body.nes .feat,
+body.nes .scan,
+body.nes .check,
+body.nes .section.notice,
+body.nes .section.gallery-frame,
+body.nes .section.download,
+body.nes .dl-btn,
+body.nes .back,
+body.nes .theme-toggle,
+body.nes .lock-out,
+body.nes .preview {
     background: var(--fc-cream) !important;
     color: var(--fc-ink) !important;
     border: 3px solid var(--fc-ink) !important;
@@ -274,44 +334,44 @@ body.famicom .preview {
     transform: none !important;
 }
 
-body.famicom button:hover,
-body.famicom .project:hover,
-body.famicom .link-card:hover,
-body.famicom .scan:hover,
-body.famicom .check:hover,
-body.famicom .dl-btn:hover,
-body.famicom .back:hover,
-body.famicom .theme-toggle:hover {
+body.nes button:hover,
+body.nes .project:hover,
+body.nes .link-card:hover,
+body.nes .scan:hover,
+body.nes .check:hover,
+body.nes .dl-btn:hover,
+body.nes .back:hover,
+body.nes .theme-toggle:hover {
     background: var(--fc-gold) !important;
     transform: translate(-1px, -1px) !important;
     box-shadow: 5px 5px 0 var(--fc-ink) !important;
 }
-body.famicom button:active,
-body.famicom .project:active,
-body.famicom .link-card:active,
-body.famicom .dl-btn:active,
-body.famicom .back:active {
+body.nes button:active,
+body.nes .project:active,
+body.nes .link-card:active,
+body.nes .dl-btn:active,
+body.nes .back:active {
     transform: translate(2px, 2px) !important;
     box-shadow: 2px 2px 0 var(--fc-ink) !important;
 }
 
 /* primary action buttons stay red */
-body.famicom .dl-btn,
-body.famicom .scan-arrow,
-body.famicom .lock-btn {
+body.nes .dl-btn,
+body.nes .scan-arrow,
+body.nes .lock-btn {
     background: var(--fc-red) !important;
     color: var(--fc-cream) !important;
 }
-body.famicom .dl-btn:hover,
-body.famicom .lock-btn:hover {
+body.nes .dl-btn:hover,
+body.nes .lock-btn:hover {
     background: var(--fc-red-dark) !important;
     color: var(--fc-cream) !important;
 }
 
 /* strip theme-toggle + back shape */
-body.famicom .theme-toggle,
-body.famicom .back,
-body.famicom .lock-out {
+body.nes .theme-toggle,
+body.nes .back,
+body.nes .lock-out {
     padding: 8px 14px !important;
     font-size: 9px !important;
     text-transform: uppercase !important;
@@ -319,7 +379,7 @@ body.famicom .lock-out {
 }
 
 /* SCAN LINES — full viewport overlay */
-body.famicom::after {
+body.nes::after {
     content: "" !important;
     position: fixed !important;
     inset: 0 !important;
@@ -340,20 +400,20 @@ body.famicom::after {
 }
 
 /* CRT vignette */
-body.famicom > *:not(.famicom-ui) {
+body.nes > *:not(.nes-ui) {
     /* leave content unaffected; vignette is a separate fixed layer */
 }
 
 /* kill emoji-heavy ambient animations that look off in 8-bit */
-body.famicom .leaf,
-body.famicom .hero-icon,
-body.famicom .link-card-icon {
+body.nes .leaf,
+body.nes .hero-icon,
+body.nes .link-card-icon {
     animation: none !important;
 }
-body.famicom .leaf { opacity: 0 !important; }
+body.nes .leaf { opacity: 0 !important; }
 
-/* FAMICOM UI CHROME — injected by konami.js */
-.famicom-flash {
+/* NES UI CHROME — injected by konami.js */
+.nes-flash {
     position: fixed;
     inset: 0;
     background: #CE1126;
@@ -361,7 +421,7 @@ body.famicom .leaf { opacity: 0 !important; }
     pointer-events: none;
     opacity: 0;
 }
-.famicom-flash.on {
+.nes-flash.on {
     animation: fc-flash 340ms ease-out forwards;
 }
 @keyframes fc-flash {
@@ -370,7 +430,7 @@ body.famicom .leaf { opacity: 0 !important; }
     100% { opacity: 0; }
 }
 
-.famicom-ribbon {
+.nes-ribbon {
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -386,9 +446,9 @@ body.famicom .leaf { opacity: 0 !important; }
     box-shadow: 4px 4px 0 #CE1126;
     user-select: none;
 }
-.famicom-ribbon b { color: #FCC048; font-weight: 400; }
+.nes-ribbon b { color: #FCC048; font-weight: 400; }
 
-.famicom-sound {
+.nes-sound {
     position: fixed;
     bottom: 10px;
     left: 10px;
@@ -403,5 +463,28 @@ body.famicom .leaf { opacity: 0 !important; }
     box-shadow: 3px 3px 0 #0D0D0D;
     user-select: none;
 }
-.famicom-sound:hover { background: #FCC048; }
-.famicom-sound:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #0D0D0D; }
+.nes-sound:hover { background: #FCC048; }
+.nes-sound:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #0D0D0D; }
+
+.nes-palette {
+    position: fixed;
+    bottom: 50px;
+    left: 10px;
+    z-index: 9999;
+    background: #F2E9D8;
+    color: #0D0D0D;
+    border: 3px solid #0D0D0D;
+    padding: 6px 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #0D0D0D;
+    user-select: none;
+}
+.nes-palette:hover { background: #FCC048; }
+.nes-palette:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #0D0D0D; }
+
+/* In Famicom palette, retint the chrome buttons + ribbon shadow to match */
+body.nes.famicom .nes-ribbon { box-shadow: 4px 4px 0 #7C1A1A; }
+body.nes.famicom .nes-ribbon b { color: #E8B340; }
