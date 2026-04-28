@@ -897,6 +897,131 @@
         }
         .lock-err.show { display: block; }
 
+        /* ============ DOWNLOAD CONFIRM MODAL ============ */
+        .dl-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(27, 13, 38, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .dl-overlay.open { display: flex; }
+        .dl-card {
+            background: var(--card);
+            border: 2.5px solid var(--pink-deep);
+            border-radius: 20px;
+            padding: 28px 26px 22px;
+            max-width: 460px;
+            width: 100%;
+            box-shadow:
+                inset 0 10px 0 rgba(255, 255, 255, 0.5),
+                4px 4px 0 rgba(184, 36, 106, 0.25);
+            position: relative;
+            transform: rotate(-1deg);
+        }
+        :root[data-theme="dark"] .dl-card {
+            box-shadow:
+                inset 0 10px 0 rgba(255, 255, 255, 0.06),
+                4px 4px 0 rgba(184, 36, 106, 0.3);
+        }
+        .dl-card h3 {
+            font-family: var(--plastic);
+            font-weight: 400;
+            font-size: 36px;
+            color: var(--pink);
+            line-height: 1;
+            margin-bottom: 4px;
+            text-shadow: 2px 2px 0 var(--pink-deep);
+        }
+        .dl-card-sub {
+            font-family: var(--script);
+            font-size: 18px;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+        .dl-confirm-list {
+            list-style: none;
+            margin: 0 0 12px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .dl-confirm-list li {
+            font-family: var(--sans);
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--ink);
+            padding-left: 22px;
+            position: relative;
+        }
+        .dl-confirm-list li::before {
+            content: "♡";
+            position: absolute;
+            left: 2px;
+            top: 0;
+            color: var(--pink);
+            font-size: 13px;
+        }
+        .dl-confirm-list li strong {
+            color: var(--pink-deep);
+            font-weight: 700;
+        }
+        :root[data-theme="dark"] .dl-confirm-list li { color: var(--text); }
+        :root[data-theme="dark"] .dl-confirm-list li strong { color: var(--pink); }
+        .dl-fork {
+            font-family: var(--script);
+            font-size: 16px;
+            color: var(--muted);
+            margin: 12px 0 6px;
+            line-height: 1.4;
+            border-top: 1.5px dashed var(--pink-deep);
+            padding-top: 12px;
+        }
+        .dl-fork a {
+            color: var(--pink);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .dl-fork a:hover { color: var(--pink-deep); }
+        .dl-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            align-items: center;
+        }
+        .dl-confirm-btn {
+            padding: 12px 20px;
+            background: var(--pink);
+            color: #fff;
+            font-family: var(--script);
+            font-size: 22px;
+            font-weight: 700;
+            border: 2.5px solid var(--pink-deep);
+            border-radius: 14px;
+            cursor: pointer;
+            line-height: 1;
+            box-shadow:
+                inset 0 8px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -3px 0 rgba(0, 0, 0, 0.15),
+                2px 2px 0 rgba(42, 22, 56, 0.2);
+        }
+        .dl-confirm-btn:active { transform: translate(1px, 1px); }
+        .dl-cancel-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: var(--script);
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
         /* ============ DEV VIEW (hidden by default) ============ */
         #dev-view { display: none; }
         body.dev-mode > .container,
@@ -1254,7 +1379,7 @@
                 <div class="dl-hint" id="dl-hint">tick the boxes above to unlock.</div>
             </div>
             <div class="dl-right">
-                <a href="#" class="dl-btn" id="dl-btn" aria-disabled="true">
+                <a href="https://github.com/bleelblep/disclaimer/releases/download/slab-test/app-release.apk" class="dl-btn" id="dl-btn" aria-disabled="true" download="slab.apk">
                     <span>download slab</span>
                     <span class="arr">↓</span>
                 </a>
@@ -1318,6 +1443,24 @@ ms/DQra57F91jtIpH3jE5UdcW/Po3sug7tGjJ6fI3+D1UmFFpmDMqzMudigMjdfV4TJPgdg36O+5MTN0
             <button type="button" class="lock-close" id="lock-close">nevermind</button>
         </div>
         <div class="lock-err" id="lock-err">nope · try again</div>
+    </div>
+</div>
+
+<!-- download confirm modal — opens after the three checkboxes + click -->
+<div class="dl-overlay" id="dl-overlay" role="dialog" aria-modal="true" aria-labelledby="dl-confirm-title">
+    <div class="dl-card">
+        <h3 id="dl-confirm-title">last call ♡</h3>
+        <div class="dl-card-sub">read me twice, then go.</div>
+        <ul class="dl-confirm-list">
+            <li><strong>as is.</strong> what installs is what you get — no roadmap, no patches on the way.</li>
+            <li><strong>no support.</strong> bug reports, feature pings, "it crashed" — they go in the void. don't take it personally.</li>
+            <li><strong>good luck.</strong> seriously, you'll be fine. probably.</li>
+        </ul>
+        <p class="dl-fork">slab is a fork of <a href="https://github.com/Imtiaz-Official/Smart-Edge" target="_blank" rel="noopener">smart-edge</a> · MIT-licensed by Imtiaz-Official. credit lives upstream ♡</p>
+        <div class="dl-row">
+            <button type="button" class="dl-confirm-btn" id="dl-confirm">i'm in ↓</button>
+            <button type="button" class="dl-cancel-btn" id="dl-cancel">nevermind</button>
+        </div>
     </div>
 </div>
 
@@ -1451,15 +1594,35 @@ ms/DQra57F91jtIpH3jE5UdcW/Po3sug7tGjJ6fI3+D1UmFFpmDMqzMudigMjdfV4TJPgdg36O+5MTN0
     checks.forEach(c => c.addEventListener('change', update));
     update();
 
+    const dlOverlay = document.getElementById('dl-overlay');
+    const dlConfirm = document.getElementById('dl-confirm');
+    const dlCancel = document.getElementById('dl-cancel');
+
+    function openDlConfirm() { dlOverlay.classList.add('open'); }
+    function closeDlConfirm() { dlOverlay.classList.remove('open'); }
+
     btn.addEventListener('click', (e) => {
-        if (btn.getAttribute('aria-disabled') === 'true') {
-            e.preventDefault();
+        e.preventDefault();
+        if (btn.getAttribute('aria-disabled') === 'true') return;
+        openDlConfirm();
+    });
+
+    dlConfirm.addEventListener('click', () => {
+        closeDlConfirm();
+        const href = btn.getAttribute('href');
+        if (!href || href === '#') {
+            alert('apk link not set yet ~ update the href in slab/index.html');
             return;
         }
-        if (btn.getAttribute('href') === '#') {
-            e.preventDefault();
-            alert('apk link not set yet ~ update the href in slab/index.html');
-        }
+        window.location.href = href;
+    });
+
+    dlCancel.addEventListener('click', closeDlConfirm);
+    dlOverlay.addEventListener('click', (e) => {
+        if (e.target === dlOverlay) closeDlConfirm();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && dlOverlay.classList.contains('open')) closeDlConfirm();
     });
 </script>
 
