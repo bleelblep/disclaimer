@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>notes · bleelblep</title>
+    <meta name="description" content="bleelblep — private notes, thoughts on apps, and a quiet blog.">
+    <meta name="robots" content="noindex, nofollow">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/cute.css">
+    <style>
+        :root {
+            --bg: #FDF4E8;
+            --card: #FFFFFF;
+            --text: #4A2C2A;
+            --text-dim: #A06868;
+            --accent: #E85A6B;
+            --border: #E0C8B8;
+            --kaomoji: #F4B6BA;
+            --pastel-pink: #F4B6BA;
+            --pastel-peach: #F5D199;
+            --pastel-lavender: #C8B8E8;
+
+            --shadow-sm: 0 2px 12px rgba(74, 44, 42, 0.06);
+            --shadow-md: 0 6px 24px rgba(74, 44, 42, 0.10);
+            --shadow-lg: 0 12px 40px rgba(74, 44, 42, 0.14);
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #B84A4A;
+            --card: #FDF4E8;
+            --text: #6A2A2A;
+            --text-dim: #A06868;
+            --accent: #E85A6B;
+            --border: rgba(253, 244, 232, 0.4);
+            --kaomoji: #F4B6BA;
+
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.18);
+            --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.24);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.32);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+        }
+        [data-theme="dark"] body { color: #FDF4E8; }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        /* NAV */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: color-mix(in srgb, var(--bg) 88%, transparent);
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            gap: 16px;
+        }
+        .brand {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        [data-theme="dark"] .brand { color: #FDF4E8; }
+        .brand-dot {
+            width: 10px; height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2.4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.7); opacity: 0.6; }
+        }
+        @media (prefers-reduced-motion: reduce) { .brand-dot { animation: none; } }
+
+        .nav-right { display: flex; align-items: center; gap: 18px; }
+        .nav-links { display: flex; gap: 24px; }
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: color 0.15s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+        [data-theme="dark"] .nav-links a { color: rgba(253, 244, 232, 0.75); }
+        [data-theme="dark"] .nav-links a:hover, [data-theme="dark"] .nav-links a.active { color: #FDF4E8; }
+
+        .theme-toggle {
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--card);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            font-size: 0.95rem;
+            line-height: 1;
+            padding: 0;
+            font-family: inherit;
+            transition: color 0.15s, border-color 0.15s, transform 0.15s;
+        }
+        .theme-toggle:hover, .theme-toggle:focus-visible {
+            color: var(--accent);
+            border-color: var(--accent);
+            outline: none;
+            transform: translateY(-1px);
+        }
+        .theme-toggle [data-theme-icon] { display: inline-block; transition: transform 0.3s ease; }
+        .theme-toggle:hover [data-theme-icon] { transform: rotate(20deg); }
+        @media (prefers-reduced-motion: reduce) {
+            .theme-toggle, .theme-toggle [data-theme-icon] { transition: none; }
+            .theme-toggle:hover [data-theme-icon] { transform: none; }
+        }
+
+        /* PAGE HEAD */
+        .page-head { padding: 72px 0 28px; }
+        .eyebrow {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        [data-theme="dark"] .eyebrow { color: rgba(253, 244, 232, 0.75); }
+        .page-head h1 {
+            font-size: clamp(2.4rem, 6vw, 3.6rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 14px;
+            line-height: 1.05;
+        }
+        .page-head h1 em { font-style: normal; color: var(--accent); }
+        [data-theme="dark"] .page-head h1 { color: #FDF4E8; }
+        .page-head p {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            max-width: 580px;
+            margin: 0;
+        }
+        [data-theme="dark"] .page-head p { color: rgba(253, 244, 232, 0.8); }
+
+        /* LOCK CARD */
+        .lock-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: var(--shadow-sm);
+            margin: 24px 0 48px;
+            position: relative;
+        }
+        .lock-card::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            right: 32px;
+            width: 22px;
+            height: 22px;
+            background: var(--pastel-pink);
+            border-radius: 50%;
+            box-shadow: -28px 4px 0 var(--pastel-peach), -56px -2px 0 var(--pastel-lavender);
+        }
+        .lock-kaomoji {
+            font-size: 1.4rem;
+            color: var(--kaomoji);
+            margin-bottom: 12px;
+        }
+        .lock-card h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 8px;
+            letter-spacing: -0.01em;
+        }
+        [data-theme="dark"] .lock-card h2 { color: var(--text); }
+        .lock-card p {
+            color: var(--text-dim);
+            font-size: 0.98rem;
+            margin: 0 0 18px;
+            line-height: 1.6;
+        }
+        .lock-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .lock-input {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 0.98rem;
+            font-weight: 500;
+            letter-spacing: 0.16em;
+            background: var(--bg);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        [data-theme="dark"] .lock-input {
+            background: rgba(253, 244, 232, 0.08);
+            color: var(--text);
+            border-color: var(--border);
+        }
+        .lock-input:focus { border-color: var(--accent); }
+        .lock-btn {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 12px 22px;
+            background: var(--accent);
+            color: #FFFFFF;
+            font-family: inherit;
+            font-size: 0.96rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 14px rgba(232, 90, 107, 0.25);
+        }
+        .lock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(232, 90, 107, 0.32); }
+        .lock-btn:active { transform: translateY(0); }
+        .lock-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 14px rgba(232, 90, 107, 0.18);
+        }
+        .lock-err {
+            display: none;
+            margin-top: 14px;
+            font-size: 0.95rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .lock-err.show { display: block; }
+        .lock-status {
+            display: none;
+            margin-top: 14px;
+            font-size: 0.92rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+        .lock-status.show { display: block; }
+
+        /* NOTES VIEW */
+        #notes-view { display: none; }
+        body.unlocked .lock-card { display: none; }
+        body.unlocked #notes-view { display: block; }
+
+        .lock-out {
+            display: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            background: transparent;
+            border: 1.5px dashed var(--border);
+            border-radius: 999px;
+            padding: 6px 14px;
+            cursor: pointer;
+            margin-left: 16px;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .lock-out:hover { color: var(--accent); border-color: var(--accent); }
+        body.unlocked .lock-out { display: inline-block; }
+
+        /* POSTS */
+        .post {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 32px 36px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 22px;
+        }
+        .post-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1.5px dashed var(--border);
+        }
+        .post-date {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-feature-settings: "tnum";
+        }
+        .post-tag {
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: var(--pastel-pink);
+            color: #6A2A2A;
+        }
+        .post-tag.build { background: var(--pastel-peach); }
+        .post-tag.ramble { background: var(--pastel-lavender); }
+        .post-tag.thought { background: var(--pastel-pink); }
+        .post-tag.log { background: #B8C8A8; }
+
+        .post h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 6px 0 0;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            flex-basis: 100%;
+        }
+        [data-theme="dark"] .post h2 { color: var(--text); }
+
+        .post-body p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0 0 14px;
+        }
+        .post-body p:last-child { margin-bottom: 0; }
+        .post-body strong { color: var(--text); font-weight: 700; }
+        .post-body em { font-style: italic; color: var(--accent); }
+        .post-body a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1.5px solid color-mix(in srgb, var(--accent) 35%, transparent);
+            transition: border-color 0.15s;
+        }
+        .post-body a:hover { border-bottom-color: var(--accent); }
+        .post-body code {
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+            font-size: 0.88rem;
+            background: var(--bg);
+            color: var(--text);
+            padding: 1px 8px;
+            border-radius: 6px;
+        }
+        [data-theme="dark"] .post-body code { background: rgba(253, 244, 232, 0.12); color: var(--text); }
+        .post-body blockquote {
+            border-left: 3px solid var(--accent);
+            margin: 14px 0;
+            padding: 4px 0 4px 16px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        .post-body ul {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 14px;
+        }
+        .post-body ul li {
+            position: relative;
+            padding-left: 22px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            font-size: 0.98rem;
+            line-height: 1.55;
+        }
+        .post-body ul li::before {
+            content: "♡";
+            position: absolute;
+            left: 0;
+            color: var(--kaomoji);
+        }
+        .post-foot {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1.5px dashed var(--border);
+            font-size: 0.86rem;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .notes-intro {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 26px 32px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 22px;
+        }
+        .notes-intro p {
+            margin: 0;
+            color: var(--text-dim);
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+        .notes-intro p strong { color: var(--text); font-weight: 700; }
+
+        .post-error {
+            background: var(--card);
+            border: 1.5px dashed var(--accent);
+            border-radius: 18px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            color: var(--accent);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .footer {
+            padding: 40px 0 64px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .footer-kaomoji {
+            color: var(--kaomoji);
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        @media (max-width: 680px) {
+            .container { padding: 0 20px; }
+            .nav-links { gap: 16px; }
+            .nav-links a { font-size: 0.9rem; }
+            .nav-right { gap: 14px; }
+            .page-head { padding: 48px 0 20px; }
+            .lock-card, .post, .notes-intro { padding: 24px; }
+            .post { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="container nav-inner">
+        <a href="../" class="brand"><span class="brand-dot"></span>bleelblep</a>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="../projects/">projects</a>
+                <a href="../about/">about</a>
+                <a href="./" class="active">notes</a>
+            </div>
+            <button type="button" class="lock-out" id="lock-out">lock ♡</button>
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+                <span data-theme-icon>☾</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<header class="page-head">
+    <div class="container">
+        <div class="eyebrow">(｡•ᴗ•｡) thoughts &amp; quiet rambles</div>
+        <h1>notes <em>&amp; rambles</em></h1>
+        <p>thoughts on the apps, build logs, and the occasional unrelated stray thought. kept private — not because it's anything precious, just because not everything needs an audience.</p>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="lock-card" id="lock-card">
+        <div class="lock-kaomoji">(｡•́︿•̀｡)</div>
+        <h2>password, please ♡</h2>
+        <p>this drawer is locked. if you've got the key, the words are yours; otherwise, this is just a wall.</p>
+        <div class="lock-form">
+            <input type="password" class="lock-input" id="lock-input" autocomplete="off" spellcheck="false" placeholder="••••••" aria-label="password">
+            <button type="button" class="lock-btn" id="lock-submit">unlock</button>
+        </div>
+        <div class="lock-status" id="lock-status">opening the drawer…</div>
+        <div class="lock-err" id="lock-err">nope · try again</div>
+    </div>
+
+    <div id="notes-view"></div>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-kaomoji">⸜(｡˃ ᵕ ˂ )⸝</div>
+        <div>made with care · © bleelblep</div>
+    </div>
+</footer>
+
+<script>
+    // ── NOTES UNLOCK · AES-GCM encrypted ─────────────────────────
+    // All notes content lives as separate AES-GCM ciphertext files:
+    //   data/index.ct       → manifest [{slug, date, tag, title}]
+    //   data/p/<slug>.ct    → one per post (HTML body)
+    // Each file uses the same password but a unique salt + iv.
+    // PBKDF2(password, salt, 200k, SHA-256) → 256-bit AES-GCM key.
+    const PBKDF2_ITER = 200000;
+    const MANIFEST_URL = './data/index.ct';
+    const POST_URL = (slug) => `./data/p/${slug}.ct`;
+
+    const lockCard = document.getElementById('lock-card');
+    const lockInput = document.getElementById('lock-input');
+    const lockSubmit = document.getElementById('lock-submit');
+    const lockErr = document.getElementById('lock-err');
+    const lockStatus = document.getElementById('lock-status');
+    const notesView = document.getElementById('notes-view');
+    const lockOut = document.getElementById('lock-out');
+
+    function b64ToBytes(b64) {
+        const bin = atob(b64.trim());
+        const out = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+        return out;
+    }
+
+    async function deriveKey(password, salt) {
+        const material = await crypto.subtle.importKey(
+            'raw', new TextEncoder().encode(password),
+            { name: 'PBKDF2' }, false, ['deriveKey']
+        );
+        return crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt, iterations: PBKDF2_ITER, hash: 'SHA-256' },
+            material,
+            { name: 'AES-GCM', length: 256 },
+            false, ['decrypt']
+        );
+    }
+
+    async function fetchAndDecrypt(url, password) {
+        const res = await fetch(url, { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`fetch ${url} failed (${res.status})`);
+        const text = (await res.text()).trim();
+        const bytes = b64ToBytes(text);
+        const salt = bytes.slice(0, 16);
+        const iv = bytes.slice(16, 28);
+        const ct = bytes.slice(28);
+        const key = await deriveKey(password, salt);
+        const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+        return new TextDecoder().decode(pt);
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[c]);
+    }
+
+    function renderPost(meta, bodyHtml) {
+        const tag = (meta.tag || 'thought').toLowerCase();
+        const article = document.createElement('article');
+        article.className = 'post';
+        article.innerHTML = `
+            <div class="post-head">
+                <span class="post-date">${escapeHtml(meta.date || '')}</span>
+                <span class="post-tag ${escapeHtml(tag)}">${escapeHtml(tag)}</span>
+                <h2>${escapeHtml(meta.title || '(untitled)')}</h2>
+            </div>
+            <div class="post-body"></div>
+        `;
+        article.querySelector('.post-body').innerHTML = bodyHtml;
+        return article;
+    }
+
+    function renderError(msg) {
+        const div = document.createElement('div');
+        div.className = 'post-error';
+        div.textContent = msg;
+        return div;
+    }
+
+    function setStatus(msg) {
+        if (msg) {
+            lockStatus.textContent = msg;
+            lockStatus.classList.add('show');
+        } else {
+            lockStatus.classList.remove('show');
+        }
+    }
+
+    let unlocked = false;
+    async function tryUnlock() {
+        const password = lockInput.value;
+        if (!password || unlocked) return;
+
+        lockErr.classList.remove('show');
+        lockSubmit.disabled = true;
+        setStatus('checking the password…');
+
+        let manifestText;
+        try {
+            manifestText = await fetchAndDecrypt(MANIFEST_URL, password);
+        } catch (e) {
+            lockSubmit.disabled = false;
+            setStatus('');
+            const isFetchErr = String(e.message || '').startsWith('fetch ');
+            lockErr.textContent = isFetchErr
+                ? 'no notes published yet · run _dev-tool.html'
+                : 'nope · try again';
+            lockErr.classList.add('show');
+            lockInput.select();
+            return;
+        }
+
+        let manifest;
+        try {
+            manifest = JSON.parse(manifestText);
+            if (!Array.isArray(manifest)) throw new Error('manifest is not an array');
+        } catch (e) {
+            lockSubmit.disabled = false;
+            setStatus('');
+            lockErr.textContent = 'manifest looks broken · re-build via _dev-tool.html';
+            lockErr.classList.add('show');
+            return;
+        }
+
+        // Sort newest first by date string (ISO-friendly: yyyy-mm-dd sorts lexically)
+        manifest.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+
+        // Render an intro card if any post is the special "intro" slug
+        notesView.innerHTML = '';
+        const introCard = document.createElement('div');
+        introCard.className = 'notes-intro';
+        introCard.innerHTML = `
+            <p><strong>welcome back.</strong> ${manifest.length} ${manifest.length === 1 ? 'entry' : 'entries'} in the drawer.</p>
+        `;
+        notesView.appendChild(introCard);
+
+        setStatus(`opening ${manifest.length} ${manifest.length === 1 ? 'entry' : 'entries'}…`);
+
+        // Fetch + decrypt all posts in parallel; render in manifest order
+        const results = await Promise.all(manifest.map(async (meta) => {
+            try {
+                const html = await fetchAndDecrypt(POST_URL(meta.slug), password);
+                return { meta, html, ok: true };
+            } catch (e) {
+                return { meta, error: e.message || 'failed to load', ok: false };
+            }
+        }));
+
+        for (const r of results) {
+            if (r.ok) {
+                notesView.appendChild(renderPost(r.meta, r.html));
+            } else {
+                notesView.appendChild(renderError(`couldn't load "${r.meta.title || r.meta.slug}" · ${r.error}`));
+            }
+        }
+
+        unlocked = true;
+        document.body.classList.add('unlocked');
+        setStatus('');
+        window.scrollTo(0, 0);
+    }
+
+    lockSubmit.addEventListener('click', tryUnlock);
+    lockInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+
+    lockOut.addEventListener('click', () => {
+        // Wipe the rendered content from memory
+        notesView.innerHTML = '';
+        unlocked = false;
+        document.body.classList.remove('unlocked');
+        lockInput.value = '';
+        lockErr.classList.remove('show');
+        setStatus('');
+        lockSubmit.disabled = false;
+        window.scrollTo(0, 0);
+    });
+</script>
+
+<script src="../assets/theme.js" defer></script>
+
+</body>
+</html>
