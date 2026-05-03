@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>glyphclocks — atomic standard time</title>
+    <meta name="description" content="A small set of pixel clock faces for the Nothing Phone (3) Glyph Matrix. Started inside glypnik, then outgrew the drawer.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        /* ── GLYPHCLOCKS: atomic age, sibling of glypnik ──
+           amber surfaces, brown ink, atomic red, retro teal. */
+        :root {
+            --bg: #F0A830;
+            --bg-cream: #F5ECD7;
+            --bg-cream-alt: #E8D4B0;
+            --brand: #3A1A08;
+            --brand-ink: #2A1205;
+            --accent: #C8821A;
+            --red: #C8372D;
+            --teal: #4A8FA8;
+            --muted: #7A4A10;
+            --border: #E8D0B0;
+            --rule: rgba(58, 26, 8, 0.18);
+            --rule-strong: rgba(58, 26, 8, 0.45);
+            --ink-on-amber: #3A1A08;
+            --ink-on-cream: #2A1205;
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #2A1A08;
+            --bg-cream: #4A3018;
+            --bg-cream-alt: #5A4028;
+            --brand: #1A0A00;
+            --brand-ink: #F0C870;
+            --accent: #E09830;
+            --red: #E05040;
+            --teal: #5AAAC8;
+            --muted: #A06820;
+            --border: #5A4028;
+            --rule: rgba(240, 200, 112, 0.18);
+            --rule-strong: rgba(240, 200, 112, 0.5);
+            --ink-on-amber: #F0C870;
+            --ink-on-cream: #F0C870;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--ink-on-amber);
+            font-weight: 400;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Atomic-age grain overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background-image: radial-gradient(circle at 1px 1px, rgba(58, 26, 8, 0.12) 1px, transparent 0);
+            background-size: 4px 4px;
+            opacity: 0.5;
+            mix-blend-mode: multiply;
+        }
+        [data-theme="dark"] body::before {
+            background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.35) 1px, transparent 0);
+            mix-blend-mode: normal;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 0 28px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Floating back + theme */
+        .back, .theme-toggle {
+            position: fixed;
+            top: 22px;
+            z-index: 20;
+            background: var(--brand);
+            color: var(--bg);
+            border: 2px solid var(--brand);
+            border-radius: 999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-decoration: none;
+            padding: 9px 18px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 4px 4px 0 var(--rule-strong);
+            cursor: pointer;
+        }
+        .back { left: 22px; }
+        .theme-toggle {
+            right: 22px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: inline-grid;
+            place-items: center;
+            font-size: 1rem;
+        }
+        [data-theme="dark"] .back,
+        [data-theme="dark"] .theme-toggle {
+            background: var(--brand-ink);
+            color: var(--brand);
+            border-color: var(--brand-ink);
+        }
+        .back:hover, .theme-toggle:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--rule-strong);
+        }
+        .theme-toggle [data-theme-icon] { display: inline-block; }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            padding: 120px 0 80px;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .hero-orbit {
+            position: absolute;
+            top: 80px;
+            right: -120px;
+            width: 520px;
+            height: 520px;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        .hero-orbit circle, .hero-orbit ellipse, .hero-orbit line {
+            fill: none;
+            stroke: var(--brand);
+            stroke-width: 2;
+        }
+        .hero-orbit .dot { fill: var(--red); stroke: none; }
+        .hero-orbit .dot-teal { fill: var(--teal); stroke: none; }
+        .hero-orbit .dot-accent { fill: var(--accent); stroke: none; }
+        [data-theme="dark"] .hero-orbit circle,
+        [data-theme="dark"] .hero-orbit ellipse,
+        [data-theme="dark"] .hero-orbit line { stroke: var(--brand-ink); }
+
+        @keyframes orbit-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .hero-orbit .spin-1 {
+            animation: orbit-spin 60s linear infinite;
+            transform-origin: 260px 260px;
+        }
+        .hero-orbit .spin-2 {
+            animation: orbit-spin 38s linear infinite reverse;
+            transform-origin: 260px 260px;
+        }
+        .hero-orbit .spin-3 {
+            animation: orbit-spin 12s linear infinite;
+            transform-origin: 260px 260px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-orbit .spin-1, .hero-orbit .spin-2, .hero-orbit .spin-3 { animation: none; }
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--brand);
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 999px;
+            padding: 6px 14px 5px;
+            margin-bottom: 28px;
+        }
+        [data-theme="dark"] .eyebrow { color: var(--brand-ink); background: transparent; border-color: var(--brand-ink); }
+
+        .eyebrow-star {
+            color: var(--red);
+            font-size: 1rem;
+            line-height: 0;
+        }
+
+        .hero h1 {
+            font-family: 'Rubik Mono One', 'Space Grotesk', sans-serif;
+            font-size: clamp(3.2rem, 9vw, 6.2rem);
+            font-weight: 400;
+            line-height: 0.88;
+            letter-spacing: -0.01em;
+            color: var(--brand);
+            margin: 0 0 24px;
+            text-transform: lowercase;
+        }
+        [data-theme="dark"] .hero h1 { color: var(--brand-ink); }
+
+        .hero-tagline {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+            color: var(--brand);
+            max-width: 560px;
+            margin: 0 0 32px;
+            line-height: 1.35;
+        }
+        [data-theme="dark"] .hero-tagline { color: var(--brand-ink); }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 7px 14px;
+            border-radius: 999px;
+            border: 1.5px solid var(--brand);
+            background: transparent;
+            color: var(--brand);
+        }
+        [data-theme="dark"] .chip { color: var(--brand-ink); border-color: var(--brand-ink); }
+
+        .chip.solid {
+            background: var(--red);
+            color: var(--bg-cream);
+            border-color: var(--red);
+        }
+        .chip.teal {
+            background: var(--teal);
+            color: var(--bg-cream);
+            border-color: var(--teal);
+        }
+
+        /* ── SECTIONS ── */
+        .section { padding: 56px 0; position: relative; }
+
+        .section-rule {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+        .section-rule-line {
+            flex: 1;
+            height: 2px;
+            background: var(--brand);
+        }
+        [data-theme="dark"] .section-rule-line { background: var(--brand-ink); }
+
+        .section-rule-num {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.95rem;
+            color: var(--brand);
+            letter-spacing: 0.1em;
+        }
+        [data-theme="dark"] .section-rule-num { color: var(--brand-ink); }
+
+        .section-rule-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--brand);
+        }
+        [data-theme="dark"] .section-rule-title { color: var(--brand-ink); }
+
+        .section h2 {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-weight: 400;
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1;
+            letter-spacing: -0.01em;
+            color: var(--brand);
+            margin: 0 0 18px;
+            text-transform: lowercase;
+        }
+        [data-theme="dark"] .section h2 { color: var(--brand-ink); }
+
+        .section-lede {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 1.15rem;
+            color: var(--brand);
+            max-width: 640px;
+            margin: 0 0 36px;
+            line-height: 1.45;
+        }
+        [data-theme="dark"] .section-lede { color: var(--brand-ink); }
+
+        .section-body {
+            max-width: 720px;
+        }
+
+        .section-body p {
+            font-size: 1.02rem;
+            color: var(--brand);
+            margin: 0 0 16px;
+            line-height: 1.7;
+        }
+        [data-theme="dark"] .section-body p { color: var(--brand-ink); }
+
+        .section-body p:last-child { margin-bottom: 0; }
+
+        .section-body a {
+            color: var(--red);
+            text-decoration: none;
+            border-bottom: 2px solid var(--red);
+            font-weight: 600;
+        }
+
+        .section-body code {
+            font-family: 'Space Grotesk', monospace;
+            background: var(--bg-cream);
+            border: 1.5px solid var(--brand);
+            color: var(--brand);
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 0.92em;
+            font-weight: 600;
+        }
+        [data-theme="dark"] .section-body code {
+            background: var(--bg-cream-alt);
+            border-color: var(--brand-ink);
+            color: var(--brand-ink);
+        }
+
+        /* ── LINEAGE STRIP ── */
+        .lineage {
+            margin: 28px 0 0;
+            padding: 22px 26px;
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 16px;
+            box-shadow: 6px 6px 0 var(--rule-strong);
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            color: var(--brand);
+            text-transform: uppercase;
+        }
+        [data-theme="dark"] .lineage { border-color: var(--brand-ink); color: var(--brand-ink); }
+
+        .lineage .l-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .lineage .l-step {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .lineage .l-tag {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.68rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+        }
+
+        .lineage .l-arrow { color: var(--red); }
+
+        .lineage .l-note {
+            display: block;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1.5px dashed var(--rule);
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--brand);
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        [data-theme="dark"] .lineage .l-note { color: var(--brand-ink); }
+
+        /* ── DIAL · face roll-call with live previews ── */
+        .dial {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+        }
+
+        .dial li {
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 18px;
+            padding: 14px 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 4px 4px 0 var(--rule-strong);
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+        }
+        [data-theme="dark"] .dial li { border-color: var(--brand-ink); }
+
+        .dial li:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--rule-strong);
+        }
+
+        .dial face-tile {
+            width: 100%;
+            background: #000;
+            border-radius: 50%;
+            border: 1.5px solid var(--brand);
+        }
+        [data-theme="dark"] .dial face-tile { border-color: var(--brand-ink); }
+
+        .dial-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .dial .num {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.72rem;
+            color: var(--red);
+            letter-spacing: 0.12em;
+        }
+
+        .dial .name {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.92rem;
+            color: var(--brand);
+            text-transform: lowercase;
+            line-height: 1;
+        }
+        [data-theme="dark"] .dial .name { color: var(--brand-ink); }
+
+        .dial .kind {
+            margin-left: auto;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.62rem;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+        [data-theme="dark"] .dial .kind { color: var(--accent); }
+
+        .dial .live {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.58rem;
+            font-weight: 700;
+            color: var(--bg-cream);
+            background: var(--red);
+            padding: 2px 7px 1px;
+            border-radius: 999px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        /* ── CALLSIGN-STYLE GESTURE LIST ── */
+        .gestures {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .gestures li {
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 16px;
+            padding: 22px 24px;
+            box-shadow: 5px 5px 0 var(--rule-strong);
+        }
+        [data-theme="dark"] .gestures li { border-color: var(--brand-ink); }
+
+        .gestures .gkey {
+            display: block;
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.74rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 10px;
+        }
+
+        .gestures .gval {
+            display: block;
+            color: var(--brand);
+            line-height: 1.6;
+            font-size: 0.98rem;
+        }
+        [data-theme="dark"] .gestures .gval { color: var(--brand-ink); }
+
+        /* ── SPEC TABLE ── */
+        .spec {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 16px;
+            box-shadow: 6px 6px 0 var(--rule-strong);
+            overflow: hidden;
+        }
+        [data-theme="dark"] .spec { border-color: var(--brand-ink); }
+
+        .spec li {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 16px;
+            padding: 16px 22px;
+            border-bottom: 1.5px dashed var(--rule);
+            align-items: baseline;
+        }
+
+        .spec li:last-child { border-bottom: 0; }
+
+        .spec .skey {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.74rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .spec .sval {
+            color: var(--brand);
+            font-size: 0.98rem;
+            line-height: 1.55;
+        }
+        [data-theme="dark"] .spec .sval { color: var(--brand-ink); }
+
+        .spec .sval strong {
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        /* ── CAVEATS ── */
+        .caveats {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .caveats li {
+            position: relative;
+            padding: 14px 0 14px 28px;
+            border-bottom: 1.5px dashed var(--rule);
+            color: var(--brand);
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+        [data-theme="dark"] .caveats li { color: var(--brand-ink); }
+
+        .caveats li:last-child { border-bottom: 0; }
+
+        .caveats li::before {
+            content: "✦";
+            position: absolute;
+            left: 0;
+            top: 14px;
+            color: var(--red);
+            font-size: 0.9rem;
+        }
+
+        /* ── SCAN CARDS ── */
+        .scan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 0 0 16px;
+        }
+
+        .scan {
+            display: grid;
+            grid-template-columns: 56px 1fr auto;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 16px;
+            box-shadow: 5px 5px 0 var(--rule-strong);
+            color: var(--ink-on-cream);
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        [data-theme="dark"] .scan { border-color: var(--brand-ink); color: var(--brand-ink); }
+
+        .scan:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--rule-strong); }
+        .scan:active { transform: translate(1px, 1px); box-shadow: 3px 3px 0 var(--rule-strong); }
+
+        .scan-icon {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 2px solid var(--brand);
+            display: grid; place-items: center;
+            color: var(--brand);
+        }
+        [data-theme="dark"] .scan-icon { background: var(--bg-cream-alt); border-color: var(--brand-ink); color: var(--brand-ink); }
+
+        .scan-icon svg { width: 28px; height: 28px; }
+
+        .scan-label {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 1rem;
+            color: var(--brand);
+            text-transform: lowercase;
+            letter-spacing: -0.01em;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        [data-theme="dark"] .scan-label { color: var(--brand-ink); }
+
+        .scan-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .scan-arrow {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 1.4rem;
+            color: var(--red);
+            transition: transform 0.2s;
+        }
+        .scan:hover .scan-arrow { transform: translateX(4px); }
+
+        .scan-tip {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--muted);
+            margin: 12px 0 0;
+        }
+        [data-theme="dark"] .scan-tip { color: #C09060; }
+
+        /* ── CHECK LIST ── */
+        .check-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .check {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px 22px;
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 16px;
+            box-shadow: 4px 4px 0 var(--rule-strong);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            color: var(--brand);
+            font-size: 0.98rem;
+            line-height: 1.55;
+        }
+        [data-theme="dark"] .check { border-color: var(--brand-ink); color: var(--brand-ink); }
+        .check:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--rule-strong); }
+
+        .check input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px; height: 22px;
+            margin: 1px 0 0;
+            flex-shrink: 0;
+            border: 2px solid var(--brand);
+            border-radius: 4px;
+            background: var(--bg);
+            cursor: pointer;
+            display: grid; place-items: center;
+            position: relative;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        [data-theme="dark"] .check input[type="checkbox"] { border-color: var(--brand-ink); background: var(--bg-cream-alt); }
+
+        .check input[type="checkbox"]:checked {
+            background: var(--red);
+            border-color: var(--red);
+        }
+        .check input[type="checkbox"]:checked::after {
+            content: "";
+            display: block;
+            width: 11px; height: 6px;
+            border-left: 2.5px solid var(--bg-cream);
+            border-bottom: 2.5px solid var(--bg-cream);
+            transform: rotate(-45deg) translate(1px, -2px);
+        }
+
+        .check span strong { color: var(--red); font-weight: 700; }
+
+        /* ── DOWNLOAD BLOCK ──
+           Section rule + heading sit on the normal page background (matching
+           the other sections). The brown card holds only the meta + button
+           so the rule and title don't get inverted. */
+        .dl-card {
+            background: var(--brand);
+            border: 2px solid var(--brand);
+            border-radius: 24px;
+            padding: 36px 36px 32px;
+            color: var(--bg-cream);
+            position: relative;
+            overflow: hidden;
+            max-width: 720px;
+            box-shadow: 8px 8px 0 var(--rule-strong);
+            margin-top: 22px;
+        }
+        [data-theme="dark"] .dl-card { background: #1A0A00; border-color: var(--brand-ink); }
+
+        .dl-card::after {
+            content: "";
+            position: absolute;
+            top: 14px; right: 14px;
+            width: 90px; height: 90px;
+            background: radial-gradient(circle, var(--red) 0, var(--red) 30%, transparent 70%);
+            opacity: 0.35;
+            pointer-events: none;
+        }
+        .dl-card > * { position: relative; z-index: 1; }
+
+        @media (max-width: 600px) {
+            .dl-card { padding: 28px 24px; }
+        }
+
+        .download-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            color: var(--bg-cream);
+            opacity: 0.75;
+            text-transform: uppercase;
+            margin: 0 0 18px;
+        }
+        .download-meta .dot { color: var(--red); margin-right: 4px; }
+
+        .dl-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 24px;
+            align-items: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 600px) {
+            .dl-grid { grid-template-columns: 1fr; }
+        }
+
+        .dl-hint {
+            font-family: 'DM Serif Display', serif;
+            font-style: italic;
+            font-size: 1.05rem;
+            color: var(--bg-cream);
+            opacity: 0.7;
+            margin: 0;
+        }
+        .dl-hint.ok {
+            color: var(--red);
+            opacity: 1;
+            font-style: normal;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.86rem;
+        }
+
+        .dl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 28px;
+            background: var(--red);
+            color: var(--bg-cream);
+            border: 2px solid var(--bg-cream);
+            border-radius: 999px;
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 1rem;
+            text-transform: lowercase;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+            cursor: pointer;
+        }
+        .dl-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.35); }
+        .dl-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35); }
+        .dl-btn[aria-disabled="true"] {
+            opacity: 0.45;
+            cursor: not-allowed;
+            pointer-events: none;
+            background: var(--muted);
+            border-color: var(--muted);
+        }
+        .dl-btn .arr { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; }
+
+        /* ── SOURCE CARD ── */
+        .source-card {
+            background: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 24px;
+            padding: 36px 36px 32px;
+            box-shadow: 8px 8px 0 var(--rule-strong);
+            color: var(--ink-on-cream);
+            max-width: 720px;
+            position: relative;
+        }
+        [data-theme="dark"] .source-card { border-color: var(--brand-ink); }
+
+        .source-eyebrow {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin: 0 0 14px;
+        }
+
+        .source-title {
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-weight: 400;
+            color: var(--brand);
+            text-transform: lowercase;
+            letter-spacing: -0.01em;
+            line-height: 1.05;
+            margin: 0 0 14px;
+        }
+        [data-theme="dark"] .source-title { color: var(--brand-ink); }
+        .source-title em { color: var(--red); font-style: italic; }
+
+        .source-card p {
+            font-size: 1rem;
+            color: var(--brand);
+            margin: 0 0 14px;
+            line-height: 1.65;
+        }
+        [data-theme="dark"] .source-card p { color: var(--brand-ink); }
+        .source-card p:last-of-type { margin-bottom: 22px; }
+
+        .source-card strong { color: var(--red); font-weight: 700; }
+
+        .gh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 22px;
+            background: var(--brand);
+            color: var(--bg-cream);
+            border: 2px solid var(--brand);
+            border-radius: 999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.86rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            box-shadow: 4px 4px 0 var(--rule-strong);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        [data-theme="dark"] .gh-btn { background: var(--brand-ink); color: var(--brand); border-color: var(--brand-ink); }
+        .gh-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--rule-strong); }
+        .gh-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--rule-strong); }
+        .gh-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        .gh-btn .arr { font-size: 1rem; }
+
+        .source-meta {
+            margin-top: 16px;
+            font-family: 'Rubik Mono One', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            color: var(--muted);
+            text-transform: uppercase;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .source-meta .sep { color: var(--rule-strong); }
+
+        @media (max-width: 600px) {
+            .source-card { padding: 28px 24px; }
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            padding: 60px 0 80px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        [data-theme="dark"] .footer { color: #A06820; }
+
+        .footer-atom {
+            display: inline-block;
+            margin-bottom: 14px;
+            color: var(--red);
+        }
+
+        .footer-atom svg { width: 36px; height: 36px; }
+
+        @keyframes atom-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .footer-atom svg .ring { animation: atom-spin 24s linear infinite; transform-origin: 18px 18px; }
+        .footer-atom svg .ring-2 { animation: atom-spin 18s linear infinite reverse; transform-origin: 18px 18px; }
+        @media (prefers-reduced-motion: reduce) {
+            .footer-atom svg .ring, .footer-atom svg .ring-2 { animation: none; }
+        }
+
+        /* ── MOBILE ── */
+        @media (max-width: 680px) {
+            .container { padding: 0 20px; }
+            .hero { padding: 96px 0 48px; }
+            .hero-orbit { width: 340px; height: 340px; top: 40px; right: -140px; opacity: 0.55; }
+            .section { padding: 40px 0; }
+            .back { padding: 7px 14px; font-size: 0.72rem; }
+            .spec li { grid-template-columns: 1fr; gap: 4px; padding: 14px 18px; }
+            .lineage { padding: 18px 20px; font-size: 0.72rem; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="../" class="back">← bleelblep</a>
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+    <span data-theme-icon>☾</span>
+</button>
+
+<header class="hero">
+    <div class="container">
+        <svg class="hero-orbit" viewBox="0 0 520 520" aria-hidden="true">
+            <g class="spin-1">
+                <ellipse cx="260" cy="260" rx="220" ry="90" />
+                <circle class="dot" cx="480" cy="260" r="6" />
+            </g>
+            <g class="spin-2">
+                <ellipse cx="260" cy="260" rx="180" ry="180" transform="rotate(30 260 260)" />
+                <circle class="dot-teal" cx="80" cy="260" r="5" />
+            </g>
+            <g class="spin-3">
+                <circle cx="260" cy="260" r="120" stroke-dasharray="3 6" />
+                <circle class="dot-accent" cx="380" cy="260" r="4" />
+            </g>
+            <circle cx="260" cy="260" r="38" />
+            <circle cx="260" cy="260" r="20" stroke-width="1.5" />
+            <line x1="260" y1="260" x2="260" y2="232" stroke-width="2.5" />
+            <line x1="260" y1="260" x2="284" y2="260" stroke-width="2" />
+            <circle class="dot" cx="260" cy="260" r="3.5" />
+        </svg>
+
+        <div class="eyebrow">
+            <span class="eyebrow-star">✦</span>
+            <span>transmission · 02 · alumnus of glypnik</span>
+        </div>
+        <h1>glyphclocks</h1>
+        <p class="hero-tagline">
+            sixteen pixel clock faces for a 489-led diamond. each one knows the time, and tells it differently.
+        </p>
+        <div class="hero-meta">
+            <span class="chip solid">nothing phone (3)</span>
+            <span class="chip teal">glyph matrix</span>
+            <span class="chip">sideloaded apk</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">01</span>
+            <span class="section-rule-title">origin</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>where it came from</h2>
+        <p class="section-lede">
+            this used to be a single toy inside <a href="../glypnik/">glypnik</a> — five faces, sharing one slot in a sandbox of unrelated gadgets.
+        </p>
+        <div class="section-body">
+            <p>
+                it kept growing. one face turned into a habit, the habit turned into a list, the list got
+                longer than its drawer. eventually clocks needed their own picker, their own preferences,
+                their own foreground service. so it left.
+            </p>
+        </div>
+
+        <div class="lineage" aria-label="lineage">
+            <div class="l-row">
+                <span class="l-step"><span>glypnik</span><span class="l-tag">toy 06</span></span>
+                <span class="l-arrow">→</span>
+                <span class="l-step"><span>5 faces</span></span>
+                <span class="l-arrow">→</span>
+                <span class="l-step"><span>16 faces</span></span>
+                <span class="l-arrow">→</span>
+                <span class="l-step"><span>glyphclocks</span><span class="l-tag">standalone</span></span>
+            </div>
+            <span class="l-note">the second project to leave the nest, after thinking of you.</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">02</span>
+            <span class="section-rule-title">faces</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>what's in the picker</h2>
+        <p class="section-lede">
+            sixteen faces ship in this build, each one runs its own animations at its<br>
+            <code style="font-family:'Space Grotesk',monospace;background:var(--bg-cream);border:1.5px solid var(--brand);padding:0 6px;border-radius:4px;font-weight:600;">own pace</code>.
+            tap any tile to play.
+        </p>
+        <ol class="dial">
+            <li><face-tile face-id="plate"></face-tile><div class="dial-row"><span class="num">01</span><span class="name">plate</span><span class="kind">read</span></div></li>
+            <li><face-tile face-id="falling"></face-tile><div class="dial-row"><span class="num">02</span><span class="name">falling</span><span class="kind">animated</span></div></li>
+            <li><face-tile face-id="slots"></face-tile><div class="dial-row"><span class="num">03</span><span class="name">slots</span><span class="kind">reel</span></div></li>
+            <li><face-tile face-id="glitch"></face-tile><div class="dial-row"><span class="num">04</span><span class="name">glitch</span><span class="kind">flicker</span></div></li>
+            <li><face-tile face-id="scanline"></face-tile><div class="dial-row"><span class="num">05</span><span class="name">scanline</span><span class="kind">crt</span></div></li>
+            <li><face-tile face-id="floaty"></face-tile><div class="dial-row"><span class="num">06</span><span class="name">floaty</span><span class="kind">drift</span></div></li>
+            <li><face-tile face-id="pendulum"></face-tile><div class="dial-row"><span class="num">07</span><span class="name">pendulum</span><span class="kind">physics</span></div></li>
+            <li><face-tile face-id="compass-plate"></face-tile><div class="dial-row"><span class="num">08</span><span class="name">compass plate</span><span class="kind">sensor</span></div></li>
+            <li><face-tile face-id="hypnosis"></face-tile><div class="dial-row"><span class="num">09</span><span class="name">hypnosis</span><span class="kind">ambient</span></div></li>
+            <li><face-tile face-id="moire"></face-tile><div class="dial-row"><span class="num">10</span><span class="name">moiré</span><span class="kind">ambient</span></div></li>
+            <li><face-tile face-id="ripple"></face-tile><div class="dial-row"><span class="num">11</span><span class="name">ripple</span><span class="kind">ambient</span></div></li>
+            <li><face-tile face-id="sonar"></face-tile><div class="dial-row"><span class="num">12</span><span class="name">sonar</span><span class="kind">ping</span></div></li>
+            <li><face-tile face-id="cymatics"></face-tile><div class="dial-row"><span class="num">13</span><span class="name">cymatics</span><span class="kind">audio</span></div></li>
+            <li><face-tile face-id="gravity-well"></face-tile><div class="dial-row"><span class="num">14</span><span class="name">gravity well</span><span class="kind">physics</span></div></li>
+            <li><face-tile face-id="numbers"></face-tile><div class="dial-row"><span class="num">15</span><span class="name">numbers</span><span class="kind">sound</span></div></li>
+            <li><face-tile face-id="spirits"></face-tile><div class="dial-row"><span class="num">16</span><span class="name">spirits</span><span class="kind">sound</span></div></li>
+        </ol>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">03</span>
+            <span class="section-rule-title">controls</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>how you talk to it</h2>
+        <ul class="gestures">
+            <li>
+                <span class="gkey">long-press</span>
+                <span class="gval">flashes a 2-second DD/MM date overlay — same pixel layout as the plate face.</span>
+            </li>
+            <li>
+                <span class="gkey">picker</span>
+                <span class="gval">pick a face, flip per-face toggles (24h, sound, layout). that's the whole app.</span>
+            </li>
+            <li>
+                <span class="gkey">aod</span>
+                <span class="gval">registered as an aod-capable glyph toy in the manifest. faces decide their own behaviour.</span>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">04</span>
+            <span class="section-rule-title">spec</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>under the hood</h2>
+        <ul class="spec">
+            <li>
+                <span class="skey">surface</span>
+                <span class="sval"><strong>489 leds</strong> arranged in a diamond on a 25×25 lattice. brightness only, 0..255 per led, no colour.</span>
+            </li>
+            <li>
+                <span class="skey">render path</span>
+                <span class="sval">each face produces a <code>Frame489</code> from a <code>ClockTime</code>. the service ticks at the face's declared fps (some are static, some run at 30 hz).</span>
+            </li>
+            <li>
+                <span class="skey">sdk</span>
+                <span class="sval">built against the <code>GlyphMatrixSDK.aar</code> as a foreground service of type <code>specialUse</code>.</span>
+            </li>
+            <li>
+                <span class="skey">storage</span>
+                <span class="sval">preferences live locally in shared prefs. no accounts, no sync, no network.</span>
+            </li>
+            <li>
+                <span class="skey">stack</span>
+                <span class="sval">kotlin · jetpack compose · material 3. min sdk 28.</span>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">05</span>
+            <span class="section-rule-title">scan</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>verify.</h2>
+        <p class="section-lede">
+            third-party scan reports for the current build — peace of mind before you sideload.
+        </p>
+        <div class="scan-grid">
+            <a href="https://www.virustotal.com/gui/file/28b7a4993083317c45b5686f1b68d79df9a8a5608633bf2f4152a7fe357aba9b/community" class="scan" target="_blank" rel="noopener" id="scan-vt">
+                <div class="scan-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="scan-label">VirusTotal</div>
+                    <div class="scan-value">view report →</div>
+                </div>
+                <div class="scan-arrow">→</div>
+            </a>
+
+            <a href="https://koodous.com/apks/28b7a4993083317c45b5686f1b68d79df9a8a5608633bf2f4152a7fe357aba9b/general-information" class="scan" target="_blank" rel="noopener" id="scan-kd">
+                <div class="scan-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="14" r="5"/>
+                        <circle cx="6" cy="8" r="2"/>
+                        <circle cx="18" cy="8" r="2"/>
+                        <circle cx="8" cy="4.5" r="1.5"/>
+                        <circle cx="16" cy="4.5" r="1.5"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="scan-label">Koodous</div>
+                    <div class="scan-value">view report →</div>
+                </div>
+                <div class="scan-arrow">→</div>
+            </a>
+        </div>
+        <p class="scan-tip">tip · drop the apk into either yourself · always a good habit ✦</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">06</span>
+            <span class="section-rule-title">acknowledge</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>quick <em>checks.</em></h2>
+        <p class="section-lede">three boxes. the download unlocks when all are ticked.</p>
+        <div class="check-list">
+            <label class="check">
+                <input type="checkbox" class="ack-check">
+                <span>i understand glyphclocks is for the <strong>nothing phone (3)</strong> only — the glyph matrix is hardware-specific and the apk won't do anything useful on other devices.</span>
+            </label>
+            <label class="check">
+                <input type="checkbox" class="ack-check">
+                <span>i'm okay installing an <strong>apk</strong> from outside the play store and know how to enable unknown sources.</span>
+            </label>
+            <label class="check">
+                <input type="checkbox" class="ack-check">
+                <span>i won't <strong>repost</strong> or mirror this build without asking — it changes often and old copies cause confusion.</span>
+            </label>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">07</span>
+            <span class="section-rule-title">download</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>take it <em>home.</em></h2>
+        <div class="dl-card">
+            <div class="download-meta">
+                <span><span class="dot">●</span>v1.0</span>
+                <span>nothing phone (3)</span>
+                <span>android 9+</span>
+            </div>
+            <div class="dl-grid">
+                <p class="dl-hint" id="dl-hint">tick the boxes above to unlock.</p>
+                <a href="https://github.com/bleelblep/glyphclocks/releases/download/v1.0.0/app-release.apk" class="dl-btn" id="dl-btn" aria-disabled="true" download="glyphclocks.apk">
+                    <span>download glyphclocks</span>
+                    <span class="arr">↓</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">08</span>
+            <span class="section-rule-title">source</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <div class="source-card">
+            <div class="source-eyebrow">▸ peek under the hood</div>
+            <h2 class="source-title">source <em>available</em>.<br>not <em>open source</em>.</h2>
+            <p>
+                the full source lives on github — every face, every animation, the matrix renderer, the picker.
+                read it, learn from it, file an issue if something looks off.
+            </p>
+            <p>
+                <strong>but</strong> it isn't open-source licensed. no fork-and-republish, no derivative apps,
+                no lifting code into your own project. the source is up so people can see how things work,
+                not as a free-for-all.
+            </p>
+            <a href="https://github.com/bleelblep/glyphclocks" target="_blank" rel="noopener" class="gh-btn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.18c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.27-1.69-1.27-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.17.92-.26 1.91-.39 2.89-.39s1.97.13 2.89.39c2.2-1.48 3.16-1.17 3.16-1.17.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.25 5.65.41.36.77 1.06.77 2.13v3.16c0 .31.21.66.8.55 4.57-1.52 7.85-5.83 7.85-10.91C23.5 5.65 18.35.5 12 .5z"/></svg>
+                <span>view on github</span>
+                <span class="arr">→</span>
+            </a>
+            <div class="source-meta">
+                <span>read-only</span>
+                <span class="sep">·</span>
+                <span>no derivative works</span>
+                <span class="sep">·</span>
+                <span>github.com/bleelblep/glyphclocks</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-rule">
+            <span class="section-rule-num">09</span>
+            <span class="section-rule-title">notes</span>
+            <span class="section-rule-line"></span>
+        </div>
+        <h2>what to know</h2>
+        <ul class="caveats">
+            <li><strong>nothing phone (3) only.</strong> the glyph matrix is exclusive to the (3); other nothing phones use different glyph hardware entirely.</li>
+            <li>not on the play store. distributed as a sideloaded apk.</li>
+            <li>no remote backend. the only thing it phones home about is the time.</li>
+        </ul>
+    </div>
+</section>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-atom" aria-hidden="true">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="18" cy="18" r="2" fill="currentColor" />
+            <ellipse class="ring" cx="18" cy="18" rx="14" ry="6" />
+            <ellipse class="ring-2" cx="18" cy="18" rx="14" ry="6" transform="rotate(60 18 18)" />
+            <ellipse class="ring" cx="18" cy="18" rx="14" ry="6" transform="rotate(120 18 18)" />
+        </svg>
+    </div>
+    <div>glyphclocks · made by bleelblep · © atomic standard time</div>
+</footer>
+
+<script src="../assets/theme.js" defer></script>
+<script type="module" src="./clocks/face-tile.js"></script>
+<script>
+    // Acknowledge → unlock download.
+    (function () {
+        const checks = document.querySelectorAll('.ack-check');
+        const btn = document.getElementById('dl-btn');
+        const hint = document.getElementById('dl-hint');
+        if (!checks.length || !btn || !hint) return;
+        function update() {
+            const all = Array.from(checks).every(c => c.checked);
+            btn.setAttribute('aria-disabled', all ? 'false' : 'true');
+            hint.classList.toggle('ok', all);
+            hint.textContent = all ? 'unlocked ✦' : 'tick the boxes above to unlock.';
+        }
+        checks.forEach(c => c.addEventListener('change', update));
+        btn.addEventListener('click', (e) => {
+            if (btn.getAttribute('aria-disabled') === 'true') {
+                e.preventDefault();
+                hint.textContent = 'tick all three first.';
+            } else if (btn.getAttribute('href').startsWith('#tbd')) {
+                e.preventDefault();
+                alert('apk link not set yet — update the dl-btn href in glyphclocks/index.html');
+            }
+        });
+        update();
+    })();
+</script>
+
+</body>
+</html>
