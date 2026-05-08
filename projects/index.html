@@ -195,6 +195,7 @@
         .project-tag.open    { color: #5A3A8A; background: rgba(200, 184, 232, 0.5); }
         .project-tag.stable  { color: #3A4A20; background: rgba(184, 200, 168, 0.5); }
         .project-tag.private { color: var(--text-dim); background: rgba(160, 104, 104, 0.12); }
+        .project-tag.paused  { color: var(--text-dim); background: rgba(160, 104, 104, 0.16); }
 
         .project-desc { font-size: 0.98rem; color: var(--text-dim); margin: 0; flex: 1; line-height: 1.6; }
         .project-meta { font-size: 0.85rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; font-weight: 600; flex-wrap: wrap; }
@@ -272,21 +273,20 @@
         </div>
 
         <div class="projects">
-            <a href="../pixlings/" class="project">
-                <div class="project-swatch swatch-peach" aria-hidden="true">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#8A5620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M7 14a7 7 0 0 1 14 0v7l-2-2-2 2-3-2-3 2-2-2-2 2v-7z" />
-                        <circle cx="11.5" cy="13" r="1.2" fill="#8A5620" stroke="none" />
-                        <circle cx="16.5" cy="13" r="1.2" fill="#8A5620" stroke="none" />
+            <a href="../glyphclocks/" class="project">
+                <div class="project-swatch swatch-amber" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#3A1A08" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="14" cy="14" r="10" />
+                        <path d="M14 8v6l4 2" />
+                        <circle cx="14" cy="14" r="1" fill="#3A1A08" stroke="none" />
                     </svg>
                 </div>
                 <div class="project-head">
-                    <h3 class="project-name">pixlings</h3>
-                    <span class="project-tag beta">closed beta</span>
+                    <h3 class="project-name">glypclocks</h3>
+                    <span class="project-tag stable">stable</span>
                 </div>
                 <p class="project-desc">
-                    a quiet presence lives within your nothing phone's glyph matrix. ambient creatures
-                    that move, react, and exist alongside you.
+                    sixteen pixel clock faces for the nothing phone (3) glyph matrix. graduated from glypnik when the picker grew its own picker. atomic-age aesthetic.
                 </p>
                 <div class="project-meta">
                     <span>android · glyph matrix</span><span>·</span>
@@ -327,7 +327,7 @@
             <h2 class="section-title">stable</h2>
             <div class="section-aside">
                 <span class="section-kaomoji">(｡•ᴗ•｡)</span>
-                <span>4 apps · done, out in the world</span>
+                <span>3 apps · done, out in the world</span>
             </div>
         </div>
 
@@ -396,27 +396,43 @@
                 </div>
             </a>
 
-            <a href="../glyphclocks/" class="project">
-                <div class="project-swatch swatch-amber" aria-hidden="true">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#3A1A08" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="14" cy="14" r="10" />
-                        <path d="M14 8v6l4 2" />
-                        <circle cx="14" cy="14" r="1" fill="#3A1A08" stroke="none" />
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2 class="section-title">paused</h2>
+            <div class="section-aside">
+                <span class="section-kaomoji">(„• ֊ •„)</span>
+                <span>1 app · quietly waiting</span>
+            </div>
+        </div>
+        <p class="drawer-intro">on the back burner. not abandoned — just resting until i come back to it.</p>
+
+        <div class="projects">
+            <a href="../pixlings/" class="project drawer">
+                <div class="project-swatch swatch-peach" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#8A5620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 14a7 7 0 0 1 14 0v7l-2-2-2 2-3-2-3 2-2-2-2 2v-7z" />
+                        <circle cx="11.5" cy="13" r="1.2" fill="#8A5620" stroke="none" />
+                        <circle cx="16.5" cy="13" r="1.2" fill="#8A5620" stroke="none" />
                     </svg>
                 </div>
                 <div class="project-head">
-                    <h3 class="project-name">glypclocks</h3>
-                    <span class="project-tag stable">stable</span>
+                    <h3 class="project-name">pixlings</h3>
+                    <span class="project-tag paused">paused</span>
                 </div>
                 <p class="project-desc">
-                    sixteen pixel clock faces for the nothing phone (3) glyph matrix. graduated from glypnik when the picker grew its own picker. atomic-age aesthetic.
+                    a quiet presence lives within your nothing phone's glyph matrix. ambient creatures
+                    that move, react, and exist alongside you. on hold while other things take priority.
                 </p>
                 <div class="project-meta">
                     <span>android · glyph matrix</span><span>·</span>
                     <span>view project <span class="arrow">→</span></span>
                 </div>
             </a>
-
         </div>
     </div>
 </section>
