@@ -440,6 +440,41 @@
             font-weight: 600;
         }
 
+        /* SECTION DIVIDERS · public / private */
+        .notes-section-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 8px 0 18px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+        .notes-section-label::before,
+        .notes-section-label::after {
+            content: "";
+            flex: 1;
+            height: 1.5px;
+            background: var(--border);
+            border-radius: 999px;
+        }
+        .notes-section-label .kao { color: var(--kaomoji); letter-spacing: 0; text-transform: none; font-size: 0.95rem; }
+        [data-theme="dark"] .notes-section-label { color: rgba(253, 244, 232, 0.75); }
+        [data-theme="dark"] .notes-section-label::before,
+        [data-theme="dark"] .notes-section-label::after { background: rgba(253, 244, 232, 0.25); }
+
+        #public-view:empty + .notes-section-label { display: none; }
+        #public-view.loading::before {
+            content: "loading public notes…";
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-style: italic;
+            padding: 12px 0;
+        }
+
         .footer {
             padding: 40px 0 64px;
             text-align: center;
@@ -491,11 +526,18 @@
     <div class="container">
         <div class="eyebrow">(｡•ᴗ•｡) thoughts &amp; quiet rambles</div>
         <h1>notes <em>&amp; rambles</em></h1>
-        <p>thoughts on the apps, build logs, and the occasional unrelated stray thought. kept private — not because it's anything precious, just because not everything needs an audience.</p>
+        <p>thoughts on the apps, build logs, and the occasional unrelated stray thought. some are public, the rest live in a locked drawer — not because they're precious, just because not everything needs an audience.</p>
     </div>
 </header>
 
 <main class="container">
+
+    <div id="public-view" class="loading"></div>
+
+    <div class="notes-section-label" id="private-label">
+        <span>private drawer</span>
+        <span class="kao">(｡•́︿•̀｡)</span>
+    </div>
 
     <div class="lock-card" id="lock-card">
         <div class="lock-kaomoji">(｡•́︿•̀｡)</div>
@@ -698,6 +740,34 @@
         lockSubmit.disabled = false;
         window.scrollTo(0, 0);
     });
+
+    // ── PUBLIC NOTES · plain JSON, no password ─────────────────────
+    // Loads ./data/public.json (array of {slug, date, tag, title, html})
+    // and renders posts above the lock card. Failures are silent (the
+    // public section just collapses) so a missing file doesn't break
+    // the locked drawer below.
+    (async function loadPublic() {
+        const publicView = document.getElementById('public-view');
+        if (!publicView) return;
+        try {
+            const res = await fetch('./data/public.json', { cache: 'no-cache' });
+            if (!res.ok) throw new Error('fetch failed');
+            const posts = await res.json();
+            if (!Array.isArray(posts) || posts.length === 0) {
+                publicView.classList.remove('loading');
+                return;
+            }
+            posts.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+            publicView.classList.remove('loading');
+            for (const meta of posts) {
+                publicView.appendChild(renderPost(meta, meta.html || ''));
+            }
+        } catch (e) {
+            // Silent fail — collapse the public area entirely.
+            publicView.classList.remove('loading');
+            publicView.innerHTML = '';
+        }
+    })();
 </script>
 
 <link rel="stylesheet" href="../assets/simple.css">
