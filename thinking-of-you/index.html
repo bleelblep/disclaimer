@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>thinking of you</title>
     <meta name="description" content="Two nothing phones quietly sharing one small pattern of light. No words, no messages — just presence.">
-    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var sp='off';try{sp=localStorage.getItem('bleelblep_simple')==='on'?'on':'off';}catch(e){}document.documentElement.setAttribute('data-simple',sp);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,300,100;9..144,500,100&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -709,6 +709,7 @@
     <span class="footer-dot"></span>
 </footer>
 
+<link rel="stylesheet" href="../assets/simple.css">
 <script src="../assets/theme.js" defer></script>
 <script src="../assets/cute.js" defer></script>
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>glyphcade — arcade in your pocket</title>
     <meta name="description" content="GlyphCade — a tiny arcade cabinet that runs on the Nothing Phone 3 Glyph Matrix. Six retro games, zero main screen.">
-    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var sp='off';try{sp=localStorage.getItem('bleelblep_simple')==='on'?'on':'off';}catch(e){}document.documentElement.setAttribute('data-simple',sp);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -791,6 +791,7 @@
     </div>
 </footer>
 
+<link rel="stylesheet" href="../assets/simple.css">
 <script src="../assets/theme.js" defer></script>
 <script src="../assets/gallery.js" defer></script>
 <script src="../assets/cute.js" defer></script>

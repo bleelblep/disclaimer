@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>about · bleelblep</title>
     <meta name="description" content="bleelblep — one person making small, careful software for nothing phones. the long version.">
-    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var sp='off';try{sp=localStorage.getItem('bleelblep_simple')==='on'?'on':'off';}catch(e){}document.documentElement.setAttribute('data-simple',sp);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -358,6 +358,10 @@
                 <a href="../notes/">notes</a>
                 <a href="../">home</a>
             </div>
+            <button type="button" class="simple-toggle" data-simple-toggle aria-pressed="false" aria-label="Turn on simple cute theme" title="simple cute theme: off — make project pages match the homepage">
+                <span data-simple-icon>⟷</span>
+                <span class="simple-toggle-label">simple</span>
+            </button>
             <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
                 <span data-theme-icon>☾</span>
             </button>
@@ -508,6 +512,7 @@
 </footer>
 
 <link rel="stylesheet" href="../assets/nes.css">
+<link rel="stylesheet" href="../assets/simple.css">
 <script src="../assets/theme.js" defer></script>
 <script src="../assets/cute.js" defer></script>
 <script src="../assets/konami.js" defer></script>

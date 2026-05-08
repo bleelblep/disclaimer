@@ -1,0 +1,199 @@
+/* bleelblep · simple cute mode · drop-in stylesheet
+ * When :root[data-simple="on"] is set, project subpages render in the cute
+ * pastel palette used by the homepage. Load this stylesheet LAST so its rules
+ * win over each project's inline <style> block via cascade order. */
+
+/* ---------- shared cute palette (light) ---------- */
+:root[data-simple="on"] {
+    --bg: #FDF4E8;
+    --card: #FFFFFF;
+    --surface: #FFFFFF;
+    --paper: #FDF4E8;
+    --text: #4A2C2A;
+    --ink: #4A2C2A;
+    --text-dim: #A06868;
+    --accent: #E85A6B;
+    --brand: #E85A6B;
+    --brand-ink: #4A2C2A;
+    --border: #E0C8B8;
+    --rule: #E0C8B8;
+    --kaomoji: #F4B6BA;
+
+    --pastel-pink: #F4B6BA;
+    --pastel-peach: #F5D199;
+    --pastel-lavender: #C8B8E8;
+    --pastel-warm: #F4A8D0;
+    --pastel-amber: #F0A830;
+    --pastel-sage: #B8C8A8;
+
+    --shadow-sm: 0 2px 12px rgba(74, 44, 42, 0.06);
+    --shadow-md: 0 6px 24px rgba(74, 44, 42, 0.10);
+    --shadow-lg: 0 12px 40px rgba(74, 44, 42, 0.14);
+
+    /* project-specific aliases — neutralised */
+    --dot: #F4B6BA;
+    --dot-glow: rgba(232, 90, 107, 0.35);
+    --yellow: #F5D199;
+    --bean: #E85A6B;
+    --neon-glow: 0 0 0 transparent;
+    --neon-glow-pink: 0 0 0 transparent;
+    --neon-glow-cyan: 0 0 0 transparent;
+    --neon-glow-yellow: 0 0 0 transparent;
+    --neon-glow-purple: 0 0 0 transparent;
+}
+
+/* ---------- shared cute palette (dark) ---------- */
+:root[data-simple="on"][data-theme="dark"] {
+    --bg: #B84A4A;
+    --card: #FDF4E8;
+    --surface: #FDF4E8;
+    --paper: #B84A4A;
+    --text: #6A2A2A;
+    --ink: #6A2A2A;
+    --text-dim: #A06868;
+    --accent: #E85A6B;
+    --brand: #E85A6B;
+    --brand-ink: #6A2A2A;
+    --border: rgba(253, 244, 232, 0.4);
+    --rule: rgba(253, 244, 232, 0.4);
+    --kaomoji: #F4B6BA;
+
+    --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.18);
+    --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.24);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.32);
+}
+
+/* ---------- baseline body styling ---------- */
+:root[data-simple="on"] body {
+    font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+    background: var(--bg) !important;
+    color: var(--text);
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+:root[data-simple="on"][data-theme="dark"] body { color: #FDF4E8; }
+
+/* Force baloo on common heading + display elements that bespoke pages
+   often pin to retro/serif/Korean fonts. */
+:root[data-simple="on"] h1,
+:root[data-simple="on"] h2,
+:root[data-simple="on"] h3,
+:root[data-simple="on"] h4,
+:root[data-simple="on"] h5,
+:root[data-simple="on"] h6,
+:root[data-simple="on"] p,
+:root[data-simple="on"] a,
+:root[data-simple="on"] span,
+:root[data-simple="on"] li,
+:root[data-simple="on"] button,
+:root[data-simple="on"] input,
+:root[data-simple="on"] label {
+    font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+}
+
+:root[data-simple="on"] code,
+:root[data-simple="on"] pre,
+:root[data-simple="on"] kbd,
+:root[data-simple="on"] samp {
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace !important;
+}
+
+/* ---------- suppress decorative chrome ---------- */
+:root[data-simple="on"] body::before,
+:root[data-simple="on"] body::after {
+    content: none !important;
+    background: none !important;
+    display: none !important;
+}
+
+:root[data-simple="on"] * {
+    mix-blend-mode: normal !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Strip neon / heavy glows that bespoke pages stack on cards */
+:root[data-simple="on"] .neon,
+:root[data-simple="on"] [class*="neon-"],
+:root[data-simple="on"] [class*="-glow"],
+:root[data-simple="on"] [class*="glow-"] {
+    box-shadow: var(--shadow-sm) !important;
+    text-shadow: none !important;
+    filter: none !important;
+}
+
+/* ---------- per-project hide rules ---------- */
+
+/* pixlings: hide the canvas (no static fallback yet) */
+:root[data-simple="on"] #glyph-canvas,
+:root[data-simple="on"] canvas[data-bespoke] {
+    display: none !important;
+}
+
+/* thinking-of-you: dim the ambient paired dots so they don't fight the cute bg */
+:root[data-simple="on"] .toy-dot,
+:root[data-simple="on"] [data-paired-dot] {
+    opacity: 0.25 !important;
+    box-shadow: none !important;
+}
+
+/* glyphclocks / glypnik: kill the grain texture noise overlays */
+:root[data-simple="on"] .grain,
+:root[data-simple="on"] [class*="grain"] {
+    display: none !important;
+    background: none !important;
+}
+
+/* slab: kill the diary paper motif backdrop */
+:root[data-simple="on"] .paper-motif,
+:root[data-simple="on"] [class*="paper-bg"] {
+    display: none !important;
+}
+
+/* soksok / kakao spec: kill chat bubble flat shadow stacks */
+:root[data-simple="on"] [class*="bubble"]::before,
+:root[data-simple="on"] [class*="bubble"]::after {
+    display: none !important;
+}
+
+/* ---------- root-page toggle button ---------- */
+.simple-toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--card);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    transition: color 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.simple-toggle:hover,
+.simple-toggle:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.simple-toggle[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+@media (max-width: 680px) {
+    .simple-toggle { padding: 0 10px; font-size: 0.78rem; }
+    .simple-toggle .simple-toggle-label { display: none; }
+}

@@ -2,8 +2,40 @@
     'use strict';
 
     var KEY = 'theme';
+    var SIMPLE_KEY = 'bleelblep_simple';
     var html = document.documentElement;
     var mql = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function simpleStored() {
+        try { return localStorage.getItem(SIMPLE_KEY) === 'on'; } catch (e) { return false; }
+    }
+
+    function simpleApply(on, persist) {
+        html.setAttribute('data-simple', on ? 'on' : 'off');
+        if (persist) {
+            try { localStorage.setItem(SIMPLE_KEY, on ? 'on' : 'off'); } catch (e) {}
+        }
+        simpleRefresh();
+    }
+
+    function simpleRefresh() {
+        var on = html.getAttribute('data-simple') === 'on';
+        document.querySelectorAll('[data-simple-toggle]').forEach(function (btn) {
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            btn.setAttribute('aria-label', on ? 'Turn off simple cute theme' : 'Turn on simple cute theme');
+            btn.title = on ? 'simple cute theme: on — tap to turn off' : 'simple cute theme: off — make project pages match the homepage';
+            var icon = btn.querySelector('[data-simple-icon]');
+            if (icon) icon.textContent = on ? '✓' : '⟷';
+        });
+    }
+
+    function simpleToggle() {
+        simpleApply(!(html.getAttribute('data-simple') === 'on'), true);
+    }
+
+    // Apply simple-mode attribute as early as possible (before DOM ready) so
+    // the cute palette takes effect without a flash of bespoke styles.
+    html.setAttribute('data-simple', simpleStored() ? 'on' : 'off');
 
     function stored() {
         try {
@@ -71,8 +103,17 @@
                 toggle();
             });
         });
+        document.querySelectorAll('[data-simple-toggle]').forEach(function (btn) {
+            if (btn.dataset.simpleWired) return;
+            btn.dataset.simpleWired = '1';
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                simpleToggle();
+            });
+        });
         wireBack();
         refresh();
+        simpleRefresh();
     }
 
     // When no explicit choice is stored, follow the system preference live.
@@ -85,10 +126,16 @@
 
     // Sync across tabs.
     window.addEventListener('storage', function (e) {
-        if (e.key !== KEY) return;
-        var v = e.newValue;
-        html.setAttribute('data-theme', (v === 'light' || v === 'dark') ? v : (mql.matches ? 'dark' : 'light'));
-        refresh();
+        if (e.key === KEY) {
+            var v = e.newValue;
+            html.setAttribute('data-theme', (v === 'light' || v === 'dark') ? v : (mql.matches ? 'dark' : 'light'));
+            refresh();
+            return;
+        }
+        if (e.key === SIMPLE_KEY) {
+            html.setAttribute('data-simple', e.newValue === 'on' ? 'on' : 'off');
+            simpleRefresh();
+        }
     });
 
     if (document.readyState === 'loading') {
@@ -98,4 +145,9 @@
     }
 
     window.bleelblepTheme = { toggle: toggle, apply: apply, resolved: resolved };
+    window.bleelblepSimple = {
+        toggle: simpleToggle,
+        apply: simpleApply,
+        isOn: function () { return html.getAttribute('data-simple') === 'on'; }
+    };
 })();
