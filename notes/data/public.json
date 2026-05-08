@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "hello-public",
+    "date": "2026-05-07",
+    "tag": "thought",
+    "title": "the public drawer",
+    "html": "<p>this is the part of the notebook anyone can read. nothing precious lives here — just the things that don't need a key.</p><p>everything else stays in the locked drawer below. <em>not because it's secret, just because it's quieter that way.</em></p>"
+  },
+  {
+    "slug": "state-of-projects",
+    "date": "2026-05-08",
+    "tag": "updates",
+    "title": "updates on the current projectss",
+    "html": "<p>I finally moved pixlings to paused status. I havent worked on it in a few weeks or maybe 1 to 2  months. This paused status is merely a formality imho, just a quick hey i got bored of this for now and im focusing on other things. Speaking of i have a few new updates for wip things (disclaimer idk if these will become public.) Firstly i have probably posted a new update for slab by now and have hopefully fixed a few critical bugs. i've been working on glypnik personally but i'm mainly focusing on performance enhancement and not features. I'm also playing around with 2 new app ideas. 1 called &quot;Clips&quot; which is a fork of the clipboard functionality from slab. It utilizes shizuku for automatic clipboard background capture and gives a nice and clean interface to sort / store them. It basically turned into my version of Nothings essential space which i didnt realize i was doing till i was deep in development. The last is a gallery app based on the Nothing OS preview drop where they demoed a subject isolation preview thumbnail thing. I'm very happy with the performance of both apps as they feel amazing and snappy. No idea when or if'll ill make them public tho so dont get your hopes up.</p>"
+  }
+]
