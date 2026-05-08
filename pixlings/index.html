@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixlings — Quiet Life in Your Glyph</title>
     <meta name="description" content="Ambient creatures that live in your Nothing Phone's Glyph Matrix.">
-    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var sp='off';try{sp=localStorage.getItem('bleelblep_simple')==='on'?'on':'off';}catch(e){}document.documentElement.setAttribute('data-simple',sp);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <style>
         /* TERRARIUM COLORS */
         :root {
@@ -824,6 +824,7 @@ for (let i = 0; i < 12; i++) {
 }
 </script>
 
+<link rel="stylesheet" href="../assets/simple.css">
 <script src="../assets/theme.js" defer></script>
 
 </body>
