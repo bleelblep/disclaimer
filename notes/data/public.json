@@ -12,5 +12,12 @@
     "tag": "ramble",
     "title": "updates on the current projects",
     "html": "<p>I finally moved pixlings to paused status. I havent worked on it in a few weeks or maybe 1 to 2  months. This paused status is merely a formality imho, just a quick hey i got bored of this for now and im focusing on other things.</p><p>Speaking of i have a few new updates for wip things (disclaimer idk if these will become public.) Firstly i have probably posted a new update for slab by now and have hopefully fixed a few critical bugs. i've been working on glypnik personally but i'm mainly focusing on performance enhancement and not features.</p><p>I'm also playing around with 2 new app ideas. 1 called &quot;Clips&quot; which is a fork of the clipboard functionality from slab. It utilizes shizuku for automatic clipboard background capture and gives a nice and clean interface to sort / store them. It basically turned into my version of Nothings essential space which i didnt realize i was doing till i was deep in development.</p><p>The last is a gallery app based on the Nothing OS preview drop where they demoed a subject isolation preview thumbnail thing. I'm very happy with the performance of both apps as they feel amazing and snappy. No idea when or if'll ill make them public tho so dont get your hopes up.</p>"
+  },
+  {
+    "slug": "new-ideas",
+    "date": "2026-05-09",
+    "tag": "thoughts",
+    "title": "some new ideas and 1 random one",
+    "html": "<p>i wanted to make a quick post saying the slab update is out. Im also currently trying to integrate clips into slab.</p><p>i got basic integration working which means its buggy as hell and works like 1/10 times.</p><p>in the next post (or whenever i get around to it) i'll make a list of all the projects that have actual download links so you can install them yourself.</p><p>i've had an an idea for a while (idk if its possible) to see if its possible to implemet a glyph matrix toy that has gestures. the idea being you press the glyph button and wave your phone or shake to activate certain actions similar to moto gestures. I also had another thought yesterday for the new 4a glyph bar. this one seems less plausible but basically turn the glyph bar into a light painting thing. for example your friend is a photographer amd you want to do a long exposure at night. your glyph bar might be able to do text messages and such.</p>"
   }
 ]
