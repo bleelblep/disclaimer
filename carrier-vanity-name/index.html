@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>carrier vanity name · fork</title>
+    <meta name="description" content="A fork of CarrierVanityName — rename your SIM's carrier label on Android (no root, via Shizuku). Patched to keep working on Pixels with the Oct 2025+ security patch.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var sp='off';try{sp=localStorage.getItem('bleelblep_simple')==='on'?'on':'off';}catch(e){}document.documentElement.setAttribute('data-simple',sp);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/cute.css">
+    <style>
+        /* CARRIER VANITY NAME — phone status-bar / SIM card aesthetic
+           cool slate paper, signal-bar greens, SIM-chip gold accents,
+           technical mono voice with rounded sans body. */
+        :root {
+            --bg: #ECEEF2;
+            --paper: #FFFFFF;
+            --chip: #F6E7B0;
+            --chip-line: #C9A93E;
+            --ink: #1B2330;
+            --ink-dim: #5C677A;
+            --rule: #D5DBE3;
+            --rule-soft: #E6EAF0;
+
+            --signal: #2EBE7C;
+            --signal-deep: #1B7F54;
+            --signal-soft: rgba(46, 190, 124, 0.14);
+            --accent: #4D6BFF;
+            --accent-deep: #2945D6;
+            --accent-soft: rgba(77, 107, 255, 0.12);
+            --warn: #D8533C;
+            --warn-soft: rgba(216, 83, 60, 0.12);
+
+            --shadow-sm: 0 2px 6px rgba(27, 35, 48, 0.06);
+            --shadow-md: 0 8px 24px rgba(27, 35, 48, 0.10);
+            --shadow-lg: 0 18px 44px rgba(27, 35, 48, 0.16);
+
+            --sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+            /* legacy/shared aliases for simple.css */
+            --text: var(--ink);
+            --text-dim: var(--ink-dim);
+            --card: var(--paper);
+            --border: var(--rule);
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0E1320;
+            --paper: #18202F;
+            --chip: #C9A93E;
+            --chip-line: #8A6F1E;
+            --ink: #E9ECF2;
+            --ink-dim: #97A2B6;
+            --rule: rgba(233, 236, 242, 0.18);
+            --rule-soft: rgba(233, 236, 242, 0.08);
+
+            --signal: #4FD89A;
+            --signal-deep: #2EBE7C;
+            --signal-soft: rgba(79, 216, 154, 0.16);
+            --accent: #7E96FF;
+            --accent-deep: #4D6BFF;
+            --accent-soft: rgba(126, 150, 255, 0.16);
+            --warn: #F37460;
+            --warn-soft: rgba(243, 116, 96, 0.18);
+
+            --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.32);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.42);
+            --shadow-lg: 0 18px 44px rgba(0, 0, 0, 0.55);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.65;
+            font-weight: 450;
+            -webkit-font-smoothing: antialiased;
+            font-size: 15.5px;
+        }
+
+        /* faint network-grid backdrop */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                linear-gradient(to right, var(--rule-soft) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--rule-soft) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse at top, rgba(0,0,0,0.55), transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at top, rgba(0,0,0,0.55), transparent 75%);
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* FLOATING CONTROLS */
+        .top-controls {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+        .top-controls > * { pointer-events: auto; }
+
+        .back {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--ink-dim);
+            text-decoration: none;
+            padding: 8px 12px;
+            border: 1px solid var(--rule);
+            border-radius: 999px;
+            background: var(--paper);
+            transition: color 0.2s, border-color 0.2s, transform 0.2s;
+            letter-spacing: 0.04em;
+        }
+        .back:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            transform: translateX(-2px);
+        }
+
+        .nav-tools { display: flex; gap: 10px; }
+
+        .icon-btn {
+            appearance: none;
+            background: var(--paper);
+            color: var(--ink-dim);
+            border: 1px solid var(--rule);
+            width: 34px; height: 34px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            font-size: 0.9rem;
+            font-family: var(--sans);
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .icon-btn:hover, .icon-btn:focus-visible {
+            color: var(--accent);
+            border-color: var(--accent);
+            outline: none;
+            transform: translateY(-1px);
+        }
+        .icon-btn [data-theme-icon],
+        .icon-btn [data-simple-icon] {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .icon-btn:hover [data-theme-icon],
+        .icon-btn:hover [data-simple-icon] { transform: rotate(20deg); }
+        .simple-toggle .simple-toggle-label { display: none; }
+        @media (prefers-reduced-motion: reduce) {
+            .back, .icon-btn, .icon-btn [data-theme-icon] { transition: none; }
+            .back:hover, .icon-btn:hover { transform: none; }
+            .icon-btn:hover [data-theme-icon] { transform: none; }
+        }
+
+        /* HERO */
+        .hero {
+            padding: 110px 0 32px;
+        }
+
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            color: var(--ink-dim);
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .eyebrow .dot {
+            width: 6px; height: 6px;
+            border-radius: 999px;
+            background: var(--signal);
+            box-shadow: 0 0 10px var(--signal);
+            animation: blink 2.4s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .eyebrow .dot { animation: none; }
+        }
+
+        h1.title {
+            font-size: clamp(2.4rem, 6vw, 3.6rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.02;
+            margin: 0 0 18px;
+            color: var(--ink);
+        }
+        h1.title em {
+            font-style: normal;
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        .tagline {
+            font-size: 1.08rem;
+            color: var(--ink-dim);
+            margin: 0;
+            max-width: 540px;
+            line-height: 1.55;
+        }
+
+        /* STATUS BAR MOCK */
+        .statusbar {
+            margin: 36px 0 8px;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-radius: 18px;
+            box-shadow: var(--shadow-md);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            font-family: var(--mono);
+            font-size: 0.86rem;
+            color: var(--ink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .statusbar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 40%, var(--accent-soft) 50%, transparent 60%);
+            transform: translateX(-100%);
+            animation: sweep 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes sweep {
+            0%, 35%, 100% { transform: translateX(-100%); }
+            65%, 70% { transform: translateX(100%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .statusbar::after { display: none; }
+        }
+
+        .sb-time {
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .sb-carrier {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .sb-bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 14px;
+        }
+        .sb-bars span {
+            width: 3px;
+            background: var(--signal);
+            border-radius: 1px;
+            display: inline-block;
+        }
+        .sb-bars span:nth-child(1) { height: 30%; }
+        .sb-bars span:nth-child(2) { height: 55%; }
+        .sb-bars span:nth-child(3) { height: 80%; }
+        .sb-bars span:nth-child(4) { height: 100%; }
+
+        .sb-label {
+            white-space: nowrap;
+        }
+
+        .sb-label .strike {
+            color: var(--ink-dim);
+            text-decoration: line-through;
+            text-decoration-color: var(--warn);
+            margin-right: 8px;
+        }
+
+        .sb-label .live {
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .sb-right {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--ink-dim);
+            font-size: 0.82rem;
+        }
+
+        .battery {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .battery-shell {
+            width: 22px; height: 11px;
+            border: 1.5px solid var(--ink-dim);
+            border-radius: 2px;
+            position: relative;
+            padding: 1px;
+        }
+        .battery-shell::after {
+            content: "";
+            position: absolute;
+            right: -3px;
+            top: 3px;
+            width: 2px; height: 5px;
+            background: var(--ink-dim);
+            border-radius: 0 1px 1px 0;
+        }
+        .battery-fill {
+            height: 100%;
+            width: 78%;
+            background: var(--signal);
+            border-radius: 1px;
+        }
+
+        @media (max-width: 560px) {
+            .statusbar { font-size: 0.76rem; padding: 12px 14px; gap: 10px; }
+            .sb-right { display: none; }
+        }
+
+        /* FORK CALLOUT */
+        .fork-card {
+            margin: 28px 0 0;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-left: 3px solid var(--accent);
+            border-radius: 14px;
+            padding: 18px 22px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 16px;
+            align-items: start;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .fork-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .fork-body { min-width: 0; }
+
+        .fork-label {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin: 0 0 4px;
+            font-weight: 600;
+        }
+
+        .fork-body p {
+            margin: 0;
+            color: var(--ink);
+            font-size: 0.96rem;
+            line-height: 1.55;
+        }
+
+        .fork-body p + p {
+            margin-top: 6px;
+            color: var(--ink-dim);
+            font-size: 0.9rem;
+        }
+
+        .fork-body a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-soft);
+            transition: border-color 0.2s;
+        }
+        .fork-body a:hover { border-color: var(--accent); }
+
+        /* SECTIONS */
+        section {
+            padding: 36px 0 0;
+        }
+
+        section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            margin: 0 0 16px;
+            color: var(--ink);
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+        }
+        section h2 .h-num {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.12em;
+        }
+
+        section p {
+            color: var(--ink);
+            margin: 0 0 14px;
+            line-height: 1.7;
+        }
+        section p:last-child { margin-bottom: 0; }
+
+        section a {
+            color: var(--accent-deep);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-soft);
+            transition: border-color 0.2s, color 0.2s;
+        }
+        section a:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        section code {
+            font-family: var(--mono);
+            font-size: 0.86em;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        [data-theme="dark"] section code { color: var(--accent); }
+
+        /* FEATURE GRID */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .feat {
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-radius: 14px;
+            padding: 18px 18px 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .feat-title {
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--signal-deep);
+            margin: 0 0 8px;
+            font-weight: 600;
+        }
+        [data-theme="dark"] .feat-title { color: var(--signal); }
+
+        .feat-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin: 0 0 6px;
+        }
+
+        .feat p {
+            margin: 0;
+            color: var(--ink-dim);
+            font-size: 0.92rem;
+            line-height: 1.55;
+        }
+
+        /* REQUIREMENTS LIST */
+        .req {
+            list-style: none;
+            margin: 6px 0 0;
+            padding: 0;
+        }
+
+        .req li {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--rule);
+            font-size: 0.96rem;
+        }
+        .req li:last-child { border-bottom: 0; }
+
+        .req-key {
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            color: var(--ink-dim);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding-top: 2px;
+        }
+
+        .req-val { color: var(--ink); }
+        .req-val strong { font-weight: 600; }
+
+        /* DOWNLOAD BUTTONS */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: var(--sans);
+            font-size: 0.96rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent-deep);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: var(--accent-deep);
+        }
+
+        .btn-ghost {
+            background: var(--paper);
+            color: var(--ink);
+            border-color: var(--rule);
+        }
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .btn .arrow { transition: transform 0.2s; }
+        .btn:hover .arrow { transform: translateX(3px); }
+
+        /* CODE BLOCK */
+        .code-block {
+            background: var(--ink);
+            color: #E8ECF2;
+            border-radius: 12px;
+            padding: 16px 18px;
+            font-family: var(--mono);
+            font-size: 0.84rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 12px 0 0;
+            box-shadow: var(--shadow-sm);
+        }
+        [data-theme="dark"] .code-block {
+            background: #0A1018;
+            border: 1px solid var(--rule);
+        }
+        .code-block .c-comment { color: #7B8AA0; }
+        .code-block .c-cmd { color: #FFB870; }
+
+        /* WARNING */
+        .warn {
+            margin-top: 8px;
+            background: var(--warn-soft);
+            border: 1px solid color-mix(in srgb, var(--warn) 50%, transparent);
+            border-radius: 12px;
+            padding: 16px 18px;
+            color: var(--ink);
+        }
+
+        .warn-label {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--warn);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .warn p { margin: 0; line-height: 1.6; font-size: 0.95rem; }
+
+        /* CREDITS */
+        .credits {
+            margin-top: 8px;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .credits ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .credits li {
+            position: relative;
+            padding: 10px 0 10px 22px;
+            color: var(--ink);
+            font-size: 0.96rem;
+            line-height: 1.65;
+            border-bottom: 1px dashed var(--rule);
+        }
+        .credits li:last-child { border-bottom: 0; }
+        .credits li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: var(--accent);
+            font-weight: 700;
+            line-height: 1.65;
+        }
+        .credits a {
+            color: var(--accent-deep);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-soft);
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .credits a:hover { color: var(--accent); border-color: var(--accent); }
+        [data-theme="dark"] .credits a { color: var(--accent); }
+        .credits code {
+            font-family: var(--mono);
+            font-size: 0.86em;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        [data-theme="dark"] .credits code { color: var(--accent); }
+
+        /* FOOTER */
+        .footer {
+            padding: 56px 24px 64px;
+            text-align: center;
+            color: var(--ink-dim);
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer .pip {
+            display: inline-block;
+            width: 5px; height: 5px;
+            border-radius: 999px;
+            background: var(--signal);
+            box-shadow: 0 0 8px var(--signal);
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 20px; }
+            .hero { padding: 90px 0 24px; }
+            .top-controls { top: 12px; left: 12px; right: 12px; }
+            .req li { grid-template-columns: 64px 1fr; gap: 12px; font-size: 0.92rem; }
+            section h2 { font-size: 1.25rem; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-controls">
+    <a href="../" class="back">← bleelblep</a>
+    <div class="nav-tools">
+        <button type="button" class="icon-btn simple-toggle" data-simple-toggle aria-pressed="false" aria-label="Turn on simple cute theme" title="simple cute theme: off">
+            <span data-simple-icon>⟷</span>
+            <span class="simple-toggle-label">simple</span>
+        </button>
+        <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+            <span data-theme-icon>☾</span>
+        </button>
+    </div>
+</div>
+
+<header class="hero">
+    <div class="container">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>fork · android · shizuku</div>
+        <h1 class="title">carrier vanity <em>name</em></h1>
+        <p class="tagline">
+            rename the carrier label your phone shows in the status bar — no root, no flashing, just shizuku and a hidden carrier-config override.
+        </p>
+
+        <div class="statusbar" aria-label="Status bar mock — carrier label changing from your real network to a custom one">
+            <div class="sb-time">9:41</div>
+            <div class="sb-carrier">
+                <span class="sb-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+                <span class="sb-label">
+                    <span class="strike">verizon</span>
+                    <span class="live">★ vanity ★</span>
+                </span>
+            </div>
+            <div class="sb-right">
+                <span>LTE</span>
+                <span class="battery" aria-hidden="true">
+                    <span>78%</span>
+                    <span class="battery-shell"><span class="battery-fill"></span></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="fork-card">
+            <div class="fork-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="6" r="2.5"/>
+                    <circle cx="6" cy="18" r="2.5"/>
+                    <circle cx="18" cy="8" r="2.5"/>
+                    <path d="M6 8.5v7"/>
+                    <path d="M6 13c0-3 4-3 6-5 1.4-1.4 1.6-3 6-3"/>
+                </svg>
+            </div>
+            <div class="fork-body">
+                <p class="fork-label">heads up · this is a fork</p>
+                <p>this is bleelblep's fork of <a href="https://github.com/nullbytepl/CarrierVanityName" target="_blank" rel="noopener">nullbytepl/CarrierVanityName</a> — same idea, but patched so it keeps working on pixels with the october 2025+ security patch.</p>
+                <p>the original app's carrier-config method started crashing once google moved <code>ICarrierConfigLoader</code> behind a broker. this fork ports the broker-instrumentation workaround from <a href="https://github.com/kyujin-cho/pixel-volte-patch" target="_blank" rel="noopener">kyujin-cho/pixel-volte-patch</a> so the trick still lands.</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <section>
+        <h2><span class="h-num">01</span> what it does</h2>
+
+        <div class="features">
+            <div class="feat">
+                <p class="feat-title">primary</p>
+                <p class="feat-name">rename your carrier</p>
+                <p>change the carrier text shown in the status bar to anything you want. persists through reboots. one tap to revert.</p>
+            </div>
+            <div class="feat">
+                <p class="feat-title">bonus</p>
+                <p class="feat-name">spoof sim country code</p>
+                <p>override the iso country code your sim reports — handy for tricking region-locked apps like the pixel thermometer.</p>
+            </div>
+            <div class="feat">
+                <p class="feat-title">how</p>
+                <p class="feat-name">no root, just shizuku</p>
+                <p>uses shizuku to apply hidden <code>CarrierConfig</code> overrides. no bootloader unlock, no system mod.</p>
+            </div>
+            <div class="feat">
+                <p class="feat-title">this fork</p>
+                <p class="feat-name">pixel oct 2025+ fix</p>
+                <p>routes calls through a broker on patched builds so the override doesn't crash on recent pixels.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2><span class="h-num">02</span> requires</h2>
+        <ul class="req">
+            <li>
+                <span class="req-key">device</span>
+                <span class="req-val">android phone with a sim — <strong>pixels tested</strong>, others may work</span>
+            </li>
+            <li>
+                <span class="req-key">os</span>
+                <span class="req-val">android 13+ (api 33), including builds with the october 2025+ patch</span>
+            </li>
+            <li>
+                <span class="req-key">tool</span>
+                <span class="req-val"><a href="https://shizuku.rikka.app/" target="_blank" rel="noopener">shizuku</a> — running, paired, and granted to the app</span>
+            </li>
+            <li>
+                <span class="req-key">root?</span>
+                <span class="req-val"><strong>no.</strong> shizuku handles privilege via adb or wireless debugging</span>
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2><span class="h-num">03</span> a warning</h2>
+        <div class="warn">
+            <span class="warn-label">read this first</span>
+            <p>anything that pokes at carrier-config via shizuku is doing something the os didn't really mean for you to do. it's worked fine for me, but it can in theory mess up your device or its data. use at your own risk — i'm not responsible if it eats your sim.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2><span class="h-num">04</span> get the apk</h2>
+        <p>prebuilt apks for this fork live on the github releases page. side-load with your file manager — no play store.</p>
+        <div class="actions">
+            <a href="https://github.com/bleelblep/CarrierVanityName/releases" target="_blank" rel="noopener" class="btn btn-primary">
+                <span>download release</span>
+                <span class="arrow">→</span>
+            </a>
+            <a href="https://github.com/bleelblep/CarrierVanityName" target="_blank" rel="noopener" class="btn btn-ghost">
+                <span>view source</span>
+                <span class="arrow">→</span>
+            </a>
+        </div>
+    </section>
+
+    <section>
+        <h2><span class="h-num">05</span> build from source</h2>
+        <p>the project leans on hidden android apis (<code>ICarrierConfigLoader</code>, <code>IActivityManager</code>, hidden overloads of <code>SubscriptionManager.getSubId</code>, etc.) that aren't in the stock <code>android.jar</code>. a clean build against a fresh sdk install will fail.</p>
+        <p>swap in a hidden-api <code>android.jar</code> for api 33 from <a href="https://github.com/Reginer/aosp-android-jar" target="_blank" rel="noopener">Reginer/aosp-android-jar</a> first, then build:</p>
+
+        <pre class="code-block"><span class="c-comment"># back up the stock sdk jar (powershell)</span>
+<span class="c-cmd">Copy-Item</span> "$env:LOCALAPPDATA\Android\Sdk\platforms\android-33\android.jar" `
+          "$env:LOCALAPPDATA\Android\Sdk\platforms\android-33\android.jar.orig"
+
+<span class="c-comment"># drop in the hidden-api variant</span>
+<span class="c-cmd">Invoke-WebRequest</span> `
+  -Uri "https://raw.githubusercontent.com/Reginer/aosp-android-jar/main/android-33/android.jar" `
+  -OutFile "$env:LOCALAPPDATA\Android\Sdk\platforms\android-33\android.jar"
+
+<span class="c-comment"># then from the repo root</span>
+<span class="c-cmd">.\gradlew</span> clean assembleDebug
+<span class="c-comment"># apk lands in app\build\outputs\apk\debug\</span></pre>
+
+        <p>to revert, restore <code>android.jar.orig</code> over <code>android.jar</code>.</p>
+    </section>
+
+    <section>
+        <h2><span class="h-num">06</span> credits</h2>
+        <div class="credits">
+            <ul>
+                <li>upstream &amp; the original idea: <a href="https://github.com/nullbytepl/CarrierVanityName" target="_blank" rel="noopener">nullbytepl/CarrierVanityName</a> — gpl-3.0</li>
+                <li>broker workaround for the oct 2025+ pixel patch is adapted from <a href="https://github.com/kyujin-cho/pixel-volte-patch" target="_blank" rel="noopener">kyujin-cho/pixel-volte-patch</a> — gpl-3.0. <code>BrokerInstrumentation.kt</code> is a port of the file with the same name in that project.</li>
+                <li>shizuku, of course — <a href="https://shizuku.rikka.app/" target="_blank" rel="noopener">shizuku.rikka.app</a></li>
+                <li>this fork is also gpl-3.0; see <code>LICENSE</code> in the repo</li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <span class="pip"></span>
+    carrier vanity name · fork by bleelblep
+    <span class="pip"></span>
+</footer>
+
+<link rel="stylesheet" href="../assets/simple.css">
+<script src="../assets/theme.js" defer></script>
+<script src="../assets/cute.js" defer></script>
+
+</body>
+</html>

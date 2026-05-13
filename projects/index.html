@@ -196,6 +196,7 @@
         .project-tag.stable  { color: #3A4A20; background: rgba(184, 200, 168, 0.5); }
         .project-tag.private { color: var(--text-dim); background: rgba(160, 104, 104, 0.12); }
         .project-tag.paused  { color: var(--text-dim); background: rgba(160, 104, 104, 0.16); }
+        .project-tag.fork    { color: #2945D6; background: rgba(77, 107, 255, 0.14); }
 
         .project-desc { font-size: 0.98rem; color: var(--text-dim); margin: 0; flex: 1; line-height: 1.6; }
         .project-meta { font-size: 0.85rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; font-weight: 600; flex-wrap: wrap; }
@@ -262,7 +263,7 @@
     <div class="container">
         <div class="eyebrow">projects</div>
         <h1>(nearly) everything <em>ever</em></h1>
-        <p>android apps, glyph matrix toys, and a few web things — grouped by what they're doing right now: being built, out in the world, or quietly waiting on me.</p>
+        <p>android apps, glyph matrix toys, and a few web things — grouped by what they're doing right now: being built, out in the world, kept-alive forks, or quietly waiting on me.</p>
     </div>
 </header>
 
@@ -400,6 +401,44 @@
                 </div>
             </a>
 
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2 class="section-title">forks &amp; patches</h2>
+            <div class="section-aside">
+                <span class="section-kaomoji">૮ ˙Ⱉ˙ ા</span>
+                <span>1 project · someone else's work, kept alive</span>
+            </div>
+        </div>
+        <p class="drawer-intro">not mine — just patched and re-released so it keeps working on my phone. credit to the original authors lives on each page.</p>
+
+        <div class="projects">
+            <a href="../carrier-vanity-name/" class="project">
+                <div class="project-swatch swatch-lavender" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#5A3A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="4" width="18" height="20" rx="3" />
+                        <path d="M5 9h18" />
+                        <rect x="9" y="13" width="10" height="7" rx="1.2" fill="#C8B8E8" stroke="#5A3A8A" />
+                        <path d="M9 16h10" />
+                        <path d="M14 13v7" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">carrier vanity name</h3>
+                    <span class="project-tag fork">fork</span>
+                </div>
+                <p class="project-desc">
+                    rename your sim's carrier label on android — no root, just shizuku. fork of nullbytepl's app, patched to keep working on pixels with the oct 2025+ security patch.
+                </p>
+                <div class="project-meta">
+                    <span>android · shizuku</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
         </div>
     </div>
 </section>
