@@ -197,6 +197,7 @@
         .project-tag.private { color: var(--text-dim); background: rgba(160, 104, 104, 0.12); }
         .project-tag.paused  { color: var(--text-dim); background: rgba(160, 104, 104, 0.16); }
         .project-tag.fork    { color: #2945D6; background: rgba(77, 107, 255, 0.14); }
+        .project-tag.experimental { color: #B11F1F; background: rgba(225, 60, 60, 0.12); }
 
         .project-desc { font-size: 0.98rem; color: var(--text-dim); margin: 0; flex: 1; line-height: 1.6; }
         .project-meta { font-size: 0.85rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; font-weight: 600; flex-wrap: wrap; }
@@ -436,6 +437,49 @@
                 </p>
                 <div class="project-meta">
                     <span>android · shizuku</span><span>·</span>
+                    <span>view project <span class="arrow">→</span></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2 class="section-title">experiments</h2>
+            <div class="section-aside">
+                <span class="section-kaomoji">(•_•) ✧</span>
+                <span>1 project · research, not a product</span>
+            </div>
+        </div>
+        <p class="drawer-intro">reverse-engineering, undocumented apis, things that work today and might not tomorrow. lives off the main grid on purpose.</p>
+
+        <div class="projects">
+            <a href="../not-thing-widgets/" class="project">
+                <div class="project-swatch swatch-pink" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#8A2A3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="6" width="20" height="16" rx="3" />
+                        <circle cx="9"  cy="11" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="14" cy="11" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="19" cy="11" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="9"  cy="15" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="14" cy="15" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="19" cy="15" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="9"  cy="19" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="14" cy="19" r="0.9" fill="#8A2A3A" stroke="none" />
+                        <circle cx="19" cy="19" r="0.9" fill="#8A2A3A" stroke="none" />
+                    </svg>
+                </div>
+                <div class="project-head">
+                    <h3 class="project-name">!thing widgets</h3>
+                    <span class="project-tag experimental">experimental</span>
+                </div>
+                <p class="project-desc">
+                    third-party widgets that render on aod, lockscreen, and homescreen — by hooking nothing's undocumented cardservice surface. credit to martmists. probably breaks on the next nothing os update.
+                </p>
+                <div class="project-meta">
+                    <span>nothing os · reverse-engineered</span><span>·</span>
                     <span>view project <span class="arrow">→</span></span>
                 </div>
             </a>

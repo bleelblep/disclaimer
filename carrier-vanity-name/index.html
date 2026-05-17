@@ -164,14 +164,11 @@
             outline: none;
             transform: translateY(-1px);
         }
-        .icon-btn [data-theme-icon],
-        .icon-btn [data-simple-icon] {
+        .icon-btn [data-theme-icon] {
             display: inline-block;
             transition: transform 0.3s ease;
         }
-        .icon-btn:hover [data-theme-icon],
-        .icon-btn:hover [data-simple-icon] { transform: rotate(20deg); }
-        .simple-toggle .simple-toggle-label { display: none; }
+        .icon-btn:hover [data-theme-icon] { transform: rotate(20deg); }
         @media (prefers-reduced-motion: reduce) {
             .back, .icon-btn, .icon-btn [data-theme-icon] { transition: none; }
             .back:hover, .icon-btn:hover { transform: none; }
@@ -716,10 +713,6 @@
 <div class="top-controls">
     <a href="../" class="back">← bleelblep</a>
     <div class="nav-tools">
-        <button type="button" class="icon-btn simple-toggle" data-simple-toggle aria-pressed="false" aria-label="Turn on simple cute theme" title="simple cute theme: off">
-            <span data-simple-icon>⟷</span>
-            <span class="simple-toggle-label">simple</span>
-        </button>
         <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
             <span data-theme-icon>☾</span>
         </button>
