@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>!thing widgets · bleelblep</title>
+    <meta name="description" content="Third-party widgets that render on aod, lockscreen, and homescreen on Nothing OS — by hooking the undocumented cardservice surface. Reverse-engineered, experimental, will probably break.">
+    <script>(function(){try{var m=window.matchMedia('(prefers-color-scheme: dark)'),s=null;try{s=localStorage.getItem('theme');}catch(e){}var t=(s==='light'||s==='dark')?s:(m.matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var sp='off';try{sp=localStorage.getItem('bleelblep_simple')==='on'?'on':'off';}catch(e){}document.documentElement.setAttribute('data-simple',sp);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/cute.css">
+    <style>
+        /* !THING WIDGETS — console / debug / glyph-surface aesthetic.
+           bone-paper light, near-black dark, with a single glyph-red accent
+           and a dot-grid backdrop that nods at the matrix. */
+        :root {
+            --bg: #F2EFE8;
+            --paper: #FFFFFF;
+            --surface: #0F0F12;
+            --surface-ink: #F2EFE8;
+            --ink: #14161B;
+            --ink-dim: #5E6471;
+            --ink-soft: #8A909C;
+            --rule: #D7D2C7;
+            --rule-soft: #E6E2D9;
+            --dot: rgba(20, 22, 27, 0.10);
+
+            --accent: #E13C3C;
+            --accent-deep: #B11F1F;
+            --accent-soft: rgba(225, 60, 60, 0.12);
+
+            --warn: #C77A1A;
+            --warn-soft: rgba(199, 122, 26, 0.14);
+            --signal: #2EBE7C;
+
+            --shadow-sm: 0 1px 2px rgba(20, 22, 27, 0.06), 0 2px 8px rgba(20, 22, 27, 0.05);
+            --shadow-md: 0 6px 22px rgba(20, 22, 27, 0.10);
+            --shadow-lg: 0 18px 44px rgba(20, 22, 27, 0.16);
+
+            --sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+            /* shared aliases for simple.css */
+            --text: var(--ink);
+            --text-dim: var(--ink-dim);
+            --card: var(--paper);
+            --border: var(--rule);
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0B0C10;
+            --paper: #14161B;
+            --surface: #06070A;
+            --surface-ink: #E9ECF2;
+            --ink: #ECEEF2;
+            --ink-dim: #8E96A6;
+            --ink-soft: #5A6273;
+            --rule: rgba(236, 238, 242, 0.14);
+            --rule-soft: rgba(236, 238, 242, 0.07);
+            --dot: rgba(236, 238, 242, 0.07);
+
+            --accent: #FF5C5C;
+            --accent-deep: #E13C3C;
+            --accent-soft: rgba(255, 92, 92, 0.16);
+
+            --warn: #F0A33C;
+            --warn-soft: rgba(240, 163, 60, 0.16);
+            --signal: #4FD89A;
+
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 6px 22px rgba(0, 0, 0, 0.45);
+            --shadow-lg: 0 18px 44px rgba(0, 0, 0, 0.6);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.65;
+            font-weight: 450;
+            -webkit-font-smoothing: antialiased;
+            font-size: 15.5px;
+        }
+
+        /* DOT-MATRIX BACKDROP */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image: radial-gradient(var(--dot) 1px, transparent 1.4px);
+            background-size: 18px 18px;
+            mask-image: radial-gradient(ellipse at top, rgba(0,0,0,0.65), transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at top, rgba(0,0,0,0.65), transparent 80%);
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* FLOATING CONTROLS */
+        .top-controls {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+        .top-controls > * { pointer-events: auto; }
+
+        .back {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--ink-dim);
+            text-decoration: none;
+            padding: 8px 12px;
+            border: 1px solid var(--rule);
+            border-radius: 999px;
+            background: var(--paper);
+            transition: color 0.2s, border-color 0.2s, transform 0.2s;
+            letter-spacing: 0.04em;
+        }
+        .back:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            transform: translateX(-2px);
+        }
+
+        .nav-tools { display: flex; gap: 10px; }
+
+        .icon-btn {
+            appearance: none;
+            background: var(--paper);
+            color: var(--ink-dim);
+            border: 1px solid var(--rule);
+            width: 34px; height: 34px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            font-size: 0.9rem;
+            font-family: var(--sans);
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .icon-btn:hover, .icon-btn:focus-visible {
+            color: var(--accent);
+            border-color: var(--accent);
+            outline: none;
+            transform: translateY(-1px);
+        }
+        .icon-btn [data-theme-icon] {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .icon-btn:hover [data-theme-icon] { transform: rotate(20deg); }
+        @media (prefers-reduced-motion: reduce) {
+            .back, .icon-btn, .icon-btn [data-theme-icon] { transition: none; }
+            .back:hover, .icon-btn:hover { transform: none; }
+            .icon-btn:hover [data-theme-icon] { transform: none; }
+        }
+
+        /* HERO */
+        .hero { padding: 110px 0 28px; }
+
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            color: var(--ink-dim);
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .eyebrow .dot {
+            width: 6px; height: 6px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            animation: blink 2.4s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .eyebrow .dot { animation: none; }
+        }
+
+        h1.title {
+            font-size: clamp(2.6rem, 7vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 0.98;
+            margin: 0 0 18px;
+            color: var(--ink);
+        }
+        h1.title .bang {
+            color: var(--accent);
+            font-weight: 800;
+            display: inline-block;
+            transform: translateY(-0.04em);
+            margin-right: 0.04em;
+        }
+
+        .tagline {
+            font-size: 1.08rem;
+            color: var(--ink-dim);
+            margin: 0;
+            max-width: 560px;
+            line-height: 1.55;
+        }
+
+        /* META STRIP */
+        .meta-strip {
+            margin: 30px 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--ink-dim);
+            letter-spacing: 0.04em;
+            padding: 12px 16px;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+        .meta-strip .sep { color: var(--ink-soft); }
+        .meta-strip strong { color: var(--ink); font-weight: 600; }
+
+        /* DISCLAIMER */
+        .disclaimer {
+            margin: 18px 0 0;
+            background: var(--warn-soft);
+            border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+            border-radius: 14px;
+            padding: 16px 18px;
+            color: var(--ink);
+        }
+        .disclaimer-label {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--warn);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .disclaimer-label::before {
+            content: "▮";
+            color: var(--warn);
+        }
+        .disclaimer p { margin: 0; line-height: 1.6; font-size: 0.95rem; }
+        .disclaimer strong { font-weight: 700; }
+
+        /* SECTIONS */
+        section { padding: 40px 0 0; }
+        section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            margin: 0 0 16px;
+            color: var(--ink);
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+        }
+        section h2 .h-num {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.12em;
+        }
+        section p {
+            color: var(--ink);
+            margin: 0 0 14px;
+            line-height: 1.7;
+        }
+        section p:last-child { margin-bottom: 0; }
+        section a {
+            color: var(--accent-deep);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-soft);
+            transition: border-color 0.2s, color 0.2s;
+        }
+        section a:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+        [data-theme="dark"] section a { color: var(--accent); }
+
+        section code {
+            font-family: var(--mono);
+            font-size: 0.86em;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        [data-theme="dark"] section code { color: var(--accent); }
+
+        /* CREDIT CARD */
+        .credit {
+            margin: 6px 0 4px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 16px 18px;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-left: 3px solid var(--accent);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+        .credit-glyph {
+            flex-shrink: 0;
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            color: var(--accent);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding-top: 2px;
+        }
+        .credit p {
+            margin: 0;
+            font-size: 0.96rem;
+            line-height: 1.6;
+        }
+        .credit p + p { margin-top: 6px; color: var(--ink-dim); font-size: 0.9rem; }
+
+        /* CODE BLOCK */
+        .code-block {
+            background: var(--surface);
+            color: var(--surface-ink);
+            border-radius: 12px;
+            padding: 16px 18px;
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            line-height: 1.65;
+            overflow-x: auto;
+            margin: 8px 0 14px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid transparent;
+        }
+        [data-theme="dark"] .code-block { border-color: var(--rule); }
+        .code-label {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin: 14px 0 4px;
+        }
+        .code-block .c-comment { color: #7B8AA0; }
+        .code-block .c-key     { color: #FFB870; }
+        .code-block .c-str     { color: #8AE0A0; }
+        .code-block .c-fn      { color: #9FB8FF; }
+
+        /* CALLOUT */
+        .callout {
+            margin-top: 10px;
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            color: var(--ink-dim);
+            background: var(--rule-soft);
+            border-left: 2px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 10px 14px;
+            line-height: 1.55;
+        }
+
+        /* STATUS LIST */
+        .status {
+            list-style: none;
+            margin: 4px 0 0;
+            padding: 0;
+            border-top: 1px dashed var(--rule);
+        }
+        .status li {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 18px;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--rule);
+            font-size: 0.96rem;
+            line-height: 1.55;
+            align-items: baseline;
+        }
+        .status-key {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .status-key.works  { color: var(--signal); }
+        .status-key.flaky  { color: var(--warn); }
+        .status-key.nope   { color: var(--accent); }
+        .status-val { color: var(--ink); }
+        .status-val em { font-style: normal; color: var(--ink-dim); }
+
+        /* CTA / APK */
+        .apk-card {
+            margin-top: 8px;
+            background: var(--paper);
+            border: 1px solid var(--rule);
+            border-radius: 14px;
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+        }
+        .apk-card p { margin: 0 0 8px; line-height: 1.6; }
+        .apk-card p:last-child { margin: 0; color: var(--ink-dim); font-size: 0.9rem; }
+
+        /* FOOTER */
+        .footer {
+            padding: 56px 24px 64px;
+            text-align: center;
+            color: var(--ink-dim);
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            position: relative;
+            z-index: 1;
+        }
+        .footer .pip {
+            display: inline-block;
+            width: 5px; height: 5px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 20px; }
+            .hero { padding: 92px 0 22px; }
+            .top-controls { top: 12px; left: 12px; right: 12px; }
+            section h2 { font-size: 1.22rem; gap: 10px; }
+            .status li { grid-template-columns: 84px 1fr; gap: 12px; font-size: 0.92rem; }
+            .meta-strip { font-size: 0.74rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-controls">
+    <a href="../" class="back">← bleelblep</a>
+    <div class="nav-tools">
+        <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+            <span data-theme-icon>☾</span>
+        </button>
+    </div>
+</div>
+
+<header class="hero">
+    <div class="container">
+        <div class="eyebrow"><span class="dot" aria-hidden="true"></span>experimental · reverse-engineered · nothing os</div>
+        <h1 class="title"><span class="bang">!</span>thing widgets</h1>
+        <p class="tagline">
+            third-party widgets that render on aod, lockscreen, and homescreen — by hooking the surface nothing's own widgets register through. the system treats them as stock.
+        </p>
+
+        <div class="meta-strip" aria-label="Test environment">
+            <span><strong>nothing os 4.1</strong></span>
+            <span class="sep">·</span>
+            <span><strong>phone (3)</strong></span>
+            <span class="sep">·</span>
+            <span>undocumented api</span>
+            <span class="sep">·</span>
+            <span>expect breakage</span>
+        </div>
+
+        <div class="disclaimer">
+            <div class="disclaimer-label">heads up</div>
+            <p>this uses an <strong>undocumented api</strong>. only tested on nothing os 4.1, phone (3). it will probably break in future os updates. don't build on this — and don't take anything here as a stable public surface.</p>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <section>
+        <h2><span class="h-num">01</span> the discovery</h2>
+        <p>
+            nothing's first-party widgets — clock, quotes, battery — don't use stock android <code>AppWidgetProvider</code>. they register through a private app called <code>com.nothing.cardservice</code>, which holds a sqlite store of widget content json and pipes it to the launcher (<code>com.nothing.launcher</code>), the lockscreen host (<code>com.nothing.hearthstone</code>), and the always-on display.
+        </p>
+        <p>
+            with the right <code>ContentProvider</code>, an aidl binding, and a card descriptor in your manifest, the system accepts <em>your</em> apk as a card provider. the picker lists your widget alongside stock ones. the layout gets inflated inside the host process from your apk's resources. nothing distinguishes you from itself.
+        </p>
+
+        <div class="credit">
+            <div class="credit-glyph">credit ▮▯▯</div>
+            <div>
+                <p>all credit goes to <strong>Martmists</strong>, who got there first. that work is what made this possible — i'd never have known the cardservice surface existed without it. this page is a separate exploration, but it stands on theirs.</p>
+            </div>
+        </div>
+
+        <p>
+            the bug that took the longest to find: when cardservice asks your provider for content, responding synchronously isn't enough. you have to <em>also</em> push the same json outbound to <code>content://com.nothing.cardservice</code> via <code>ContentResolver.call</code> — otherwise the host's db never receives it and the widget renders blank. one line of misunderstanding; days of "why is it empty."
+        </p>
+    </section>
+
+    <section>
+        <h2><span class="h-num">02</span> how it works</h2>
+        <p>three pieces have to line up: the manifest registration, the json schema cardservice expects, and — critically — the outbound push that gets your content into the host's db.</p>
+
+        <p class="code-label">// the part everyone misses</p>
+<pre class="code-block"><span class="c-comment">// when cardservice asks for content, respond AND push outbound.
+// without the second step, the host's db stays empty
+// and your widget renders blank. days of debugging live here.</span>
+<span class="c-fn">override fun</span> call(method: String, arg: String?, extras: Bundle?): Bundle {
+    <span class="c-fn">val</span> response = Bundle()
+    <span class="c-fn">val</span> widgetId = arg?.toIntOrNull() ?: <span class="c-fn">return</span> response
+
+    <span class="c-fn">when</span> (method) {
+        <span class="c-str">"updateAppWidget"</span>, <span class="c-str">"partUpdateWidget"</span> -&gt; {
+            <span class="c-fn">val</span> cardInfo = buildCardInfo(widgetId)
+
+            <span class="c-comment">// (1) respond synchronously…</span>
+            response.putString(<span class="c-str">"card_info"</span>, cardInfo)
+
+            <span class="c-comment">// (2) …AND push outbound. this is the line.</span>
+            mainHandler.post {
+                CardServiceClient.notifyUpdate(widgetId, cardInfo)
+            }
+        }
+    }
+    <span class="c-fn">return</span> response
+}</pre>
+
+        <p class="code-label">// the json the host actually wants</p>
+<pre class="code-block">{
+  <span class="c-key">"config_info"</span>: { <span class="c-key">"layout_id"</span>: 2131296789, <span class="c-key">"package_name"</span>: <span class="c-str">"com.yourpkg"</span>, ... },
+  <span class="c-key">"view_info"</span>: [
+    {
+      <span class="c-key">"item_type"</span>: 0,
+      <span class="c-key">"view_id"</span>: 2131231044,
+      <span class="c-key">"view_type"</span>: <span class="c-str">"view"</span>,
+      <span class="c-key">"invoke"</span>: [
+        { <span class="c-key">"item_type"</span>: 17, <span class="c-key">"invoke_method"</span>: <span class="c-str">"setText"</span>,
+          <span class="c-key">"invoke_params"</span>: [
+            { <span class="c-key">"item_type"</span>: 5, <span class="c-key">"param_type"</span>: 2, <span class="c-key">"param_value"</span>: <span class="c-str">"hello"</span> }
+          ] }
+      ]
+    }
+  ]
+}</pre>
+
+        <div class="callout">
+            the view object's invocation array is <code>"invoke"</code> — not <code>"invoke_params"</code>. the invocation's parameter array is <code>"invoke_params"</code> — not <code>"params"</code>. for setText, <code>param_type=2</code> (CharSequence), not 8 (String). easy to miss; impossible to guess.
+        </div>
+
+        <p>aod is the same json with a second copy of the structure nested under the key <code>"simple_card_info"</code> — different layout id, simpler view tree (1dp outlines, no fills, white text, no brand colors). if that key is absent the widget just doesn't render on aod. no separate manifest attribute, no separate code path; the data shape is the signal.</p>
+    </section>
+
+    <section>
+        <h2><span class="h-num">03</span> what works · what doesn't</h2>
+        <ul class="status">
+            <li>
+                <span class="status-key works">works</span>
+                <span class="status-val">rendering on aod / lockscreen / homescreen. tap actions. multi-frame fade animations (push a sequence of <code>setAlpha</code> jsons on a handler). resize, long-press configure popup, and multi-page viewpager2 (vertical only — the launcher eats horizontal swipes unless you implement <code>IHorizontalScrollableView</code>).</span>
+            </li>
+            <li>
+                <span class="status-key flaky">flaky</span>
+                <span class="status-val">anything that touches the launcher's theme. <code>TextView</code>, <code>ProgressBar</code>, and friends pull defaults through the launcher's theme at inflate — which is incomplete for non-system packages. <em>workaround: wrap framework views in <code>android:theme="@android:style/Theme.DeviceDefault"</code> and use literal colors.</em></span>
+            </li>
+            <li>
+                <span class="status-key nope">doesn't</span>
+                <span class="status-val">there's no way to make a third-party widget <em>lockscreen-only</em> through the card descriptor. <code>cardWidgetType</code> and <code>cardFeatures</code> don't gate the surface — both pickers accept the same values. the filter lives somewhere in systemui that hasn't been traced yet.</span>
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2><span class="h-num">04</span> maybe an apk?</h2>
+        <div class="apk-card">
+            <p>i might post an apk eventually. no promises on timing, and no promises i'll fix it when the next nothing os update breaks it.</p>
+            <p>this sits in <a href="../projects/">/projects</a> under <em>experiments</em> rather than on the homepage for a reason — it's research, not a product. if you're tinkering with cardservice yourself and want to compare findings, that's the audience.</p>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <span class="pip"></span>
+    !thing widgets · research by bleelblep
+    <span class="pip"></span>
+</footer>
+
+<link rel="stylesheet" href="../assets/simple.css">
+<script src="../assets/theme.js" defer></script>
+<script src="../assets/cute.js" defer></script>
+
+</body>
+</html>
