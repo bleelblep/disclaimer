@@ -34,4 +34,11 @@
     "title": "!thing widgets — a hack, not a product",
     "html": "<p>spent a while reverse-engineering the surface nothing's own widgets register through — a private app called <code>com.nothing.cardservice</code> that sits between widget providers and the launcher / lockscreen / aod hosts. hooked into it. now a few custom widgets appear in the picker and render on all three surfaces. the system treats them as stock.</p><p>all credit to <strong>martmists</strong>, who got there first. that's what made this possible at all — without their work i'd never have known the cardservice surface existed.</p><p>this is an <em>undocumented</em> api. only tested on nothing os 4.1, phone (3). it will probably break in future os updates. i'm not going to pretend otherwise, and i'm not going to call it a product. it lives on its own page rather than the projects grid for that reason — <a href=\"../not-thing-widgets/\">!thing widgets</a>, if you want to read about it.</p><p>i'll maybe post an apk soon. no promises on timing, no promises on fixing it when it breaks. <em>quieter that way.</em></p>"
   }
+  {
+  "slug": "chromext-and-widgets",
+  "date": "2026-05-20",
+  "tag": "ramble",
+  "title": "chromext, and a widget update",
+  "html": "<p>forked chromext and got it working on the new naver whale browser versions. probably works on chrome and the other chromium browsers too — didn't test, didn't really care to. only updated it because i wanted it for myself.</p><p>not planning to post or host this one. </p><p>on the widget side — not sure i mentioned this last time, but i've got a stock music widget clone working on lockscreen now. still buggy in spots. overall happy with the outcome.</p><p>one more left. fork the photo widget, turn it into a shortcut — then (nearly) every kwgt widget i was running has a !thing equivalent. <em>that'll be the lot.</em></p>"
+  }
 ]
