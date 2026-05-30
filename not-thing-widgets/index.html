@@ -437,6 +437,40 @@
         .apk-card p { margin: 0 0 8px; line-height: 1.6; }
         .apk-card p.fine { margin: 16px 0 0; color: var(--ink-dim); font-size: 0.9rem; }
 
+        /* BUILD / VERSION STRIP */
+        .build-meta {
+            margin: 16px 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 12px;
+            font-family: var(--mono);
+            font-size: 0.76rem;
+            letter-spacing: 0.04em;
+            color: var(--ink-dim);
+            padding: 12px 14px;
+            background: var(--rule-soft);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+        }
+        .build-meta .bm-tag {
+            font-weight: 700;
+            color: var(--accent-deep);
+            background: var(--accent-soft);
+            padding: 2px 9px;
+            border-radius: 999px;
+            letter-spacing: 0.06em;
+        }
+        [data-theme="dark"] .build-meta .bm-tag { color: var(--accent); }
+        .build-meta .bm-key {
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.68rem;
+            color: var(--ink-soft);
+        }
+        .build-meta strong { color: var(--ink); font-weight: 600; }
+        .build-meta .sep { color: var(--ink-soft); }
+
         /* SCAN CARD — third-party verification before sideload */
         .scan {
             display: grid;
@@ -784,6 +818,16 @@
         <h2><span class="h-num">04</span> the apk</h2>
         <div class="apk-card">
             <p>here it is — a public build you can sideload and poke at. tick the boxes to unlock the download.</p>
+            <div class="build-meta" aria-label="Build details">
+                <span class="bm-tag">v1</span>
+                <span class="bm-key">built</span><span><strong>2026-05-30</strong></span>
+                <span class="sep">·</span>
+                <span class="bm-key">target</span><span><strong>nothing os 4.1</strong> · phone (3)</span>
+                <span class="sep">·</span>
+                <span class="bm-key">size</span><span><strong>~25&nbsp;MB</strong></span>
+                <span class="sep">·</span>
+                <span class="bm-key">signing</span><span>unsigned (debug)</span>
+            </div>
             <a href="https://www.virustotal.com/gui/file/2e099209de1c44c7816a8c52570caf07" class="scan" target="_blank" rel="noopener">
                 <span class="scan-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
