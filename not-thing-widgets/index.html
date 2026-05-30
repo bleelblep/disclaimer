@@ -435,7 +435,131 @@
             box-shadow: var(--shadow-sm);
         }
         .apk-card p { margin: 0 0 8px; line-height: 1.6; }
-        .apk-card p:last-child { margin: 0; color: var(--ink-dim); font-size: 0.9rem; }
+        .apk-card p.fine { margin: 16px 0 0; color: var(--ink-dim); font-size: 0.9rem; }
+
+        /* ACKNOWLEDGE CHECKS — tick all to unlock the download */
+        .ack-list {
+            list-style: none;
+            margin: 16px 0 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .ack {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 14px 16px;
+            background: var(--rule-soft);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            font-size: 0.94rem;
+            line-height: 1.5;
+            color: var(--ink);
+        }
+        .ack:hover { border-color: var(--ink-soft); }
+        .ack:has(input:checked) {
+            border-color: color-mix(in srgb, var(--signal) 55%, transparent);
+            background: color-mix(in srgb, var(--signal) 9%, transparent);
+        }
+        .ack input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px; height: 20px;
+            margin: 1px 0 0;
+            flex-shrink: 0;
+            border: 1px solid var(--ink-soft);
+            border-radius: 5px;
+            background: var(--paper);
+            cursor: pointer;
+            display: grid; place-items: center;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .ack input[type="checkbox"]:checked {
+            background: var(--signal);
+            border-color: var(--signal);
+        }
+        .ack input[type="checkbox"]:checked::after {
+            content: "";
+            display: block;
+            width: 9px; height: 5px;
+            border-left: 2px solid var(--paper);
+            border-bottom: 2px solid var(--paper);
+            transform: rotate(-45deg) translate(1px, -1px);
+        }
+        .ack input[type="checkbox"]:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .ack code {
+            font-family: var(--mono);
+            font-size: 0.84em;
+            background: var(--accent-soft);
+            color: var(--accent-deep);
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+        [data-theme="dark"] .ack code { color: var(--accent); }
+        .ack strong { color: var(--accent-deep); font-weight: 700; }
+        [data-theme="dark"] .ack strong { color: var(--accent); }
+
+        /* DOWNLOAD ROW — gated until all boxes ticked */
+        .dl-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px 18px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--rule);
+        }
+        .dl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--mono);
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent);
+            border: 1px solid var(--accent-deep);
+            border-radius: 999px;
+            padding: 12px 24px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s, opacity 0.2s;
+            cursor: pointer;
+        }
+        .dl-btn:hover, .dl-btn:focus-visible {
+            background: var(--accent-deep);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            outline: none;
+        }
+        .dl-btn[aria-disabled="true"] {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+            background: var(--ink-soft);
+            border-color: var(--ink-soft);
+            box-shadow: none;
+        }
+        .dl-btn .arr { font-size: 1rem; line-height: 1; }
+        .dl-hint {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+            color: var(--ink-soft);
+        }
+        .dl-hint.ok { color: var(--signal); font-weight: 600; }
+        @media (prefers-reduced-motion: reduce) {
+            .dl-btn { transition: none; }
+            .dl-btn:hover { transform: none; }
+        }
 
         /* FOOTER */
         .footer {
@@ -599,10 +723,31 @@
     </section>
 
     <section>
-        <h2><span class="h-num">04</span> maybe an apk?</h2>
+        <h2><span class="h-num">04</span> the apk</h2>
         <div class="apk-card">
-            <p>i might post an apk eventually. no promises on timing, and no promises i'll fix it when the next nothing os update breaks it.</p>
-            <p>this sits in <a href="../projects/">/projects</a> under <em>experiments</em> rather than on the homepage for a reason — it's research, not a product. if you're tinkering with cardservice yourself and want to compare findings, that's the audience.</p>
+            <p>here it is — a public build you can sideload and poke at. tick the boxes to unlock the download.</p>
+            <div class="ack-list">
+                <label class="ack">
+                    <input type="checkbox" class="ack-check">
+                    <span>i understand this is <strong>research, not a product</strong> — it uses an undocumented api and will probably break on future nothing os updates.</span>
+                </label>
+                <label class="ack">
+                    <input type="checkbox" class="ack-check">
+                    <span>i'm only on <strong>nothing os 4.1 / phone (3)</strong>, or i accept it may not work at all on anything else.</span>
+                </label>
+                <label class="ack">
+                    <input type="checkbox" class="ack-check">
+                    <span>i'm okay installing an unsigned <code>.apk</code> from outside the play store and know how to enable unknown sources.</span>
+                </label>
+            </div>
+            <div class="dl-row">
+                <a href="app-public-release.apk" class="dl-btn" id="dl-btn" aria-disabled="true" download="not-thing-widgets.apk">
+                    <span>download apk</span>
+                    <span class="arr" aria-hidden="true">↓</span>
+                </a>
+                <span class="dl-hint" id="dl-hint">tick the boxes above to unlock.</span>
+            </div>
+            <p class="fine">this sits in <a href="../projects/">/projects</a> under <em>experiments</em> rather than on the homepage for a reason. if you're tinkering with cardservice yourself and want to compare findings, that's the audience.</p>
         </div>
     </section>
 
@@ -617,6 +762,29 @@
 <link rel="stylesheet" href="../assets/simple.css">
 <script src="../assets/theme.js" defer></script>
 <script src="../assets/cute.js" defer></script>
+<script>
+    // acknowledge → unlock download.
+    (function () {
+        var checks = document.querySelectorAll('.ack-check');
+        var btn = document.getElementById('dl-btn');
+        var hint = document.getElementById('dl-hint');
+        if (!checks.length || !btn || !hint) return;
+        function update() {
+            var all = Array.prototype.every.call(checks, function (c) { return c.checked; });
+            btn.setAttribute('aria-disabled', all ? 'false' : 'true');
+            hint.classList.toggle('ok', all);
+            hint.textContent = all ? 'unlocked — sideload at your own risk.' : 'tick the boxes above to unlock.';
+        }
+        Array.prototype.forEach.call(checks, function (c) { c.addEventListener('change', update); });
+        btn.addEventListener('click', function (e) {
+            if (btn.getAttribute('aria-disabled') === 'true') {
+                e.preventDefault();
+                hint.textContent = 'tick all three first.';
+            }
+        });
+        update();
+    })();
+</script>
 
 </body>
 </html>
