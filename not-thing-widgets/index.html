@@ -437,6 +437,64 @@
         .apk-card p { margin: 0 0 8px; line-height: 1.6; }
         .apk-card p.fine { margin: 16px 0 0; color: var(--ink-dim); font-size: 0.9rem; }
 
+        /* SCAN CARD — third-party verification before sideload */
+        .scan {
+            display: grid;
+            grid-template-columns: 40px 1fr auto;
+            align-items: center;
+            gap: 14px;
+            margin: 16px 0 0;
+            padding: 14px 16px;
+            background: var(--rule-soft);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--ink);
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        .scan:hover {
+            border-color: var(--signal);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        .scan-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: grid; place-items: center;
+            color: var(--signal);
+            border: 1px solid color-mix(in srgb, var(--signal) 45%, transparent);
+            background: color-mix(in srgb, var(--signal) 12%, transparent);
+        }
+        .scan-icon svg { width: 22px; height: 22px; }
+        .scan-label {
+            font-family: var(--mono);
+            font-size: 0.84rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: var(--ink);
+            line-height: 1.2;
+        }
+        .scan-sub {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-top: 3px;
+        }
+        .scan-arrow {
+            font-family: var(--mono);
+            font-size: 1.1rem;
+            color: var(--signal);
+            transition: transform 0.2s;
+        }
+        .scan:hover .scan-arrow { transform: translateX(3px); }
+        @media (prefers-reduced-motion: reduce) {
+            .scan, .scan-arrow { transition: none; }
+            .scan:hover { transform: none; }
+            .scan:hover .scan-arrow { transform: none; }
+        }
+
         /* ACKNOWLEDGE CHECKS — tick all to unlock the download */
         .ack-list {
             list-style: none;
@@ -726,6 +784,19 @@
         <h2><span class="h-num">04</span> the apk</h2>
         <div class="apk-card">
             <p>here it is — a public build you can sideload and poke at. tick the boxes to unlock the download.</p>
+            <a href="https://www.virustotal.com/gui/file/9d7681503fefb67abdfe0e43aef82669" class="scan" target="_blank" rel="noopener">
+                <span class="scan-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </span>
+                <span>
+                    <span class="scan-label">VirusTotal</span>
+                    <span class="scan-sub">view scan report →</span>
+                </span>
+                <span class="scan-arrow" aria-hidden="true">→</span>
+            </a>
             <div class="ack-list">
                 <label class="ack">
                     <input type="checkbox" class="ack-check">
